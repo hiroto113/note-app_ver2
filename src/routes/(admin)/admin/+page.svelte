@@ -1,0 +1,119 @@
+<script lang="ts">
+	// Currently unused but may be needed for future dashboard data
+	export let data;
+	// Suppress unused warning
+	data;
+</script>
+
+<svelte:head>
+	<title>管理画面 - My Notes</title>
+</svelte:head>
+
+<div class="px-4 sm:px-0">
+	<div class="mb-8">
+		<h1 class="text-3xl font-bold text-gray-900">管理画面</h1>
+		<p class="mt-2 text-gray-600">記事とカテゴリの管理を行えます</p>
+	</div>
+	
+	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+		<div class="bg-white overflow-hidden shadow rounded-lg">
+			<div class="p-5">
+				<div class="flex items-center">
+					<div class="flex-shrink-0">
+						<svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+						</svg>
+					</div>
+					<div class="ml-5 w-0 flex-1">
+						<dl>
+							<dt class="text-sm font-medium text-gray-500 truncate">総記事数</dt>
+							<dd class="text-lg font-medium text-gray-900">0</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+			<div class="bg-gray-50 px-5 py-3">
+				<div class="text-sm">
+					<a href="/admin/posts" class="font-medium text-blue-600 hover:text-blue-500">
+						記事管理へ
+					</a>
+				</div>
+			</div>
+		</div>
+		
+		<div class="bg-white overflow-hidden shadow rounded-lg">
+			<div class="p-5">
+				<div class="flex items-center">
+					<div class="flex-shrink-0">
+						<svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z" />
+						</svg>
+					</div>
+					<div class="ml-5 w-0 flex-1">
+						<dl>
+							<dt class="text-sm font-medium text-gray-500 truncate">総カテゴリ数</dt>
+							<dd class="text-lg font-medium text-gray-900">0</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+			<div class="bg-gray-50 px-5 py-3">
+				<div class="text-sm">
+					<a href="/admin/categories" class="font-medium text-blue-600 hover:text-blue-500">
+						カテゴリ管理へ
+					</a>
+				</div>
+			</div>
+		</div>
+		
+		<div class="bg-white overflow-hidden shadow rounded-lg">
+			<div class="p-5">
+				<div class="flex items-center">
+					<div class="flex-shrink-0">
+						<svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+						</svg>
+					</div>
+					<div class="ml-5 w-0 flex-1">
+						<dl>
+							<dt class="text-sm font-medium text-gray-500 truncate">公開記事数</dt>
+							<dd class="text-lg font-medium text-gray-900">0</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+			<div class="bg-gray-50 px-5 py-3">
+				<div class="text-sm">
+					<a href="/" target="_blank" class="font-medium text-blue-600 hover:text-blue-500">
+						サイトを表示
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="mt-8">
+		<div class="bg-white shadow rounded-lg">
+			<div class="px-4 py-5 sm:p-6">
+				<h3 class="text-lg leading-6 font-medium text-gray-900">クイックアクション</h3>
+				<div class="mt-5">
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						<a
+							href="/admin/posts/new"
+							class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+						>
+							新しい記事を作成
+						</a>
+						<a
+							href="/admin/categories/new"
+							class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+						>
+							新しいカテゴリを作成
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

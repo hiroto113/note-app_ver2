@@ -1,0 +1,12 @@
+# Ignore files for Prettier
+.svelte-kit/
+build/
+dist/
+node_modules/
+package/
+.env
+.env.*
+!.env.example
+pnpm-lock.yaml
+package-lock.json
+yarn.lock

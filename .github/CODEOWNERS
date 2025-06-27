@@ -1,0 +1,24 @@
+# Global code ownership
+# These owners will be the default owners for everything in the repo
+* @project-owner
+
+# Documentation
+/doc/ @documentation-team
+*.md @documentation-team
+
+# Configuration files
+/.github/ @devops-team
+/package.json @devops-team
+/pnpm-lock.yaml @devops-team
+*.config.* @devops-team
+
+# Source code
+/src/ @development-team
+
+# Tests
+/tests/ @qa-team
+*.test.* @qa-team
+*.spec.* @qa-team
+
+# Database and migrations
+/drizzle/ @database-team
