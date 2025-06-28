@@ -21,7 +21,8 @@
       "Bash(pnpm run lint:*)",
       "Bash(npx eslint:*)",
       "Bash(pnpm run:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(gh pr:*)"
     ],
     "deny": []
   }
