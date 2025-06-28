@@ -11,7 +11,15 @@ export default {
 				themes: ['github-dark'],
 				langs: ['javascript', 'typescript', 'svelte', 'html', 'css', 'bash', 'json']
 			});
-			await highlighter.loadLanguage('javascript', 'typescript', 'svelte', 'html', 'css', 'bash', 'json');
+			await highlighter.loadLanguage(
+				'javascript',
+				'typescript',
+				'svelte',
+				'html',
+				'css',
+				'bash',
+				'json'
+			);
 			const html = highlighter.codeToHtml(code, {
 				lang,
 				theme: 'github-dark'

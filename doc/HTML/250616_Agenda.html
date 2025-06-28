@@ -1,171 +1,225 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <title>AI開発 学習ログ</title>
-  <style>
-    body {
-      font-family: 'Helvetica Neue', sans-serif;
-      line-height: 1.8;
-      padding: 40px;
-      max-width: 960px;
-      margin: auto;
-      background-color: #fdfdfd;
-      color: #333;
-    }
-    h1, h2, h3 {
-      color: #2c3e50;
-      margin-top: 1.5em;
-    }
-    h1 {
-      font-size: 2.2em;
-      border-bottom: 2px solid #ccc;
-      padding-bottom: 0.3em;
-    }
-    h2 {
-      font-size: 1.6em;
-      border-left: 5px solid #2c3e50;
-      padding-left: 10px;
-    }
-    h3 {
-      font-size: 1.3em;
-    }
-    h4 {
-      font-size: 1.1em;
-      margin-top: 1em;
-    }
-    p {
-      margin: 1em 0;
-    }
-    ul {
-      margin-left: 1.5em;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1em 0;
-    }
-    th, td {
-      border: 1px solid #aaa;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #eee;
-    }
-    blockquote {
-      background: #f0f0f0;
-      border-left: 4px solid #999;
-      margin: 1em 0;
-      padding: 0.8em 1em;
-      font-style: italic;
-    }
-    details {
-      margin: 1em 0;
-      padding: 0.5em 1em;
-      background-color: #f9f9f9;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    summary {
-      font-weight: bold;
-      cursor: pointer;
-    }
-    pre {
-      white-space: pre-wrap;
-    }
-  </style>
-</head>
-<body>
-  <h1>250616_アジェンダ</h1>
+	<head>
+		<meta charset="UTF-8" />
+		<title>AI開発 学習ログ</title>
+		<style>
+			body {
+				font-family: 'Helvetica Neue', sans-serif;
+				line-height: 1.8;
+				padding: 40px;
+				max-width: 960px;
+				margin: auto;
+				background-color: #fdfdfd;
+				color: #333;
+			}
+			h1,
+			h2,
+			h3 {
+				color: #2c3e50;
+				margin-top: 1.5em;
+			}
+			h1 {
+				font-size: 2.2em;
+				border-bottom: 2px solid #ccc;
+				padding-bottom: 0.3em;
+			}
+			h2 {
+				font-size: 1.6em;
+				border-left: 5px solid #2c3e50;
+				padding-left: 10px;
+			}
+			h3 {
+				font-size: 1.3em;
+			}
+			h4 {
+				font-size: 1.1em;
+				margin-top: 1em;
+			}
+			p {
+				margin: 1em 0;
+			}
+			ul {
+				margin-left: 1.5em;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin: 1em 0;
+			}
+			th,
+			td {
+				border: 1px solid #aaa;
+				padding: 8px;
+				text-align: left;
+			}
+			th {
+				background-color: #eee;
+			}
+			blockquote {
+				background: #f0f0f0;
+				border-left: 4px solid #999;
+				margin: 1em 0;
+				padding: 0.8em 1em;
+				font-style: italic;
+			}
+			details {
+				margin: 1em 0;
+				padding: 0.5em 1em;
+				background-color: #f9f9f9;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+			}
+			summary {
+				font-weight: bold;
+				cursor: pointer;
+			}
+			pre {
+				white-space: pre-wrap;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>250616_アジェンダ</h1>
 
-  <h2>1．学習事項の振り返り</h2>
+		<h2>1．学習事項の振り返り</h2>
 
-  <h3>1.1 AI開発ツールの習得</h3>
+		<h3>1.1 AI開発ツールの習得</h3>
 
-  <h4>実施内容</h4>
-  <ul>
-    <li><strong>Cursorの習得：</strong>開発支援ツールとしてCursorに対象を絞り、書籍を使って基本操作と活用方針を習得。</li>
-    <li><strong>実践的な開発：</strong>書籍のガイドに沿いながらオセロ（コンピューター対戦付き）、2048、Spotify風アプリを構築。</li>
-    <li><strong>発散的インプット：</strong>Vibe Coding、MCPといったキーワードを軸に発散的にインプット。</li>
-  </ul>
+		<h4>実施内容</h4>
+		<ul>
+			<li>
+				<strong>Cursorの習得：</strong
+				>開発支援ツールとしてCursorに対象を絞り、書籍を使って基本操作と活用方針を習得。
+			</li>
+			<li>
+				<strong>実践的な開発：</strong
+				>書籍のガイドに沿いながらオセロ（コンピューター対戦付き）、2048、Spotify風アプリを構築。
+			</li>
+			<li>
+				<strong>発散的インプット：</strong>Vibe
+				Coding、MCPといったキーワードを軸に発散的にインプット。
+			</li>
+		</ul>
 
-  <h4>得られた知見・仮説</h4>
-  <ul>
-    <li>精度の高い設計があれば、CursorのAgentモードで自発的なシステム構築が可能。</li>
-    <li>実践したことおよびインプット内容を踏まえ、AI開発の成功に必要な要素は次の3点に集約されるのではないかという仮説を得た：</li>
-  </ul>
+		<h4>得られた知見・仮説</h4>
+		<ul>
+			<li>精度の高い設計があれば、CursorのAgentモードで自発的なシステム構築が可能。</li>
+			<li>
+				実践したことおよびインプット内容を踏まえ、AI開発の成功に必要な要素は次の3点に集約されるのではないかという仮説を得た：
+			</li>
+		</ul>
 
-  <table>
-    <tr>
-      <th>要素</th>
-      <th>分類</th>
-      <th>内容</th>
-    </tr>
-    <tr>
-      <td>１ 設計</td>
-      <td>方法論</td>
-      <td>高精度な設計があれば、AIによる自律的なシステム構築が可能。設計自体もAI活用が可能。</td>
-    </tr>
-    <tr>
-      <td>２ テスト</td>
-      <td>方法論</td>
-      <td>品質検証を人手で全て行うのは非効率。自動テストによる品質保証とテスト自体へもAIを活用することが鍵。</td>
-    </tr>
-    <tr>
-      <td>３ 外部ツール連携</td>
-      <td>技術</td>
-      <td>設計・開発・テストがAIで可能になるほど、ツール間の分断が最大のボトルネックに。</td>
-    </tr>
-  </table>
+		<table>
+			<tr>
+				<th>要素</th>
+				<th>分類</th>
+				<th>内容</th>
+			</tr>
+			<tr>
+				<td>１ 設計</td>
+				<td>方法論</td>
+				<td>
+					高精度な設計があれば、AIによる自律的なシステム構築が可能。設計自体もAI活用が可能。
+				</td>
+			</tr>
+			<tr>
+				<td>２ テスト</td>
+				<td>方法論</td>
+				<td>
+					品質検証を人手で全て行うのは非効率。自動テストによる品質保証とテスト自体へもAIを活用することが鍵。
+				</td>
+			</tr>
+			<tr>
+				<td>３ 外部ツール連携</td>
+				<td>技術</td>
+				<td>
+					設計・開発・テストがAIで可能になるほど、ツール間の分断が最大のボトルネックに。
+				</td>
+			</tr>
+		</table>
 
-  <h3>1.2 Cursorを用いた実践によるさらなる理解</h3>
+		<h3>1.2 Cursorを用いた実践によるさらなる理解</h3>
 
-  <h4>実施内容</h4>
-  <ul>
-    <li><strong>note風アプリの構築：</strong>学習した知識の実践と新たな学習の蓄積を往復的に行いながら、アプリケーション構築を進行。</li>
-    <li><strong>体系的なインプット：</strong>設計、テスト、開発知識の3軸で書籍等から継続に学習。</li>
-    <li><strong>Speeeでの業務応用：</strong>業務時間の余剰を活用し、分析・提案業務を自動化する雛形をPoCとして開発中。</li>
-  </ul>
+		<h4>実施内容</h4>
+		<ul>
+			<li>
+				<strong>note風アプリの構築：</strong
+				>学習した知識の実践と新たな学習の蓄積を往復的に行いながら、アプリケーション構築を進行。
+			</li>
+			<li>
+				<strong>体系的なインプット：</strong
+				>設計、テスト、開発知識の3軸で書籍等から継続に学習。
+			</li>
+			<li>
+				<strong>Speeeでの業務応用：</strong
+				>業務時間の余剰を活用し、分析・提案業務を自動化する雛形をPoCとして開発中。
+			</li>
+		</ul>
 
-  <h4>得られたこと・詳細</h4>
-  <details>
-    <summary>📘 ai_development_guide.md：生成AIを活用した開発のガイドライン</summary>
-    <iframe src="./ai_development_guide.html" width="100%" height="400px" style="border:1px solid #ccc;"></iframe>
-  </details>
-  <details>
-    <summary>🧭 assistant_development_rules.md：アシスタントの開発支援ルール</summary>
-    <iframe src="./assistant_development_rules.html" width="100%" height="400px" style="border:1px solid #ccc;"></iframe>
-  </details>
-  <details>
-    <summary>🛠 design.md：システム設計情報</summary>
-    <iframe src="./design.html" width="100%" height="400px" style="border:1px solid #ccc;"></iframe>
-  </details>
-  <details>
-    <summary>📋 development.md：開発フローと管理ドキュメント</summary>
-    <iframe src="./development.html" width="100%" height="400px" style="border:1px solid #ccc;"></iframe>
-  </details>
+		<h4>得られたこと・詳細</h4>
+		<details>
+			<summary>📘 ai_development_guide.md：生成AIを活用した開発のガイドライン</summary>
+			<iframe
+				src="./ai_development_guide.html"
+				width="100%"
+				height="400px"
+				style="border: 1px solid #ccc"
+			></iframe>
+		</details>
+		<details>
+			<summary>🧭 assistant_development_rules.md：アシスタントの開発支援ルール</summary>
+			<iframe
+				src="./assistant_development_rules.html"
+				width="100%"
+				height="400px"
+				style="border: 1px solid #ccc"
+			></iframe>
+		</details>
+		<details>
+			<summary>🛠 design.md：システム設計情報</summary>
+			<iframe
+				src="./design.html"
+				width="100%"
+				height="400px"
+				style="border: 1px solid #ccc"
+			></iframe>
+		</details>
+		<details>
+			<summary>📋 development.md：開発フローと管理ドキュメント</summary>
+			<iframe
+				src="./development.html"
+				width="100%"
+				height="400px"
+				style="border: 1px solid #ccc"
+			></iframe>
+		</details>
 
-  <h2>2．今後の問いとインプット方針</h2>
+		<h2>2．今後の問いとインプット方針</h2>
 
-  <h3>2.1 現時点での問い</h3>
-  <blockquote>
-    Q. AIを活用した開発を効果的に実現していくにあたって、企業にとって特に障壁となりうるポイントはどこか？
-  </blockquote>
-  <p>現時点での仮説として、以下の3つが主要な論点となるのではないかと考えている：</p>
-  <ul>
-    <li>設計（方法論）</li>
-    <li>テスト（方法論）</li>
-    <li>外部ツール・システム間の連携（技術）</li>
-  </ul>
-  <p>この問いに対応する観点を、今後の学習を進めるうえでの基軸としていきたい。</p>
+		<h3>2.1 現時点での問い</h3>
+		<blockquote>
+			Q.
+			AIを活用した開発を効果的に実現していくにあたって、企業にとって特に障壁となりうるポイントはどこか？
+		</blockquote>
+		<p>現時点での仮説として、以下の3つが主要な論点となるのではないかと考えている：</p>
+		<ul>
+			<li>設計（方法論）</li>
+			<li>テスト（方法論）</li>
+			<li>外部ツール・システム間の連携（技術）</li>
+		</ul>
+		<p>この問いに対応する観点を、今後の学習を進めるうえでの基軸としていきたい。</p>
 
-  <h3>2.2 今後インプットしたいこと</h3>
-  <ul>
-    <li>設計やテスト自動化、ソフトウェア品質に関する書籍</li>
-    <li>AIと外部システムを連携させる実践的アーキテクチャ事例</li>
-    <li>DevOpsやCI/CDといった開発インフラの実践知識</li>
-  </ul>
-  <p><strong>＊参考書籍・資料があれば今後の学習に活用したいため、ご教示頂きたいです。</strong></p>
-</body>
+		<h3>2.2 今後インプットしたいこと</h3>
+		<ul>
+			<li>設計やテスト自動化、ソフトウェア品質に関する書籍</li>
+			<li>AIと外部システムを連携させる実践的アーキテクチャ事例</li>
+			<li>DevOpsやCI/CDといった開発インフラの実践知識</li>
+		</ul>
+		<p>
+			<strong
+				>＊参考書籍・資料があれば今後の学習に活用したいため、ご教示頂きたいです。</strong
+			>
+		</p>
+	</body>
 </html>

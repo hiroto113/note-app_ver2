@@ -13,7 +13,15 @@
       "Bash(/opt/homebrew/bin/gh issue close 16 --comment \"This issue has already been completed.\")",
       "Bash(/opt/homebrew/bin/gh issue list --state all --limit 15)",
       "Bash(/opt/homebrew/bin/gh issue list --state closed --limit 10)",
-      "Bash(# Close completed Phase 3 issues\n/opt/homebrew/bin/gh issue close 18 --comment \"✅ データベース設定が完了しました。Drizzle ORMとSQLiteの環境構築、スキーマ定義が完了しています。\"\n/opt/homebrew/bin/gh issue close 19 --comment \"✅ 認証機能の実装が完了しました。Auth.jsによる管理者認証システムが動作しています。\"\n/opt/homebrew/bin/gh issue close 20 --comment \"✅ 記事CRUD APIの実装が完了しました。記事の作成・読み取り・更新・削除が可能です。\"\n/opt/homebrew/bin/gh issue close 21 --comment \"✅ カテゴリ管理APIの実装が完了しました。カテゴリのCRUD操作が可能です。\")"
+      "Bash(# Close completed Phase 3 issues\n/opt/homebrew/bin/gh issue close 18 --comment \"✅ データベース設定が完了しました。Drizzle ORMとSQLiteの環境構築、スキーマ定義が完了しています。\"\n/opt/homebrew/bin/gh issue close 19 --comment \"✅ 認証機能の実装が完了しました。Auth.jsによる管理者認証システムが動作しています。\"\n/opt/homebrew/bin/gh issue close 20 --comment \"✅ 記事CRUD APIの実装が完了しました。記事の作成・読み取り・更新・削除が可能です。\"\n/opt/homebrew/bin/gh issue close 21 --comment \"✅ カテゴリ管理APIの実装が完了しました。カテゴリのCRUD操作が可能です。\")",
+      "Bash(export:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(pnpm run lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(pnpm run:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

@@ -1,8 +1,8 @@
 ---
-title: "最初の記事"
-publishedAt: "2024-06-26"
-description: "これは最初のテスト記事です。MDsveXの機能をテストします。"
-categories: ["test", "markdown"]
+title: '最初の記事'
+publishedAt: '2024-06-26'
+description: 'これは最初のテスト記事です。MDsveXの機能をテストします。'
+categories: ['test', 'markdown']
 ---
 
 # 最初の記事
@@ -13,7 +13,7 @@ categories: ["test", "markdown"]
 
 ```javascript
 function greet(name) {
-  console.log(`Hello, ${name}!`);
+	console.log(`Hello, ${name}!`);
 }
 
 greet('World');

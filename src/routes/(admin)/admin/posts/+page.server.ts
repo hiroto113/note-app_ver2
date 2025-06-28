@@ -3,21 +3,21 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ fetch, locals }) => {
 	const session = await locals.getSession();
-	
+
 	if (!session?.user) {
 		throw error(401, 'Unauthorized');
 	}
-	
+
 	try {
 		const response = await fetch('/api/admin/posts');
-		
+
 		if (!response.ok) {
 			const errorData = await response.json();
 			throw error(response.status, errorData.error || 'Failed to fetch posts');
 		}
-		
+
 		const data = await response.json();
-		
+
 		return {
 			posts: data.posts || []
 		};

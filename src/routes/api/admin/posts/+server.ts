@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { posts, postsToCategories, users, categories } from '$lib/server/db/schema';
+import { posts, postsToCategories, users } from '$lib/server/db/schema';
 import { requireAuth } from '$lib/server/auth';
 import { generateSlug } from '$lib/utils/slug';
 import { eq, desc } from 'drizzle-orm';
@@ -9,7 +9,7 @@ import type { RequestHandler } from './$types';
 // GET /api/admin/posts - Get all posts (including drafts)
 export const GET: RequestHandler = async (event) => {
 	await requireAuth(event);
-	
+
 	try {
 		const allPosts = await db
 			.select({
@@ -29,7 +29,7 @@ export const GET: RequestHandler = async (event) => {
 			.from(posts)
 			.leftJoin(users, eq(posts.userId, users.id))
 			.orderBy(desc(posts.createdAt));
-		
+
 		return json({ posts: allPosts });
 	} catch (error) {
 		console.error('Error fetching posts:', error);
@@ -40,19 +40,19 @@ export const GET: RequestHandler = async (event) => {
 // POST /api/admin/posts - Create new post
 export const POST: RequestHandler = async (event) => {
 	const user = await requireAuth(event);
-	
+
 	try {
 		const { title, content, excerpt, status, categoryIds } = await event.request.json();
-		
+
 		if (!title || !content) {
 			return json({ error: 'Title and content are required' }, { status: 400 });
 		}
-		
+
 		// Generate unique slug
-		let baseSlug = generateSlug(title);
+		const baseSlug = generateSlug(title);
 		let slug = baseSlug;
 		let counter = 1;
-		
+
 		// Check if slug exists and make it unique
 		while (true) {
 			const existingPost = await db
@@ -60,15 +60,15 @@ export const POST: RequestHandler = async (event) => {
 				.from(posts)
 				.where(eq(posts.slug, slug))
 				.get();
-			
+
 			if (!existingPost) break;
-			
+
 			slug = `${baseSlug}-${counter}`;
 			counter++;
 		}
-		
+
 		const now = new Date();
-		
+
 		// Create post
 		const result = await db
 			.insert(posts)
@@ -84,19 +84,19 @@ export const POST: RequestHandler = async (event) => {
 				updatedAt: now
 			})
 			.returning({ id: posts.id });
-		
+
 		const postId = result[0].id;
-		
+
 		// Add categories if provided
 		if (categoryIds && categoryIds.length > 0) {
 			const categoryInserts = categoryIds.map((categoryId: number) => ({
 				postId,
 				categoryId
 			}));
-			
+
 			await db.insert(postsToCategories).values(categoryInserts);
 		}
-		
+
 		return json({ id: postId, slug }, { status: 201 });
 	} catch (error) {
 		console.error('Error creating post:', error);

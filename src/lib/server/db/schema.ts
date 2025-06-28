@@ -6,16 +6,24 @@ export const users = sqliteTable('users', {
 	id: text('id').primaryKey(),
 	username: text('username').notNull().unique(),
 	hashedPassword: text('hashed_password').notNull(),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
+	createdAt: integer('created_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	updatedAt: integer('updated_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date())
 });
 
 // Sessions table for Auth.js
 export const sessions = sqliteTable('sessions', {
 	id: text('id').primaryKey(),
-	userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	userId: text('user_id')
+		.notNull()
+		.references(() => users.id, { onDelete: 'cascade' }),
 	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
+	createdAt: integer('created_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date())
 });
 
 // Categories table
@@ -24,8 +32,12 @@ export const categories = sqliteTable('categories', {
 	name: text('name').notNull().unique(),
 	slug: text('slug').notNull().unique(),
 	description: text('description'),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
+	createdAt: integer('created_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	updatedAt: integer('updated_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date())
 });
 
 // Posts table
@@ -35,17 +47,29 @@ export const posts = sqliteTable('posts', {
 	slug: text('slug').notNull().unique(),
 	content: text('content').notNull(),
 	excerpt: text('excerpt'),
-	status: text('status', { enum: ['draft', 'published'] }).notNull().default('draft'),
+	status: text('status', { enum: ['draft', 'published'] })
+		.notNull()
+		.default('draft'),
 	publishedAt: integer('published_at', { mode: 'timestamp' }),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-	userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' })
+	createdAt: integer('created_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	updatedAt: integer('updated_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	userId: text('user_id')
+		.notNull()
+		.references(() => users.id, { onDelete: 'cascade' })
 });
 
 // Many-to-many relationship table for posts and categories
 export const postsToCategories = sqliteTable('posts_to_categories', {
-	postId: integer('post_id').notNull().references(() => posts.id, { onDelete: 'cascade' }),
-	categoryId: integer('category_id').notNull().references(() => categories.id, { onDelete: 'cascade' })
+	postId: integer('post_id')
+		.notNull()
+		.references(() => posts.id, { onDelete: 'cascade' }),
+	categoryId: integer('category_id')
+		.notNull()
+		.references(() => categories.id, { onDelete: 'cascade' })
 });
 
 // Relations

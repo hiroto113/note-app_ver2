@@ -13,7 +13,5 @@
 	"files.associations": {
 		"*.css": "postcss"
 	},
-	"tailwindCSS.experimental.classRegex": [
-		["class\\s*:\\s*[\"'`]([^\"'`]*).*?[\"'`]", "([^\"]*)"]
-	]
+	"tailwindCSS.experimental.classRegex": [["class\\s*:\\s*[\"'`]([^\"'`]*).*?[\"'`]", "([^\"]*)"]]
 }

@@ -1,297 +1,1242 @@
-<!DOCTYPE html><html><head>
-      <title>ai_development_guide</title>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      
-      <link rel="stylesheet" href="file:///c:\Users\hiroto\.cursor\extensions\shd101wyy.markdown-preview-enhanced-0.8.18\crossnote\dependencies\katex\katex.min.css">
-      
-      
-      <script type="text/javascript" src="file:///c:\Users\hiroto\.cursor\extensions\shd101wyy.markdown-preview-enhanced-0.8.18\crossnote\dependencies\mermaid\mermaid.min.js" charset="UTF-8"></script>
-      
-      
-      <style>
-      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
-/* Please visit the URL below for more information: */
-/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+<!doctype html>
+<html>
+	<head>
+		<title>ai_development_guide</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      </style>
-      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", function () {
-    // your code here
-  });
-</script></head><body for="html-export">
-    
-    
-      <div class="crossnote markdown-preview  ">
-      <div>
-<h1 id="生成aiを活用したソフトウェア開発ガイド">生成AIを活用したソフトウェア開発ガイド </h1>
-<h2 id="1-はじめに">1. はじめに </h2>
-<h3 id="11-本ドキュメントについて">1.1 本ドキュメントについて </h3>
-<p>このドキュメントは、生成AIを活用したソフトウェア開発を始めようとする開発者向けのガイドラインです。生成AIの特性を理解し、その長所を活かしながら短所を適切に制御するための具体的な手法を提案します。</p>
-<h3 id="12-想定読者">1.2 想定読者 </h3>
-<ul>
-<li>生成AIを用いた開発を始めようとしている開発者</li>
-<li>生成AIを活用した開発プロセスを確立したいチームリーダー</li>
-<li>生成AIを用いた開発の品質を向上させたい開発者</li>
-</ul>
-<h3 id="13-本ドキュメントの目的">1.3 本ドキュメントの目的 </h3>
-<p>生成AIを用いて開発する際の重要な考慮点を明示し、マイナスの側面を適切に抑制しながら効果的に開発を進めるための具体的な手法を提示することを目的としています。</p>
-<h3 id="14-各章の関連性">1.4 各章の関連性 </h3>
-<p>本ドキュメントは、以下の図に示すように、「課題の認識」「対策の立案」「プロセスへの統合」という流れで構成されています。2章で生成AIの根本的な課題を提示し、3章でそれぞれの課題に対する戦略的な対策を、そして4章でそれらの対策を具体的な開発プロセスに落とし込む方法を解説します。</p>
-<iframe src="diagram.svg" width="100%" height="650px" style="border:none;"></iframe>
-<h2 id="2-生成aiの特性">2. 生成AIの特性 </h2>
-<h3 id="21-ポジティブな特性">2.1 ポジティブな特性 </h3>
-<ol>
-<li>
-<p><strong>高速なコード生成</strong></p>
-<ul>
-<li>基本的な実装の素早い生成</li>
-<li>ボイラープレートコードの自動生成</li>
-<li>定型的なタスクの効率化</li>
-</ul>
-<p>生成AIは、人間の開発者が手作業で行うコーディングと比較して、はるかに高速にコードを生成することができます。特に、基本的なCRUD操作やデータモデルの実装、APIエンドポイントの作成などの定型的なタスクにおいて、その効果を発揮します。また、プロジェクトの初期設定やボイラープレートコードの生成も、テンプレートに基づいて迅速に行うことができ、開発の立ち上げフェーズを大幅に短縮することが可能です。</p>
-</li>
-<li>
-<p><strong>広範な知識ベース</strong></p>
-<ul>
-<li>多様な技術スタックへの対応</li>
-<li>ベストプラクティスの提案</li>
-<li>一般的な問題解決パターンの提示</li>
-</ul>
-<p>生成AIは、膨大な量のコードやドキュメントを学習しており、様々な技術スタックやフレームワークに関する知識を持っています。これにより、特定の問題に対して、業界で広く採用されているベストプラクティスや設計パターンを提案することができます。また、異なる技術間の統合方法や、特定の機能の実装方法について、実践的な提案を行うことができます。</p>
-</li>
-<li>
-<p><strong>柔軟な対話性</strong></p>
-<ul>
-<li>インタラクティブな問題解決</li>
-<li>段階的な要件の具体化</li>
-<li>説明の詳細化や簡略化</li>
-</ul>
-<p>生成AIは、開発者との対話を通じて問題解決を進めることができます。要件が曖昧な場合でも、質問を通じて具体化を図り、段階的に解決策を提示することが可能です。また、技術的な説明についても、開発者の理解度や要望に応じて、詳細な説明や簡潔な要約を提供することができ、効果的なコミュニケーションツールとして機能します。</p>
-</li>
-</ol>
-<h3 id="22-注意すべき特性マイナスの側面">2.2 注意すべき特性（マイナスの側面） </h3>
-<ol>
-<li>
-<p><strong>知識の限界</strong></p>
-<ul>
-<li>学習データのカットオフ</li>
-<li>ハルシネーション（情報の捏造）</li>
-</ul>
-<p>生成AIの知識は、学習させたデータに依存します。そのため、学習データが収集された特定の日時（カットオフ）より新しい情報を反映できません。これは、最新のライブラリやフレームワーク、セキュリティ脆弱性に対応できず、古いバージョンや非推奨の構文をベースにしたコードを生成してしまうリスクに繋がります。また、事実に基づかない情報（ハルシネーション）をもっともらしく生成することもあり、開発者が誤った情報に基づいて判断を下す危険性も内包しています。</p>
-</li>
-<li>
-<p><strong>理解の限界</strong></p>
-<ul>
-<li>長期的な文脈の維持が困難</li>
-<li>複雑な依存関係の把握が不完全</li>
-<li>開発者の意図の誤解釈</li>
-</ul>
-<p>生成AIは、対話における短期的な文脈は理解できますが、プロジェクト全体の設計思想や、コンポーネント間の複雑な依存関係、長期的な開発経緯といった広範なコンテキストを完全に把握することは困難です。このため、全体設計との整合性が取れないコードを生成したり、開発者の暗黙の意図を汲み取れずに要件から逸脱した過剰な機能（スコープクリープ）を提案・実装したりする可能性があります。これが「スコープ制御の難しさ」に繋がります。</p>
-</li>
-<li>
-<p><strong>生成の不確実性</strong></p>
-<ul>
-<li>出力の確率的な性質</li>
-<li>品質のばらつきと一貫性の欠如</li>
-</ul>
-<p>生成AIの出力は確率モデルに基づいているため、同じプロンプト（指示）に対しても、実行するたびに異なる結果を生成する可能性があります。これは、コードの品質にばらつきを生じさせ、時には最適でない実装や、エッジケースを考慮しない、あるいはセキュリティ上の脆弱性を含むコードが生成されるなど、直接的な「品質保証の課題」を引き起こします。</p>
-</li>
-</ol>
-<h2 id="3-課題への対策">3. 課題への対策 </h2>
-<h3 id="31-知識の限界への対策人の手による検証補完">3.1 「知識の限界」への対策：人の手による検証・補完 </h3>
-<ol>
-<li>
-<p><strong>セキュリティ対策の徹底</strong></p>
-<ul>
-<li><strong>脆弱性スキャンの定期実施</strong>: 生成AIは過去の脆弱性情報に基づいてコードを生成する可能性があるため、既知の脆弱性が含まれていないかスキャンツールで定期的に確認します。</li>
-<li><strong>セキュリティレビューの実施</strong>: 専門家の視点で、生成されたロジックに潜在的なセキュリティホールがないかレビューします。</li>
-<li><strong>依存関係の管理</strong>: 使用しているライブラリやフレームワークに古いバージョンが選択されていないか確認し、常に安全なバージョンを利用するよう管理します。</li>
-</ul>
-</li>
-<li>
-<p><strong>ファクトチェックと最新情報の反映</strong></p>
-<ul>
-<li><strong>情報の正確性検証</strong>: 生成AIが提示する情報（特にライブラリの仕様やAPIの利用法）が正確であるか、公式ドキュメントなどで必ず確認（ファクトチェック）します。</li>
-<li><strong>カットオフの意識</strong>: AIの知識が古いことを念頭に置き、最新の技術標準やベストプラクティスを人間が補完します。</li>
-</ul>
-</li>
-</ol>
-<h3 id="32-理解の限界への対策明確なコンテキストの提示">3.2 「理解の限界」への対策：明確なコンテキストの提示 </h3>
-<ol>
-<li>
-<p><strong>設計ドキュメントの整備</strong></p>
-<ul>
-<li><strong>アーキテクチャ図の維持</strong>: システム全体の構造を視覚的に示すことで、AIと開発者の共通認識を形成します。</li>
-<li><strong>インターフェース定義の明確化</strong>: APIの仕様などを厳密に定義し、コンポーネント間の連携における誤解を防ぎます。</li>
-<li><strong>データモデルの文書化</strong>: データの構造を明確にすることで、一貫性のあるデータ処理をAIに指示します。</li>
-</ul>
-</li>
-<li>
-<p><strong>プロンプト管理の徹底</strong></p>
-<ul>
-<li><strong>プロンプトテンプレートの活用</strong>: 必要な背景情報、制約条件、期待する出力形式などをテンプレート化し、指示の精度を高めます。</li>
-<li><strong>コンテキスト情報の明示</strong>: 対話の際には、関連する設計ドキュメントや過去の決定事項を明示的にインプットとして提供します。</li>
-</ul>
-</li>
-<li>
-<p><strong>トレーサビリティの確保</strong></p>
-<ul>
-<li><strong>要件とコードの紐付け</strong>: Issueトラッカーなどを活用し、どの要件に基づいてコードが生成されたかを追跡可能にします。</li>
-<li><strong>決定事項の記録</strong>: 設計変更などの重要な決定を記録・共有し、コンテキストが失われるのを防ぎます。</li>
-</ul>
-</li>
-</ol>
-<h3 id="33-生成の不確実性への対策段階的な開発と評価">3.3 「生成の不確実性」への対策：段階的な開発と評価 </h3>
-<ol>
-<li>
-<p><strong>段階的な開発アプローチ</strong></p>
-<ul>
-<li><strong>全体設計の明確化</strong>: 最初に全体像を固め、AIに実装を依頼する範囲を限定します。</li>
-<li><strong>フェーズごとの目標設定</strong>: 開発を管理可能な小さなステップに分割し、各ステップのゴールを明確にします。</li>
-<li><strong>完了条件の具体化</strong>: 「何ができたら完了か」を客観的に測定できる基準（受け入れ基準）として定義します。</li>
-</ul>
-</li>
-<li>
-<p><strong>品質基準の確立</strong></p>
-<ul>
-<li><strong>コーディング規約の策定</strong>: 一貫したコードスタイルを強制し、出力のばらつきを抑制します。</li>
-<li><strong>テスト基準の設定</strong>: 単体テストのカバレッジ目標などを定め、最低限の品質を担保します。</li>
-<li><strong>レビュー基準の明確化</strong>: コードレビューの観点を事前に定義し、評価の属人性を排除します。</li>
-</ul>
-</li>
-<li>
-<p><strong>検証プロセスの強化</strong></p>
-<ul>
-<li><strong>自動テストの充実</strong>: 生成されたコードが既存の機能を破壊しないか、リグレッションテストを自動化して常に監視します。</li>
-<li><strong>コードレビューの徹底</strong>: AIの生成物であっても、人間が書いたコードと同様に必ずレビューを実施します。</li>
-<li><strong>静的解析の活用</strong>: ツールを用いて潜在的なバグやコードの不備を機械的に検出し、品質のベースラインを維持します。</li>
-</ul>
-</li>
-</ol>
-<h2 id="4-具体的な開発手法対策のプロセスへの統合">4. 具体的な開発手法（対策のプロセスへの統合） </h2>
-<h3 id="41-開発プロセスの概要">4.1 開発プロセスの概要 </h3>
-<p>本ガイドで提案する開発プロセスは、前章で述べた対策を実践に統合するための具体的なフレームワークです。</p>
-<ol>
-<li>
-<p><strong>全体設計フェーズ</strong></p>
-<ul>
-<li><strong>目的</strong>: プロジェクトの土台を固め、AIに正確なコンテキストを渡す準備を整える（「3.2 理解の限界」への対策の具体化）。</li>
-<li><strong>活動</strong>: システム要件の定義、アーキテクチャの設計、技術スタックの選定、主要なデータモデルやインターフェースの定義など。</li>
-</ul>
-</li>
-<li>
-<p><strong>フェーズ分解</strong></p>
-<ul>
-<li><strong>目的</strong>: 開発全体を管理可能な単位に分割し、段階的に開発を進める（「3.3 生成の不確実性」への対策の具体化）。</li>
-<li><strong>活動</strong>: 機能の優先順位付け、依存関係の分析、マイルストーンの設定。</li>
-</ul>
-</li>
-<li>
-<p><strong>反復的な開発サイクル</strong></p>
-<ul>
-<li><strong>目的</strong>: 小さなサイクルを繰り返すことで、手戻りを最小限に抑えつつ、継続的に品質を評価・改善する（「3.3 生成の不確実性」への対策の具体化）。</li>
-<li><strong>サイクル</strong>: 詳細設計 → 実装 → テスト → レビュー。</li>
-</ul>
-</li>
-</ol>
-<h3 id="42-各フェーズでの具体的なステップ">4.2 各フェーズでの具体的なステップ </h3>
-<ol>
-<li>
-<p><strong>フェーズ開始時</strong></p>
-<ul>
-<li><strong>目的</strong>: 各開発フェーズの方向性を明確にし、評価基準を定める。</li>
-<li><strong>活動</strong>: 目標の明確化、受け入れ基準の設定、リスクの特定。</li>
-</ul>
-</li>
-<li>
-<p><strong>開発中</strong></p>
-<ul>
-<li><strong>目的</strong>: 定期的なレビューを通じて、品質を維持し、問題点を早期に発見する。</li>
-<li><strong>活動</strong>: 定期的なレビュー、進捗の可視化、問題点の早期発見。</li>
-</ul>
-</li>
-<li>
-<p><strong>フェーズ完了時</strong></p>
-<ul>
-<li><strong>目的</strong>: 成果物を検証し、次のサイクルに知見を活かす。</li>
-<li><strong>活動</strong>: 完了条件の確認、成果物の検証、振り返りの実施。</li>
-</ul>
-</li>
-</ol>
-<h3 id="43-品質管理プロセス">4.3 品質管理プロセス </h3>
-<p><strong>目的</strong>: 開発の全段階を通じて、生成されたコードの品質と安全性を多角的に保証する（「3.1 知識の限界」「3.3 生成の不確実性」への対策の具体化）。</p>
-<ol>
-<li>
-<p><strong>コードレベルの品質管理</strong></p>
-<ul>
-<li><strong>内容</strong>: コーディング規約の遵守、テストカバレッジの確保、静的解析の実施。</li>
-<li><strong>役割</strong>: 生成されたコードの基本的な品質と一貫性を担保する。</li>
-</ul>
-</li>
-<li>
-<p><strong>ドキュメントレベルの品質管理</strong></p>
-<ul>
-<li><strong>内容</strong>: 設計書の更新、APIドキュメントの整備、変更履歴の管理。</li>
-<li><strong>役割</strong>: 開発のコンテキストを維持し、将来の変更に備える。</li>
-</ul>
-</li>
-<li>
-<p><strong>プロセスレベルの品質管理</strong></p>
-<ul>
-<li><strong>内容</strong>: レビュープロセスの最適化、CI/CDパイプラインの整備、モニタリングの強化。</li>
-<li><strong>役割</strong>: 品質保証の仕組みを自動化・効率化し、継続的な改善を促す。</li>
-</ul>
-</li>
-</ol>
-<h2 id="5-実践のためのチェックリスト">5. 実践のためのチェックリスト </h2>
-<h3 id="51-プロジェクト開始時">5.1 プロジェクト開始時 </h3>
-<ul>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> 全体設計書の作成</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> 開発プロセスの定義</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> 品質基準の設定</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> ツール・環境の準備</li>
-</ul>
-<h3 id="52-フェーズ開始時">5.2 フェーズ開始時 </h3>
-<ul>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> 詳細設計書の作成</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> 受け入れ基準の定義</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> リスクの評価</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> タスクの分解</li>
-</ul>
-<h3 id="53-開発サイクル">5.3 開発サイクル </h3>
-<ul>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> コーディング規約の遵守</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> テストの実施</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> コードレビュー</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> ドキュメント更新</li>
-</ul>
-<h3 id="54-フェーズ完了時">5.4 フェーズ完了時 </h3>
-<ul>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> 完了条件の確認</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> 成果物の検証</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> 振り返りの実施</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> 次フェーズの準備</li>
-</ul>
-<h2 id="6-継続的な改善のために">6. 継続的な改善のために </h2>
-<h3 id="61-モニタリング項目">6.1 モニタリング項目 </h3>
-<ul>
-<li>品質メトリクス</li>
-<li>パフォーマンス指標</li>
-<li>生産性指標</li>
-</ul>
-<p>生成AIを活用した開発プロセスを継続的に改善するためには、適切なモニタリング項目を設定し、定期的に評価することが重要です。品質メトリクスではコードの品質や不具合の発生率を、パフォーマンス指標ではシステムの応答時間やリソース使用率を、生産性指標では開発速度や生成AIの活用効率を測定します。これらの指標を総合的に分析することで、プロセスの改善点を特定することができます。</p>
-<h3 id="62-改善プロセス">6.2 改善プロセス </h3>
-<ol>
-<li>データの収集</li>
-<li>分析と評価</li>
-<li>改善案の作成</li>
-<li>実施と検証</li>
-</ol>
-<p>継続的な改善を実現するため、体系的な改善プロセスを確立します。まず、設定したモニタリング項目に基づいてデータを収集し、それらを詳細に分析して現状を評価します。その結果に基づいて具体的な改善案を作成し、実施します。実施後は効果を検証し、必要に応じて更なる改善を行います。このサイクルを継続的に回すことで、生成AIを活用した開発プロセスを段階的に最適化していくことができます。</p>
-<h2 id="プロンプト履歴">プロンプト履歴 </h2>
-<h3 id="初回作成プロンプト">初回作成プロンプト </h3>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>以下の形式でドキュメントを作成してください：
+		<link
+			rel="stylesheet"
+			href="file:///c:\Users\hiroto\.cursor\extensions\shd101wyy.markdown-preview-enhanced-0.8.18\crossnote\dependencies\katex\katex.min.css"
+		/>
+
+		<script
+			type="text/javascript"
+			src="file:///c:\Users\hiroto\.cursor\extensions\shd101wyy.markdown-preview-enhanced-0.8.18\crossnote\dependencies\mermaid\mermaid.min.js"
+			charset="UTF-8"
+		></script>
+
+		<style>
+			code[class*='language-'],
+			pre[class*='language-'] {
+				color: #333;
+				background: 0 0;
+				font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+				text-align: left;
+				white-space: pre;
+				word-spacing: normal;
+				word-break: normal;
+				word-wrap: normal;
+				line-height: 1.4;
+				-moz-tab-size: 8;
+				-o-tab-size: 8;
+				tab-size: 8;
+				-webkit-hyphens: none;
+				-moz-hyphens: none;
+				-ms-hyphens: none;
+				hyphens: none;
+			}
+			pre[class*='language-'] {
+				padding: 0.8em;
+				overflow: auto;
+				border-radius: 3px;
+				background: #f5f5f5;
+			}
+			:not(pre) > code[class*='language-'] {
+				padding: 0.1em;
+				border-radius: 0.3em;
+				white-space: normal;
+				background: #f5f5f5;
+			}
+			.token.blockquote,
+			.token.comment {
+				color: #969896;
+			}
+			.token.cdata {
+				color: #183691;
+			}
+			.token.doctype,
+			.token.macro.property,
+			.token.punctuation,
+			.token.variable {
+				color: #333;
+			}
+			.token.builtin,
+			.token.important,
+			.token.keyword,
+			.token.operator,
+			.token.rule {
+				color: #a71d5d;
+			}
+			.token.attr-value,
+			.token.regex,
+			.token.string,
+			.token.url {
+				color: #183691;
+			}
+			.token.atrule,
+			.token.boolean,
+			.token.code,
+			.token.command,
+			.token.constant,
+			.token.entity,
+			.token.number,
+			.token.property,
+			.token.symbol {
+				color: #0086b3;
+			}
+			.token.prolog,
+			.token.selector,
+			.token.tag {
+				color: #63a35c;
+			}
+			.token.attr-name,
+			.token.class,
+			.token.class-name,
+			.token.function,
+			.token.id,
+			.token.namespace,
+			.token.pseudo-class,
+			.token.pseudo-element,
+			.token.url-reference .token.variable {
+				color: #795da3;
+			}
+			.token.entity {
+				cursor: help;
+			}
+			.token.title,
+			.token.title .token.punctuation {
+				font-weight: 700;
+				color: #1d3e81;
+			}
+			.token.list {
+				color: #ed6a43;
+			}
+			.token.inserted {
+				background-color: #eaffea;
+				color: #55a532;
+			}
+			.token.deleted {
+				background-color: #ffecec;
+				color: #bd2c00;
+			}
+			.token.bold {
+				font-weight: 700;
+			}
+			.token.italic {
+				font-style: italic;
+			}
+			.language-json .token.property {
+				color: #183691;
+			}
+			.language-markup .token.tag .token.punctuation {
+				color: #333;
+			}
+			.language-css .token.function,
+			code.language-css {
+				color: #0086b3;
+			}
+			.language-yaml .token.atrule {
+				color: #63a35c;
+			}
+			code.language-yaml {
+				color: #183691;
+			}
+			.language-ruby .token.function {
+				color: #333;
+			}
+			.language-markdown .token.url {
+				color: #795da3;
+			}
+			.language-makefile .token.symbol {
+				color: #795da3;
+			}
+			.language-makefile .token.variable {
+				color: #183691;
+			}
+			.language-makefile .token.builtin {
+				color: #0086b3;
+			}
+			.language-bash .token.keyword {
+				color: #0086b3;
+			}
+			pre[data-line] {
+				position: relative;
+				padding: 1em 0 1em 3em;
+			}
+			pre[data-line] .line-highlight-wrapper {
+				position: absolute;
+				top: 0;
+				left: 0;
+				background-color: transparent;
+				display: block;
+				width: 100%;
+			}
+			pre[data-line] .line-highlight {
+				position: absolute;
+				left: 0;
+				right: 0;
+				padding: inherit 0;
+				margin-top: 1em;
+				background: hsla(24, 20%, 50%, 0.08);
+				background: linear-gradient(
+					to right,
+					hsla(24, 20%, 50%, 0.1) 70%,
+					hsla(24, 20%, 50%, 0)
+				);
+				pointer-events: none;
+				line-height: inherit;
+				white-space: pre;
+			}
+			pre[data-line] .line-highlight:before,
+			pre[data-line] .line-highlight[data-end]:after {
+				content: attr(data-start);
+				position: absolute;
+				top: 0.4em;
+				left: 0.6em;
+				min-width: 1em;
+				padding: 0 0.5em;
+				background-color: hsla(24, 20%, 50%, 0.4);
+				color: #f4f1ef;
+				font: bold 65%/1.5 sans-serif;
+				text-align: center;
+				vertical-align: 0.3em;
+				border-radius: 999px;
+				text-shadow: none;
+				box-shadow: 0 1px #fff;
+			}
+			pre[data-line] .line-highlight[data-end]:after {
+				content: attr(data-end);
+				top: auto;
+				bottom: 0.4em;
+			}
+			html body {
+				font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;
+				font-size: 16px;
+				line-height: 1.6;
+				color: #333;
+				background-color: #fff;
+				overflow: initial;
+				box-sizing: border-box;
+				word-wrap: break-word;
+			}
+			html body > :first-child {
+				margin-top: 0;
+			}
+			html body h1,
+			html body h2,
+			html body h3,
+			html body h4,
+			html body h5,
+			html body h6 {
+				line-height: 1.2;
+				margin-top: 1em;
+				margin-bottom: 16px;
+				color: #000;
+			}
+			html body h1 {
+				font-size: 2.25em;
+				font-weight: 300;
+				padding-bottom: 0.3em;
+			}
+			html body h2 {
+				font-size: 1.75em;
+				font-weight: 400;
+				padding-bottom: 0.3em;
+			}
+			html body h3 {
+				font-size: 1.5em;
+				font-weight: 500;
+			}
+			html body h4 {
+				font-size: 1.25em;
+				font-weight: 600;
+			}
+			html body h5 {
+				font-size: 1.1em;
+				font-weight: 600;
+			}
+			html body h6 {
+				font-size: 1em;
+				font-weight: 600;
+			}
+			html body h1,
+			html body h2,
+			html body h3,
+			html body h4,
+			html body h5 {
+				font-weight: 600;
+			}
+			html body h5 {
+				font-size: 1em;
+			}
+			html body h6 {
+				color: #5c5c5c;
+			}
+			html body strong {
+				color: #000;
+			}
+			html body del {
+				color: #5c5c5c;
+			}
+			html body a:not([href]) {
+				color: inherit;
+				text-decoration: none;
+			}
+			html body a {
+				color: #08c;
+				text-decoration: none;
+			}
+			html body a:hover {
+				color: #00a3f5;
+				text-decoration: none;
+			}
+			html body img {
+				max-width: 100%;
+			}
+			html body > p {
+				margin-top: 0;
+				margin-bottom: 16px;
+				word-wrap: break-word;
+			}
+			html body > ol,
+			html body > ul {
+				margin-bottom: 16px;
+			}
+			html body ol,
+			html body ul {
+				padding-left: 2em;
+			}
+			html body ol.no-list,
+			html body ul.no-list {
+				padding: 0;
+				list-style-type: none;
+			}
+			html body ol ol,
+			html body ol ul,
+			html body ul ol,
+			html body ul ul {
+				margin-top: 0;
+				margin-bottom: 0;
+			}
+			html body li {
+				margin-bottom: 0;
+			}
+			html body li.task-list-item {
+				list-style: none;
+			}
+			html body li > p {
+				margin-top: 0;
+				margin-bottom: 0;
+			}
+			html body .task-list-item-checkbox {
+				margin: 0 0.2em 0.25em -1.8em;
+				vertical-align: middle;
+			}
+			html body .task-list-item-checkbox:hover {
+				cursor: pointer;
+			}
+			html body blockquote {
+				margin: 16px 0;
+				font-size: inherit;
+				padding: 0 15px;
+				color: #5c5c5c;
+				background-color: #f0f0f0;
+				border-left: 4px solid #d6d6d6;
+			}
+			html body blockquote > :first-child {
+				margin-top: 0;
+			}
+			html body blockquote > :last-child {
+				margin-bottom: 0;
+			}
+			html body hr {
+				height: 4px;
+				margin: 32px 0;
+				background-color: #d6d6d6;
+				border: 0 none;
+			}
+			html body table {
+				margin: 10px 0 15px 0;
+				border-collapse: collapse;
+				border-spacing: 0;
+				display: block;
+				width: 100%;
+				overflow: auto;
+				word-break: normal;
+				word-break: keep-all;
+			}
+			html body table th {
+				font-weight: 700;
+				color: #000;
+			}
+			html body table td,
+			html body table th {
+				border: 1px solid #d6d6d6;
+				padding: 6px 13px;
+			}
+			html body dl {
+				padding: 0;
+			}
+			html body dl dt {
+				padding: 0;
+				margin-top: 16px;
+				font-size: 1em;
+				font-style: italic;
+				font-weight: 700;
+			}
+			html body dl dd {
+				padding: 0 16px;
+				margin-bottom: 16px;
+			}
+			html body code {
+				font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+				font-size: 0.85em;
+				color: #000;
+				background-color: #f0f0f0;
+				border-radius: 3px;
+				padding: 0.2em 0;
+			}
+			html body code::after,
+			html body code::before {
+				letter-spacing: -0.2em;
+				content: '\00a0';
+			}
+			html body pre > code {
+				padding: 0;
+				margin: 0;
+				word-break: normal;
+				white-space: pre;
+				background: 0 0;
+				border: 0;
+			}
+			html body .highlight {
+				margin-bottom: 16px;
+			}
+			html body .highlight pre,
+			html body pre {
+				padding: 1em;
+				overflow: auto;
+				line-height: 1.45;
+				border: #d6d6d6;
+				border-radius: 3px;
+			}
+			html body .highlight pre {
+				margin-bottom: 0;
+				word-break: normal;
+			}
+			html body pre code,
+			html body pre tt {
+				display: inline;
+				max-width: initial;
+				padding: 0;
+				margin: 0;
+				overflow: initial;
+				line-height: inherit;
+				word-wrap: normal;
+				background-color: transparent;
+				border: 0;
+			}
+			html body pre code:after,
+			html body pre code:before,
+			html body pre tt:after,
+			html body pre tt:before {
+				content: normal;
+			}
+			html body blockquote,
+			html body dl,
+			html body ol,
+			html body p,
+			html body pre,
+			html body ul {
+				margin-top: 0;
+				margin-bottom: 16px;
+			}
+			html body kbd {
+				color: #000;
+				border: 1px solid #d6d6d6;
+				border-bottom: 2px solid #c7c7c7;
+				padding: 2px 4px;
+				background-color: #f0f0f0;
+				border-radius: 3px;
+			}
+			@media print {
+				html body {
+					background-color: #fff;
+				}
+				html body h1,
+				html body h2,
+				html body h3,
+				html body h4,
+				html body h5,
+				html body h6 {
+					color: #000;
+					page-break-after: avoid;
+				}
+				html body blockquote {
+					color: #5c5c5c;
+				}
+				html body pre {
+					page-break-inside: avoid;
+				}
+				html body table {
+					display: table;
+				}
+				html body img {
+					display: block;
+					max-width: 100%;
+					max-height: 100%;
+				}
+				html body code,
+				html body pre {
+					word-wrap: break-word;
+					white-space: pre;
+				}
+			}
+			.markdown-preview {
+				width: 100%;
+				height: 100%;
+				box-sizing: border-box;
+			}
+			.markdown-preview ul {
+				list-style: disc;
+			}
+			.markdown-preview ul ul {
+				list-style: circle;
+			}
+			.markdown-preview ul ul ul {
+				list-style: square;
+			}
+			.markdown-preview ol {
+				list-style: decimal;
+			}
+			.markdown-preview ol ol,
+			.markdown-preview ul ol {
+				list-style-type: lower-roman;
+			}
+			.markdown-preview ol ol ol,
+			.markdown-preview ol ul ol,
+			.markdown-preview ul ol ol,
+			.markdown-preview ul ul ol {
+				list-style-type: lower-alpha;
+			}
+			.markdown-preview .newpage,
+			.markdown-preview .pagebreak {
+				page-break-before: always;
+			}
+			.markdown-preview pre.line-numbers {
+				position: relative;
+				padding-left: 3.8em;
+				counter-reset: linenumber;
+			}
+			.markdown-preview pre.line-numbers > code {
+				position: relative;
+			}
+			.markdown-preview pre.line-numbers .line-numbers-rows {
+				position: absolute;
+				pointer-events: none;
+				top: 1em;
+				font-size: 100%;
+				left: 0;
+				width: 3em;
+				letter-spacing: -1px;
+				border-right: 1px solid #999;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+			.markdown-preview pre.line-numbers .line-numbers-rows > span {
+				pointer-events: none;
+				display: block;
+				counter-increment: linenumber;
+			}
+			.markdown-preview pre.line-numbers .line-numbers-rows > span:before {
+				content: counter(linenumber);
+				color: #999;
+				display: block;
+				padding-right: 0.8em;
+				text-align: right;
+			}
+			.markdown-preview .mathjax-exps .MathJax_Display {
+				text-align: center !important;
+			}
+			.markdown-preview:not([data-for='preview']) .code-chunk .code-chunk-btn-group {
+				display: none;
+			}
+			.markdown-preview:not([data-for='preview']) .code-chunk .status {
+				display: none;
+			}
+			.markdown-preview:not([data-for='preview']) .code-chunk .output-div {
+				margin-bottom: 16px;
+			}
+			.markdown-preview .md-toc {
+				padding: 0;
+			}
+			.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link {
+				display: inline;
+				padding: 0.25rem 0;
+			}
+			.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,
+			.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p {
+				display: inline;
+			}
+			.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link {
+				font-weight: 800;
+			}
+			.scrollbar-style::-webkit-scrollbar {
+				width: 8px;
+			}
+			.scrollbar-style::-webkit-scrollbar-track {
+				border-radius: 10px;
+				background-color: transparent;
+			}
+			.scrollbar-style::-webkit-scrollbar-thumb {
+				border-radius: 5px;
+				background-color: rgba(150, 150, 150, 0.66);
+				border: 4px solid rgba(150, 150, 150, 0.66);
+				background-clip: content-box;
+			}
+			html body[for='html-export']:not([data-presentation-mode]) {
+				position: relative;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				margin: 0;
+				padding: 0;
+				overflow: auto;
+			}
+			html body[for='html-export']:not([data-presentation-mode]) .markdown-preview {
+				position: relative;
+				top: 0;
+				min-height: 100vh;
+			}
+			@media screen and (min-width: 914px) {
+				html body[for='html-export']:not([data-presentation-mode]) .markdown-preview {
+					padding: 2em calc(50% - 457px + 2em);
+				}
+			}
+			@media screen and (max-width: 914px) {
+				html body[for='html-export']:not([data-presentation-mode]) .markdown-preview {
+					padding: 2em;
+				}
+			}
+			@media screen and (max-width: 450px) {
+				html body[for='html-export']:not([data-presentation-mode]) .markdown-preview {
+					font-size: 14px !important;
+					padding: 1em;
+				}
+			}
+			@media print {
+				html body[for='html-export']:not([data-presentation-mode]) #sidebar-toc-btn {
+					display: none;
+				}
+			}
+			html body[for='html-export']:not([data-presentation-mode]) #sidebar-toc-btn {
+				position: fixed;
+				bottom: 8px;
+				left: 8px;
+				font-size: 28px;
+				cursor: pointer;
+				color: inherit;
+				z-index: 99;
+				width: 32px;
+				text-align: center;
+				opacity: 0.4;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				#sidebar-toc-btn {
+				opacity: 1;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.md-sidebar-toc {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 300px;
+				height: 100%;
+				padding: 32px 0 48px 0;
+				font-size: 14px;
+				box-shadow: 0 0 4px rgba(150, 150, 150, 0.33);
+				box-sizing: border-box;
+				overflow: auto;
+				background-color: inherit;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.md-sidebar-toc::-webkit-scrollbar {
+				width: 8px;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.md-sidebar-toc::-webkit-scrollbar-track {
+				border-radius: 10px;
+				background-color: transparent;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.md-sidebar-toc::-webkit-scrollbar-thumb {
+				border-radius: 5px;
+				background-color: rgba(150, 150, 150, 0.66);
+				border: 4px solid rgba(150, 150, 150, 0.66);
+				background-clip: content-box;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.md-sidebar-toc
+				a {
+				text-decoration: none;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.md-sidebar-toc
+				.md-toc {
+				padding: 0 16px;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.md-sidebar-toc
+				.md-toc
+				.md-toc-link-wrapper
+				.md-toc-link {
+				display: inline;
+				padding: 0.25rem 0;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.md-sidebar-toc
+				.md-toc
+				.md-toc-link-wrapper
+				.md-toc-link
+				div,
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.md-sidebar-toc
+				.md-toc
+				.md-toc-link-wrapper
+				.md-toc-link
+				p {
+				display: inline;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.md-sidebar-toc
+				.md-toc
+				.md-toc-link-wrapper.highlighted
+				.md-toc-link {
+				font-weight: 800;
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+				.markdown-preview {
+				left: 300px;
+				width: calc(100% - 300px);
+				padding: 2em calc(50% - 457px - 300px / 2);
+				margin: 0;
+				box-sizing: border-box;
+			}
+			@media screen and (max-width: 1274px) {
+				html
+					body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+					.markdown-preview {
+					padding: 2em;
+				}
+			}
+			@media screen and (max-width: 450px) {
+				html
+					body[for='html-export']:not([data-presentation-mode])[html-show-sidebar-toc]
+					.markdown-preview {
+					width: 100%;
+				}
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode]):not([html-show-sidebar-toc])
+				.markdown-preview {
+				left: 50%;
+				transform: translateX(-50%);
+			}
+			html
+				body[for='html-export']:not([data-presentation-mode]):not([html-show-sidebar-toc])
+				.md-sidebar-toc {
+				display: none;
+			}
+			/* Please visit the URL below for more information: */
+			/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+		</style>
+		<!-- The content below will be included at the end of the <head> element. -->
+		<script type="text/javascript">
+			document.addEventListener('DOMContentLoaded', function () {
+				// your code here
+			});
+		</script>
+	</head>
+	<body for="html-export">
+		<div class="crossnote markdown-preview">
+			<div>
+				<h1 id="生成aiを活用したソフトウェア開発ガイド">
+					生成AIを活用したソフトウェア開発ガイド
+				</h1>
+				<h2 id="1-はじめに">1. はじめに</h2>
+				<h3 id="11-本ドキュメントについて">1.1 本ドキュメントについて</h3>
+				<p>
+					このドキュメントは、生成AIを活用したソフトウェア開発を始めようとする開発者向けのガイドラインです。生成AIの特性を理解し、その長所を活かしながら短所を適切に制御するための具体的な手法を提案します。
+				</p>
+				<h3 id="12-想定読者">1.2 想定読者</h3>
+				<ul>
+					<li>生成AIを用いた開発を始めようとしている開発者</li>
+					<li>生成AIを活用した開発プロセスを確立したいチームリーダー</li>
+					<li>生成AIを用いた開発の品質を向上させたい開発者</li>
+				</ul>
+				<h3 id="13-本ドキュメントの目的">1.3 本ドキュメントの目的</h3>
+				<p>
+					生成AIを用いて開発する際の重要な考慮点を明示し、マイナスの側面を適切に抑制しながら効果的に開発を進めるための具体的な手法を提示することを目的としています。
+				</p>
+				<h3 id="14-各章の関連性">1.4 各章の関連性</h3>
+				<p>
+					本ドキュメントは、以下の図に示すように、「課題の認識」「対策の立案」「プロセスへの統合」という流れで構成されています。2章で生成AIの根本的な課題を提示し、3章でそれぞれの課題に対する戦略的な対策を、そして4章でそれらの対策を具体的な開発プロセスに落とし込む方法を解説します。
+				</p>
+				<iframe src="diagram.svg" width="100%" height="650px" style="border: none"></iframe>
+				<h2 id="2-生成aiの特性">2. 生成AIの特性</h2>
+				<h3 id="21-ポジティブな特性">2.1 ポジティブな特性</h3>
+				<ol>
+					<li>
+						<p><strong>高速なコード生成</strong></p>
+						<ul>
+							<li>基本的な実装の素早い生成</li>
+							<li>ボイラープレートコードの自動生成</li>
+							<li>定型的なタスクの効率化</li>
+						</ul>
+						<p>
+							生成AIは、人間の開発者が手作業で行うコーディングと比較して、はるかに高速にコードを生成することができます。特に、基本的なCRUD操作やデータモデルの実装、APIエンドポイントの作成などの定型的なタスクにおいて、その効果を発揮します。また、プロジェクトの初期設定やボイラープレートコードの生成も、テンプレートに基づいて迅速に行うことができ、開発の立ち上げフェーズを大幅に短縮することが可能です。
+						</p>
+					</li>
+					<li>
+						<p><strong>広範な知識ベース</strong></p>
+						<ul>
+							<li>多様な技術スタックへの対応</li>
+							<li>ベストプラクティスの提案</li>
+							<li>一般的な問題解決パターンの提示</li>
+						</ul>
+						<p>
+							生成AIは、膨大な量のコードやドキュメントを学習しており、様々な技術スタックやフレームワークに関する知識を持っています。これにより、特定の問題に対して、業界で広く採用されているベストプラクティスや設計パターンを提案することができます。また、異なる技術間の統合方法や、特定の機能の実装方法について、実践的な提案を行うことができます。
+						</p>
+					</li>
+					<li>
+						<p><strong>柔軟な対話性</strong></p>
+						<ul>
+							<li>インタラクティブな問題解決</li>
+							<li>段階的な要件の具体化</li>
+							<li>説明の詳細化や簡略化</li>
+						</ul>
+						<p>
+							生成AIは、開発者との対話を通じて問題解決を進めることができます。要件が曖昧な場合でも、質問を通じて具体化を図り、段階的に解決策を提示することが可能です。また、技術的な説明についても、開発者の理解度や要望に応じて、詳細な説明や簡潔な要約を提供することができ、効果的なコミュニケーションツールとして機能します。
+						</p>
+					</li>
+				</ol>
+				<h3 id="22-注意すべき特性マイナスの側面">2.2 注意すべき特性（マイナスの側面）</h3>
+				<ol>
+					<li>
+						<p><strong>知識の限界</strong></p>
+						<ul>
+							<li>学習データのカットオフ</li>
+							<li>ハルシネーション（情報の捏造）</li>
+						</ul>
+						<p>
+							生成AIの知識は、学習させたデータに依存します。そのため、学習データが収集された特定の日時（カットオフ）より新しい情報を反映できません。これは、最新のライブラリやフレームワーク、セキュリティ脆弱性に対応できず、古いバージョンや非推奨の構文をベースにしたコードを生成してしまうリスクに繋がります。また、事実に基づかない情報（ハルシネーション）をもっともらしく生成することもあり、開発者が誤った情報に基づいて判断を下す危険性も内包しています。
+						</p>
+					</li>
+					<li>
+						<p><strong>理解の限界</strong></p>
+						<ul>
+							<li>長期的な文脈の維持が困難</li>
+							<li>複雑な依存関係の把握が不完全</li>
+							<li>開発者の意図の誤解釈</li>
+						</ul>
+						<p>
+							生成AIは、対話における短期的な文脈は理解できますが、プロジェクト全体の設計思想や、コンポーネント間の複雑な依存関係、長期的な開発経緯といった広範なコンテキストを完全に把握することは困難です。このため、全体設計との整合性が取れないコードを生成したり、開発者の暗黙の意図を汲み取れずに要件から逸脱した過剰な機能（スコープクリープ）を提案・実装したりする可能性があります。これが「スコープ制御の難しさ」に繋がります。
+						</p>
+					</li>
+					<li>
+						<p><strong>生成の不確実性</strong></p>
+						<ul>
+							<li>出力の確率的な性質</li>
+							<li>品質のばらつきと一貫性の欠如</li>
+						</ul>
+						<p>
+							生成AIの出力は確率モデルに基づいているため、同じプロンプト（指示）に対しても、実行するたびに異なる結果を生成する可能性があります。これは、コードの品質にばらつきを生じさせ、時には最適でない実装や、エッジケースを考慮しない、あるいはセキュリティ上の脆弱性を含むコードが生成されるなど、直接的な「品質保証の課題」を引き起こします。
+						</p>
+					</li>
+				</ol>
+				<h2 id="3-課題への対策">3. 課題への対策</h2>
+				<h3 id="31-知識の限界への対策人の手による検証補完">
+					3.1 「知識の限界」への対策：人の手による検証・補完
+				</h3>
+				<ol>
+					<li>
+						<p><strong>セキュリティ対策の徹底</strong></p>
+						<ul>
+							<li>
+								<strong>脆弱性スキャンの定期実施</strong>:
+								生成AIは過去の脆弱性情報に基づいてコードを生成する可能性があるため、既知の脆弱性が含まれていないかスキャンツールで定期的に確認します。
+							</li>
+							<li>
+								<strong>セキュリティレビューの実施</strong>:
+								専門家の視点で、生成されたロジックに潜在的なセキュリティホールがないかレビューします。
+							</li>
+							<li>
+								<strong>依存関係の管理</strong>:
+								使用しているライブラリやフレームワークに古いバージョンが選択されていないか確認し、常に安全なバージョンを利用するよう管理します。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>ファクトチェックと最新情報の反映</strong></p>
+						<ul>
+							<li>
+								<strong>情報の正確性検証</strong>:
+								生成AIが提示する情報（特にライブラリの仕様やAPIの利用法）が正確であるか、公式ドキュメントなどで必ず確認（ファクトチェック）します。
+							</li>
+							<li>
+								<strong>カットオフの意識</strong>:
+								AIの知識が古いことを念頭に置き、最新の技術標準やベストプラクティスを人間が補完します。
+							</li>
+						</ul>
+					</li>
+				</ol>
+				<h3 id="32-理解の限界への対策明確なコンテキストの提示">
+					3.2 「理解の限界」への対策：明確なコンテキストの提示
+				</h3>
+				<ol>
+					<li>
+						<p><strong>設計ドキュメントの整備</strong></p>
+						<ul>
+							<li>
+								<strong>アーキテクチャ図の維持</strong>:
+								システム全体の構造を視覚的に示すことで、AIと開発者の共通認識を形成します。
+							</li>
+							<li>
+								<strong>インターフェース定義の明確化</strong>:
+								APIの仕様などを厳密に定義し、コンポーネント間の連携における誤解を防ぎます。
+							</li>
+							<li>
+								<strong>データモデルの文書化</strong>:
+								データの構造を明確にすることで、一貫性のあるデータ処理をAIに指示します。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>プロンプト管理の徹底</strong></p>
+						<ul>
+							<li>
+								<strong>プロンプトテンプレートの活用</strong>:
+								必要な背景情報、制約条件、期待する出力形式などをテンプレート化し、指示の精度を高めます。
+							</li>
+							<li>
+								<strong>コンテキスト情報の明示</strong>:
+								対話の際には、関連する設計ドキュメントや過去の決定事項を明示的にインプットとして提供します。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>トレーサビリティの確保</strong></p>
+						<ul>
+							<li>
+								<strong>要件とコードの紐付け</strong>:
+								Issueトラッカーなどを活用し、どの要件に基づいてコードが生成されたかを追跡可能にします。
+							</li>
+							<li>
+								<strong>決定事項の記録</strong>:
+								設計変更などの重要な決定を記録・共有し、コンテキストが失われるのを防ぎます。
+							</li>
+						</ul>
+					</li>
+				</ol>
+				<h3 id="33-生成の不確実性への対策段階的な開発と評価">
+					3.3 「生成の不確実性」への対策：段階的な開発と評価
+				</h3>
+				<ol>
+					<li>
+						<p><strong>段階的な開発アプローチ</strong></p>
+						<ul>
+							<li>
+								<strong>全体設計の明確化</strong>:
+								最初に全体像を固め、AIに実装を依頼する範囲を限定します。
+							</li>
+							<li>
+								<strong>フェーズごとの目標設定</strong>:
+								開発を管理可能な小さなステップに分割し、各ステップのゴールを明確にします。
+							</li>
+							<li>
+								<strong>完了条件の具体化</strong>:
+								「何ができたら完了か」を客観的に測定できる基準（受け入れ基準）として定義します。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>品質基準の確立</strong></p>
+						<ul>
+							<li>
+								<strong>コーディング規約の策定</strong>:
+								一貫したコードスタイルを強制し、出力のばらつきを抑制します。
+							</li>
+							<li>
+								<strong>テスト基準の設定</strong>:
+								単体テストのカバレッジ目標などを定め、最低限の品質を担保します。
+							</li>
+							<li>
+								<strong>レビュー基準の明確化</strong>:
+								コードレビューの観点を事前に定義し、評価の属人性を排除します。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>検証プロセスの強化</strong></p>
+						<ul>
+							<li>
+								<strong>自動テストの充実</strong>:
+								生成されたコードが既存の機能を破壊しないか、リグレッションテストを自動化して常に監視します。
+							</li>
+							<li>
+								<strong>コードレビューの徹底</strong>:
+								AIの生成物であっても、人間が書いたコードと同様に必ずレビューを実施します。
+							</li>
+							<li>
+								<strong>静的解析の活用</strong>:
+								ツールを用いて潜在的なバグやコードの不備を機械的に検出し、品質のベースラインを維持します。
+							</li>
+						</ul>
+					</li>
+				</ol>
+				<h2 id="4-具体的な開発手法対策のプロセスへの統合">
+					4. 具体的な開発手法（対策のプロセスへの統合）
+				</h2>
+				<h3 id="41-開発プロセスの概要">4.1 開発プロセスの概要</h3>
+				<p>
+					本ガイドで提案する開発プロセスは、前章で述べた対策を実践に統合するための具体的なフレームワークです。
+				</p>
+				<ol>
+					<li>
+						<p><strong>全体設計フェーズ</strong></p>
+						<ul>
+							<li>
+								<strong>目的</strong>:
+								プロジェクトの土台を固め、AIに正確なコンテキストを渡す準備を整える（「3.2
+								理解の限界」への対策の具体化）。
+							</li>
+							<li>
+								<strong>活動</strong>:
+								システム要件の定義、アーキテクチャの設計、技術スタックの選定、主要なデータモデルやインターフェースの定義など。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>フェーズ分解</strong></p>
+						<ul>
+							<li>
+								<strong>目的</strong>:
+								開発全体を管理可能な単位に分割し、段階的に開発を進める（「3.3
+								生成の不確実性」への対策の具体化）。
+							</li>
+							<li>
+								<strong>活動</strong>:
+								機能の優先順位付け、依存関係の分析、マイルストーンの設定。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>反復的な開発サイクル</strong></p>
+						<ul>
+							<li>
+								<strong>目的</strong>:
+								小さなサイクルを繰り返すことで、手戻りを最小限に抑えつつ、継続的に品質を評価・改善する（「3.3
+								生成の不確実性」への対策の具体化）。
+							</li>
+							<li>
+								<strong>サイクル</strong>: 詳細設計 → 実装 → テスト → レビュー。
+							</li>
+						</ul>
+					</li>
+				</ol>
+				<h3 id="42-各フェーズでの具体的なステップ">4.2 各フェーズでの具体的なステップ</h3>
+				<ol>
+					<li>
+						<p><strong>フェーズ開始時</strong></p>
+						<ul>
+							<li>
+								<strong>目的</strong>:
+								各開発フェーズの方向性を明確にし、評価基準を定める。
+							</li>
+							<li>
+								<strong>活動</strong>:
+								目標の明確化、受け入れ基準の設定、リスクの特定。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>開発中</strong></p>
+						<ul>
+							<li>
+								<strong>目的</strong>:
+								定期的なレビューを通じて、品質を維持し、問題点を早期に発見する。
+							</li>
+							<li>
+								<strong>活動</strong>:
+								定期的なレビュー、進捗の可視化、問題点の早期発見。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>フェーズ完了時</strong></p>
+						<ul>
+							<li>
+								<strong>目的</strong>: 成果物を検証し、次のサイクルに知見を活かす。
+							</li>
+							<li>
+								<strong>活動</strong>:
+								完了条件の確認、成果物の検証、振り返りの実施。
+							</li>
+						</ul>
+					</li>
+				</ol>
+				<h3 id="43-品質管理プロセス">4.3 品質管理プロセス</h3>
+				<p>
+					<strong>目的</strong>:
+					開発の全段階を通じて、生成されたコードの品質と安全性を多角的に保証する（「3.1
+					知識の限界」「3.3 生成の不確実性」への対策の具体化）。
+				</p>
+				<ol>
+					<li>
+						<p><strong>コードレベルの品質管理</strong></p>
+						<ul>
+							<li>
+								<strong>内容</strong>:
+								コーディング規約の遵守、テストカバレッジの確保、静的解析の実施。
+							</li>
+							<li>
+								<strong>役割</strong>:
+								生成されたコードの基本的な品質と一貫性を担保する。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>ドキュメントレベルの品質管理</strong></p>
+						<ul>
+							<li>
+								<strong>内容</strong>:
+								設計書の更新、APIドキュメントの整備、変更履歴の管理。
+							</li>
+							<li>
+								<strong>役割</strong>:
+								開発のコンテキストを維持し、将来の変更に備える。
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p><strong>プロセスレベルの品質管理</strong></p>
+						<ul>
+							<li>
+								<strong>内容</strong>:
+								レビュープロセスの最適化、CI/CDパイプラインの整備、モニタリングの強化。
+							</li>
+							<li>
+								<strong>役割</strong>:
+								品質保証の仕組みを自動化・効率化し、継続的な改善を促す。
+							</li>
+						</ul>
+					</li>
+				</ol>
+				<h2 id="5-実践のためのチェックリスト">5. 実践のためのチェックリスト</h2>
+				<h3 id="51-プロジェクト開始時">5.1 プロジェクト開始時</h3>
+				<ul>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> 全体設計書の作成
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> 開発プロセスの定義
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> 品質基準の設定
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> ツール・環境の準備
+					</li>
+				</ul>
+				<h3 id="52-フェーズ開始時">5.2 フェーズ開始時</h3>
+				<ul>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> 詳細設計書の作成
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> 受け入れ基準の定義
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> リスクの評価
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> タスクの分解
+					</li>
+				</ul>
+				<h3 id="53-開発サイクル">5.3 開発サイクル</h3>
+				<ul>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" />
+						コーディング規約の遵守
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> テストの実施
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> コードレビュー
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> ドキュメント更新
+					</li>
+				</ul>
+				<h3 id="54-フェーズ完了時">5.4 フェーズ完了時</h3>
+				<ul>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> 完了条件の確認
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> 成果物の検証
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> 振り返りの実施
+					</li>
+					<li class="task-list-item">
+						<input type="checkbox" class="task-list-item-checkbox" /> 次フェーズの準備
+					</li>
+				</ul>
+				<h2 id="6-継続的な改善のために">6. 継続的な改善のために</h2>
+				<h3 id="61-モニタリング項目">6.1 モニタリング項目</h3>
+				<ul>
+					<li>品質メトリクス</li>
+					<li>パフォーマンス指標</li>
+					<li>生産性指標</li>
+				</ul>
+				<p>
+					生成AIを活用した開発プロセスを継続的に改善するためには、適切なモニタリング項目を設定し、定期的に評価することが重要です。品質メトリクスではコードの品質や不具合の発生率を、パフォーマンス指標ではシステムの応答時間やリソース使用率を、生産性指標では開発速度や生成AIの活用効率を測定します。これらの指標を総合的に分析することで、プロセスの改善点を特定することができます。
+				</p>
+				<h3 id="62-改善プロセス">6.2 改善プロセス</h3>
+				<ol>
+					<li>データの収集</li>
+					<li>分析と評価</li>
+					<li>改善案の作成</li>
+					<li>実施と検証</li>
+				</ol>
+				<p>
+					継続的な改善を実現するため、体系的な改善プロセスを確立します。まず、設定したモニタリング項目に基づいてデータを収集し、それらを詳細に分析して現状を評価します。その結果に基づいて具体的な改善案を作成し、実施します。実施後は効果を検証し、必要に応じて更なる改善を行います。このサイクルを継続的に回すことで、生成AIを活用した開発プロセスを段階的に最適化していくことができます。
+				</p>
+				<h2 id="プロンプト履歴">プロンプト履歴</h2>
+				<h3 id="初回作成プロンプト">初回作成プロンプト</h3>
+				<pre
+					data-role="codeBlock"
+					data-info=""
+					class="language-text"
+				><code>以下の形式でドキュメントを作成してください：
 
 ##想定読者
 これから生成AIを用いた開発を始めようとしている人
@@ -306,55 +1251,49 @@
 
 ##補足
 こちらのドキュメントは今後も継続的に追加・修正を加えていく想定です。また追加・修正は生成AIを用いて実施していく想定のため、次回の追加・修正時に生成AIに渡すプロンプトについても、追加・修正したい内容のみ追記すれば良い形で作成し、末尾に追記するようにしてください
-</code></pre><h1 id="変更履歴">変更履歴 </h1>
-<ul>
-<li>2024-06-05: 初版作成</li>
-</ul>
-</div>
-      </div>
-      
-      
-    
-    
-    <script type="module">
-// TODO: If ZenUML gets integrated into mermaid in the future,
-//      we can remove the following lines.
+</code></pre>
+				<h1 id="変更履歴">変更履歴</h1>
+				<ul>
+					<li>2024-06-05: 初版作成</li>
+				</ul>
+			</div>
+		</div>
 
+		<script type="module">
+			// TODO: If ZenUML gets integrated into mermaid in the future,
+			//      we can remove the following lines.
 
-var MERMAID_CONFIG = ({"startOnLoad":false});
-if (typeof MERMAID_CONFIG !== 'undefined') {
-  MERMAID_CONFIG.startOnLoad = false
-  MERMAID_CONFIG.cloneCssStyles = false
-  MERMAID_CONFIG.theme = "default"
-}
+			var MERMAID_CONFIG = { startOnLoad: false };
+			if (typeof MERMAID_CONFIG !== 'undefined') {
+				MERMAID_CONFIG.startOnLoad = false;
+				MERMAID_CONFIG.cloneCssStyles = false;
+				MERMAID_CONFIG.theme = 'default';
+			}
 
-mermaid.initialize(MERMAID_CONFIG || {})
-if (typeof(window['Reveal']) !== 'undefined') {
-  function mermaidRevealHelper(event) {
-    var currentSlide = event.currentSlide
-    var diagrams = currentSlide.querySelectorAll('.mermaid')
-    for (var i = 0; i < diagrams.length; i++) {
-      var diagram = diagrams[i]
-      if (!diagram.hasAttribute('data-processed')) {
-        mermaid.init(null, diagram, ()=> {
-          Reveal.slide(event.indexh, event.indexv)
-        })
-      }
-    }
-  }
-  Reveal.addEventListener('slidetransitionend', mermaidRevealHelper)
-  Reveal.addEventListener('ready', mermaidRevealHelper)
-  await mermaid.run({
-    nodes: document.querySelectorAll('.mermaid')
-  })
-} else {
-  await mermaid.run({
-    nodes: document.querySelectorAll('.mermaid')
-  })
-}
-</script>
-    
-    
-    
-  
-    </body></html>
+			mermaid.initialize(MERMAID_CONFIG || {});
+			if (typeof window['Reveal'] !== 'undefined') {
+				function mermaidRevealHelper(event) {
+					var currentSlide = event.currentSlide;
+					var diagrams = currentSlide.querySelectorAll('.mermaid');
+					for (var i = 0; i < diagrams.length; i++) {
+						var diagram = diagrams[i];
+						if (!diagram.hasAttribute('data-processed')) {
+							mermaid.init(null, diagram, () => {
+								Reveal.slide(event.indexh, event.indexv);
+							});
+						}
+					}
+				}
+				Reveal.addEventListener('slidetransitionend', mermaidRevealHelper);
+				Reveal.addEventListener('ready', mermaidRevealHelper);
+				await mermaid.run({
+					nodes: document.querySelectorAll('.mermaid')
+				});
+			} else {
+				await mermaid.run({
+					nodes: document.querySelectorAll('.mermaid')
+				});
+			}
+		</script>
+	</body>
+</html>

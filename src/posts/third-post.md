@@ -1,8 +1,8 @@
 ---
-title: "SvelteKitで始めるWeb開発"
-publishedAt: "2024-06-24"
-description: "SvelteKitを使ったWeb開発の基本について説明します。"
-categories: ["svelte", "web-development"]
+title: 'SvelteKitで始めるWeb開発'
+publishedAt: '2024-06-24'
+description: 'SvelteKitを使ったWeb開発の基本について説明します。'
+categories: ['svelte', 'web-development']
 ---
 
 # SvelteKitで始めるWeb開発
@@ -28,15 +28,15 @@ npm run dev
 
 ```svelte
 <script>
-  let count = 0;
-  
-  function increment() {
-    count += 1;
-  }
+	let count = 0;
+
+	function increment() {
+		count += 1;
+	}
 </script>
 
 <button on:click={increment}>
-  Count: {count}
+	Count: {count}
 </button>
 ```
 

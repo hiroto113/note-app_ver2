@@ -7,9 +7,9 @@
 	export let error: string = '';
 	export let options: Array<{ value: string; label: string }> = [];
 	export let placeholder: string = '選択してください';
-	
+
 	let selectElement: HTMLSelectElement;
-	
+
 	export function focus() {
 		selectElement?.focus();
 	}
@@ -22,7 +22,7 @@
 			<span class="text-red-500">*</span>
 		{/if}
 	</label>
-	
+
 	<select
 		bind:this={selectElement}
 		{id}
@@ -44,7 +44,7 @@
 			<option value={option.value}>{option.label}</option>
 		{/each}
 	</select>
-	
+
 	{#if error}
 		<p class="text-sm text-red-600">{error}</p>
 	{/if}

@@ -7,9 +7,9 @@
 	export let disabled: boolean = false;
 	export let error: string = '';
 	export let type: 'text' | 'email' | 'password' | 'url' = 'text';
-	
+
 	let inputElement: HTMLInputElement;
-	
+
 	export function focus() {
 		inputElement?.focus();
 	}
@@ -22,7 +22,7 @@
 			<span class="text-red-500">*</span>
 		{/if}
 	</label>
-	
+
 	<input
 		bind:this={inputElement}
 		{id}
@@ -40,7 +40,7 @@
 		on:change
 		on:focus
 	/>
-	
+
 	{#if error}
 		<p class="text-sm text-red-600">{error}</p>
 	{/if}

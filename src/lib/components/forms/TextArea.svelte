@@ -8,9 +8,9 @@
 	export let error: string = '';
 	export let rows: number = 3;
 	export let resize: boolean = true;
-	
+
 	let textareaElement: HTMLTextAreaElement;
-	
+
 	export function focus() {
 		textareaElement?.focus();
 	}
@@ -23,7 +23,7 @@
 			<span class="text-red-500">*</span>
 		{/if}
 	</label>
-	
+
 	<textarea
 		bind:this={textareaElement}
 		{id}
@@ -42,7 +42,7 @@
 		on:change
 		on:focus
 	></textarea>
-	
+
 	{#if error}
 		<p class="text-sm text-red-600">{error}</p>
 	{/if}

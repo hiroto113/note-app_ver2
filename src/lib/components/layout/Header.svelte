@@ -7,12 +7,8 @@
 				</a>
 			</div>
 			<div class="flex space-x-8">
-				<a href="/" class="text-gray-600 hover:text-gray-900">
-					記事一覧
-				</a>
-				<a href="/about" class="text-gray-600 hover:text-gray-900">
-					学習ログ
-				</a>
+				<a href="/" class="text-gray-600 hover:text-gray-900"> 記事一覧 </a>
+				<a href="/about" class="text-gray-600 hover:text-gray-900"> 学習ログ </a>
 			</div>
 		</div>
 	</div>

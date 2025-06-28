@@ -1,7 +1,7 @@
 <script lang="ts">
 	import PostList from '$lib/components/admin/PostList.svelte';
 	import type { PageData } from './$types';
-	
+
 	export let data: PageData;
 </script>
 

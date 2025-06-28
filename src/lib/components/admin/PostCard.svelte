@@ -1,9 +1,9 @@
 <script lang="ts">
 	import StatusBadge from './StatusBadge.svelte';
 	import type { Post } from '$lib/server/db/schema';
-	
+
 	export let post: Post & { author: { id: string; username: string } };
-	
+
 	function formatDate(dateString: string | Date) {
 		const date = new Date(dateString);
 		return date.toLocaleDateString('ja-JP', {
@@ -12,23 +12,25 @@
 			day: 'numeric'
 		});
 	}
-	
+
 	function handleEdit() {
 		window.location.href = `/admin/posts/${post.id}/edit`;
 	}
-	
+
 	function handleDelete() {
-		if (confirm(`「${post.title}」を削除してもよろしいですか？\n\nこの操作は取り消せません。`)) {
+		if (
+			confirm(`「${post.title}」を削除してもよろしいですか？\n\nこの操作は取り消せません。`)
+		) {
 			deletePost();
 		}
 	}
-	
+
 	async function deletePost() {
 		try {
 			const response = await fetch(`/api/admin/posts/${post.id}`, {
 				method: 'DELETE'
 			});
-			
+
 			if (response.ok) {
 				// Reload page to refresh the list
 				window.location.reload();
@@ -43,33 +45,35 @@
 	}
 </script>
 
-<div class="bg-white shadow rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-200">
+<div
+	class="rounded-lg border border-gray-200 bg-white shadow transition-shadow duration-200 hover:shadow-md"
+>
 	<div class="p-6">
 		<div class="flex items-start justify-between">
-			<div class="flex-1 min-w-0">
-				<h3 class="text-lg font-medium text-gray-900 truncate">
-					<a 
-						href="/posts/{post.slug}" 
+			<div class="min-w-0 flex-1">
+				<h3 class="truncate text-lg font-medium text-gray-900">
+					<a
+						href="/posts/{post.slug}"
 						target="_blank"
-						class="hover:text-blue-600 transition-colors"
+						class="transition-colors hover:text-blue-600"
 						title="記事を表示"
 					>
 						{post.title}
 					</a>
 				</h3>
-				
+
 				{#if post.excerpt}
-					<p class="mt-1 text-sm text-gray-600 line-clamp-2">
+					<p class="mt-1 line-clamp-2 text-sm text-gray-600">
 						{post.excerpt}
 					</p>
 				{/if}
 			</div>
-			
+
 			<div class="ml-4 flex-shrink-0">
 				<StatusBadge status={post.status} />
 			</div>
 		</div>
-		
+
 		<div class="mt-4 flex items-center justify-between text-sm text-gray-500">
 			<div class="flex items-center space-x-4">
 				<span>作成者: {post.author.username}</span>
@@ -79,18 +83,18 @@
 				<span>更新: {formatDate(post.updatedAt)}</span>
 			</div>
 		</div>
-		
+
 		<div class="mt-4 flex items-center justify-end space-x-3">
 			<button
 				on:click={handleEdit}
-				class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+				class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 			>
 				編集
 			</button>
-			
+
 			<button
 				on:click={handleDelete}
-				class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+				class="inline-flex items-center rounded-md border border-transparent bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 			>
 				削除
 			</button>

@@ -9,13 +9,13 @@ export const load: PageServerLoad = async () => {
 		const postsDirectory = join(process.cwd(), 'src/posts');
 		const files = await readdir(postsDirectory);
 		const markdownFiles = files.filter((file: string) => file.endsWith('.md'));
-		
+
 		const posts: Post[] = await Promise.all(
 			markdownFiles.map(async (file: string) => {
 				const filePath = join(postsDirectory, file);
 				const fileContent = await readFile(filePath, 'utf-8');
 				const { data } = matter(fileContent);
-				
+
 				return {
 					slug: file.replace('.md', ''),
 					title: data.title || 'Untitled',
@@ -25,10 +25,13 @@ export const load: PageServerLoad = async () => {
 				};
 			})
 		);
-		
+
 		// Sort by publishedAt in descending order (newest first)
-		posts.sort((a: Post, b: Post) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
-		
+		posts.sort(
+			(a: Post, b: Post) =>
+				new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+		);
+
 		return {
 			posts
 		};
