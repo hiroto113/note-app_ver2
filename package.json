@@ -12,7 +12,7 @@
 		"format": "prettier --write .",
 		"test": "vitest run",
 		"test:unit": "vitest",
-		"test:e2e": "playwright test",
+		"test:e2e": "playwright test --project=chromium",
 		"db:generate": "drizzle-kit generate",
 		"db:push": "drizzle-kit push",
 		"db:migrate": "drizzle-kit migrate",
