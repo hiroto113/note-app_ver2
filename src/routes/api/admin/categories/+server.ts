@@ -1,15 +1,13 @@
 import { json, error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { categories } from '$lib/server/db/schema';
-import { requireAuth } from '$lib/server/auth';
 import { generateSlug } from '$lib/utils/slug';
 import { eq, desc } from 'drizzle-orm';
+import { validateCategory, createValidationErrorResponse } from '$lib/server/validation';
 import type { RequestHandler } from './$types';
 
 // GET /api/admin/categories - Get all categories
-export const GET: RequestHandler = async (event) => {
-	await requireAuth(event);
-
+export const GET: RequestHandler = async () => {
 	try {
 		const allCategories = await db
 			.select({
@@ -31,14 +29,15 @@ export const GET: RequestHandler = async (event) => {
 };
 
 // POST /api/admin/categories - Create new category
-export const POST: RequestHandler = async (event) => {
-	await requireAuth(event);
-
+export const POST: RequestHandler = async ({ request }) => {
 	try {
-		const { name, description } = await event.request.json();
+		const categoryData = await request.json();
+		const { name, description } = categoryData;
 
-		if (!name) {
-			return json({ error: 'Name is required' }, { status: 400 });
+		// バリデーション実行
+		const validation = validateCategory(categoryData);
+		if (!validation.isValid) {
+			return createValidationErrorResponse(validation.errors);
 		}
 
 		// Generate unique slug
@@ -84,14 +83,15 @@ export const POST: RequestHandler = async (event) => {
 };
 
 // PUT /api/admin/categories - Update category
-export const PUT: RequestHandler = async (event) => {
-	await requireAuth(event);
-
+export const PUT: RequestHandler = async ({ request }) => {
 	try {
-		const { id, name, description } = await event.request.json();
+		const categoryData = await request.json();
+		const { id, name, description } = categoryData;
 
-		if (!id || !name) {
-			return json({ error: 'ID and name are required' }, { status: 400 });
+		// バリデーション実行
+		const validation = validateCategory(categoryData);
+		if (!validation.isValid) {
+			return createValidationErrorResponse(validation.errors);
 		}
 
 		// Check if category exists
@@ -153,14 +153,12 @@ export const PUT: RequestHandler = async (event) => {
 };
 
 // DELETE /api/admin/categories - Delete category
-export const DELETE: RequestHandler = async (event) => {
-	await requireAuth(event);
-
+export const DELETE: RequestHandler = async ({ request }) => {
 	try {
-		const { id } = await event.request.json();
+		const { id } = await request.json();
 
-		if (!id) {
-			return json({ error: 'ID is required' }, { status: 400 });
+		if (!id || !Number.isInteger(id) || id <= 0) {
+			return json({ error: 'Valid ID is required' }, { status: 400 });
 		}
 
 		// Check if category exists

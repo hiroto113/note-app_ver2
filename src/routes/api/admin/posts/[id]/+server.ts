@@ -1,16 +1,14 @@
 import { json, error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { posts, postsToCategories, users, categories } from '$lib/server/db/schema';
-import { requireAuth } from '$lib/server/auth';
 import { generateSlug } from '$lib/utils/slug';
 import { eq, and, ne } from 'drizzle-orm';
+import { validatePost, createValidationErrorResponse } from '$lib/server/validation';
 import type { RequestHandler } from './$types';
 
 // GET /api/admin/posts/[id] - Get single post with categories
-export const GET: RequestHandler = async (event) => {
-	await requireAuth(event);
-
-	const postId = parseInt(event.params.id);
+export const GET: RequestHandler = async ({ params }) => {
+	const postId = parseInt(params.id);
 	if (isNaN(postId)) {
 		throw error(400, 'Invalid post ID');
 	}
@@ -69,19 +67,20 @@ export const GET: RequestHandler = async (event) => {
 };
 
 // PUT /api/admin/posts/[id] - Update post
-export const PUT: RequestHandler = async (event) => {
-	await requireAuth(event);
-
-	const postId = parseInt(event.params.id);
+export const PUT: RequestHandler = async ({ params, request }) => {
+	const postId = parseInt(params.id);
 	if (isNaN(postId)) {
 		throw error(400, 'Invalid post ID');
 	}
 
 	try {
-		const { title, content, excerpt, status, categoryIds } = await event.request.json();
+		const postData = await request.json();
+		const { title, content, excerpt, status, categoryIds } = postData;
 
-		if (!title || !content) {
-			return json({ error: 'Title and content are required' }, { status: 400 });
+		// バリデーション実行
+		const validation = validatePost(postData);
+		if (!validation.isValid) {
+			return createValidationErrorResponse(validation.errors);
 		}
 
 		// Check if post exists
@@ -160,10 +159,8 @@ export const PUT: RequestHandler = async (event) => {
 };
 
 // DELETE /api/admin/posts/[id] - Delete post
-export const DELETE: RequestHandler = async (event) => {
-	await requireAuth(event);
-
-	const postId = parseInt(event.params.id);
+export const DELETE: RequestHandler = async ({ params }) => {
+	const postId = parseInt(params.id);
 	if (isNaN(postId)) {
 		throw error(400, 'Invalid post ID');
 	}

@@ -1,16 +1,44 @@
 import { json } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { posts, postsToCategories, users } from '$lib/server/db/schema';
-import { requireAuth } from '$lib/server/auth';
+import { posts, postsToCategories, users, categories } from '$lib/server/db/schema';
 import { generateSlug } from '$lib/utils/slug';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and, sql } from 'drizzle-orm';
+import {
+	validatePost,
+	validatePagination,
+	createValidationErrorResponse
+} from '$lib/server/validation';
 import type { RequestHandler } from './$types';
 
 // GET /api/admin/posts - Get all posts (including drafts)
-export const GET: RequestHandler = async (event) => {
-	await requireAuth(event);
-
+export const GET: RequestHandler = async ({ url }) => {
 	try {
+		// クエリパラメータの検証
+		const {
+			page,
+			limit,
+			errors: paginationErrors
+		} = validatePagination({
+			page: url.searchParams.get('page'),
+			limit: url.searchParams.get('limit')
+		});
+
+		if (paginationErrors.length > 0) {
+			return createValidationErrorResponse(paginationErrors);
+		}
+
+		const status = url.searchParams.get('status');
+
+		// オフセットの計算
+		const offset = (page - 1) * limit;
+
+		// WHERE条件の構築
+		const whereConditions = [];
+		if (status && status !== 'all') {
+			whereConditions.push(eq(posts.status, status as 'draft' | 'published'));
+		}
+
+		// 記事一覧の取得（カテゴリ情報含む）
 		const allPosts = await db
 			.select({
 				id: posts.id,
@@ -24,13 +52,47 @@ export const GET: RequestHandler = async (event) => {
 				author: {
 					id: users.id,
 					username: users.username
-				}
+				},
+				categories: sql<string>`
+					GROUP_CONCAT(
+						json_object(
+							'id', ${categories.id},
+							'name', ${categories.name}
+						)
+					)
+				`.as('categories')
 			})
 			.from(posts)
 			.leftJoin(users, eq(posts.userId, users.id))
-			.orderBy(desc(posts.createdAt));
+			.leftJoin(postsToCategories, eq(posts.id, postsToCategories.postId))
+			.leftJoin(categories, eq(postsToCategories.categoryId, categories.id))
+			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
+			.groupBy(posts.id)
+			.orderBy(desc(posts.createdAt))
+			.limit(limit)
+			.offset(offset);
 
-		return json({ posts: allPosts });
+		// 総件数の取得
+		const [{ count }] = await db
+			.select({ count: sql<number>`COUNT(*)` })
+			.from(posts)
+			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
+
+		// カテゴリ情報のパース
+		const formattedPosts = allPosts.map((post) => ({
+			...post,
+			categories: post.categories ? post.categories.split(',').map((c) => JSON.parse(c)) : []
+		}));
+
+		return json({
+			posts: formattedPosts,
+			pagination: {
+				page,
+				limit,
+				total: Number(count),
+				totalPages: Math.ceil(Number(count) / limit)
+			}
+		});
 	} catch (error) {
 		console.error('Error fetching posts:', error);
 		return json({ error: 'Failed to fetch posts' }, { status: 500 });
@@ -38,14 +100,19 @@ export const GET: RequestHandler = async (event) => {
 };
 
 // POST /api/admin/posts - Create new post
-export const POST: RequestHandler = async (event) => {
-	const user = await requireAuth(event);
-
+export const POST: RequestHandler = async ({ request, locals }) => {
 	try {
-		const { title, content, excerpt, status, categoryIds } = await event.request.json();
+		// 認証チェックはhooks.server.tsで行われるため、sessionを取得のみ
+		const session = await locals.getSession?.();
+		const userId = session?.user?.id;
 
-		if (!title || !content) {
-			return json({ error: 'Title and content are required' }, { status: 400 });
+		const postData = await request.json();
+		const { title, content, excerpt, status, categoryIds, publishedAt } = postData;
+
+		// バリデーション実行
+		const validation = validatePost(postData);
+		if (!validation.isValid) {
+			return createValidationErrorResponse(validation.errors);
 		}
 
 		// Generate unique slug
@@ -68,6 +135,8 @@ export const POST: RequestHandler = async (event) => {
 		}
 
 		const now = new Date();
+		const finalPublishedAt =
+			status === 'published' ? (publishedAt ? new Date(publishedAt) : now) : null;
 
 		// Create post
 		const result = await db
@@ -78,26 +147,26 @@ export const POST: RequestHandler = async (event) => {
 				content,
 				excerpt: excerpt || content.substring(0, 200) + '...',
 				status: (status as 'draft' | 'published') || 'draft',
-				publishedAt: status === 'published' ? now : null,
-				userId: user.id!,
+				publishedAt: finalPublishedAt,
+				userId: userId!,
 				createdAt: now,
 				updatedAt: now
 			})
-			.returning({ id: posts.id });
+			.returning();
 
-		const postId = result[0].id;
+		const createdPost = result[0];
 
 		// Add categories if provided
 		if (categoryIds && categoryIds.length > 0) {
 			const categoryInserts = categoryIds.map((categoryId: number) => ({
-				postId,
+				postId: createdPost.id,
 				categoryId
 			}));
 
 			await db.insert(postsToCategories).values(categoryInserts);
 		}
 
-		return json({ id: postId, slug }, { status: 201 });
+		return json(createdPost, { status: 201 });
 	} catch (error) {
 		console.error('Error creating post:', error);
 		return json({ error: 'Failed to create post' }, { status: 500 });
