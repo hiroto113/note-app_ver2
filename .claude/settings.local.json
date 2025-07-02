@@ -22,7 +22,10 @@
 			"Bash(npx eslint:*)",
 			"Bash(pnpm run:*)",
 			"Bash(git add:*)",
-			"Bash(gh pr:*)"
+			"Bash(gh pr:*)",
+			"Bash(gh label create:*)",
+			"Bash(gh issue create:*)",
+			"Bash(git checkout:*)"
 		],
 		"deny": []
 	}
