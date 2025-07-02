@@ -1,44 +1,39 @@
-import { readdir, readFile } from 'fs/promises';
-import { join } from 'path';
-import matter from 'gray-matter';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { Post } from '$lib/types';
+import { publicApi } from '$lib/api';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ url }) => {
 	try {
-		const postsDirectory = join(process.cwd(), 'src/posts');
-		const files = await readdir(postsDirectory);
-		const markdownFiles = files.filter((file: string) => file.endsWith('.md'));
+		// クエリパラメータを取得
+		const page = parseInt(url.searchParams.get('page') || '1');
+		const category = url.searchParams.get('category') || undefined;
+		const limit = 10; // 公開側では固定
 
-		const posts: Post[] = await Promise.all(
-			markdownFiles.map(async (file: string) => {
-				const filePath = join(postsDirectory, file);
-				const fileContent = await readFile(filePath, 'utf-8');
-				const { data } = matter(fileContent);
+		// 公開用APIから記事一覧を取得
+		const data = await publicApi.getPosts({
+			page,
+			limit,
+			category
+		});
 
-				return {
-					slug: file.replace('.md', ''),
-					title: data.title || 'Untitled',
-					publishedAt: data.publishedAt || new Date().toISOString().split('T')[0],
-					description: data.description || '',
-					categories: data.categories || []
-				};
-			})
-		);
-
-		// Sort by publishedAt in descending order (newest first)
-		posts.sort(
-			(a: Post, b: Post) =>
-				new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-		);
+		// カテゴリ一覧も取得
+		const categoriesData = await publicApi.getCategories();
 
 		return {
-			posts
+			posts: data.posts,
+			pagination: data.pagination,
+			categories: categoriesData.categories,
+			currentCategory: category
 		};
-	} catch (error) {
-		console.error('Error loading posts:', error);
-		return {
-			posts: []
-		};
+	} catch (err) {
+		console.error('Error loading posts:', err);
+
+		// APIエラーの場合は適切なステータスコードで応答
+		if (err instanceof Error && 'status' in err) {
+			throw error(err.status as number, err.message);
+		}
+
+		// その他のエラーは500として処理
+		throw error(500, 'Failed to load posts');
 	}
 };
