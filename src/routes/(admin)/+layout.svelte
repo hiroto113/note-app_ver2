@@ -15,9 +15,9 @@
 			<div class="flex h-16 justify-between">
 				<div class="flex">
 					<div class="flex flex-shrink-0 items-center">
-						<a href="/admin" class="text-xl font-bold text-gray-900"> 管理画面 </a>
+						<a href="/admin" class="text-lg font-bold text-gray-900 md:text-xl"> 管理画面 </a>
 					</div>
-					<div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+					<div class="hidden sm:ml-6 sm:flex sm:space-x-4 md:space-x-8">
 						<a
 							href="/admin"
 							class="inline-flex items-center px-1 pt-1 text-sm font-medium {$page.url
@@ -49,25 +49,26 @@
 						</a>
 					</div>
 				</div>
-				<div class="flex items-center space-x-4">
-					<span class="text-sm text-gray-700">
+				<div class="flex items-center space-x-2 sm:space-x-4">
+					<span class="hidden text-sm text-gray-700 sm:inline">
 						{data.session.user?.name || 'ユーザー'}
 					</span>
 					<button
 						on:click={handleSignOut}
-						class="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
+						class="rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 sm:px-3 sm:py-2 sm:text-sm"
 					>
 						ログアウト
 					</button>
-					<a href="/" class="text-sm text-gray-500 hover:text-gray-700" target="_blank">
-						サイトを表示
+					<a href="/" class="text-xs text-gray-500 hover:text-gray-700 sm:text-sm" target="_blank">
+						<span class="hidden sm:inline">サイトを表示</span>
+						<span class="sm:hidden">サイト</span>
 					</a>
 				</div>
 			</div>
 		</div>
 	</nav>
 
-	<main class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+	<main class="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
 		<slot />
 	</main>
 </div>
