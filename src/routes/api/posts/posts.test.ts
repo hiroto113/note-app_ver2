@@ -68,10 +68,10 @@ describe('Public Posts API', () => {
 			expect(data.posts.length).toBeGreaterThan(0);
 
 			// 公開記事のみが返されることを確認
-			const testPost = data.posts.find((p: any) => p.slug === 'test-post');
+			const testPost = data.posts.find((p: { slug: string }) => p.slug === 'test-post');
 			expect(testPost).toBeDefined();
 
-			const draftPost = data.posts.find((p: any) => p.slug === 'draft-post');
+			const draftPost = data.posts.find((p: { slug: string }) => p.slug === 'draft-post');
 			expect(draftPost).toBeUndefined();
 		});
 
@@ -85,8 +85,8 @@ describe('Public Posts API', () => {
 			expect(data.posts).toBeInstanceOf(Array);
 
 			// フィルタリングされた記事がすべて指定カテゴリを持つことを確認
-			data.posts.forEach((post: any) => {
-				const hasCategory = post.categories.some((c: any) => c.id === testCategoryId);
+			data.posts.forEach((post: { categories: Array<{ id: number }> }) => {
+				const hasCategory = post.categories.some((c) => c.id === testCategoryId);
 				expect(hasCategory).toBe(true);
 			});
 		});
@@ -140,9 +140,11 @@ describe('Public Posts API', () => {
 			expect(data).toHaveProperty('categories');
 			expect(data.categories).toBeInstanceOf(Array);
 
-			const testCategory = data.categories.find((c: any) => c.slug === 'test-category');
+			const testCategory = data.categories.find(
+				(c: { slug: string; postCount: number }) => c.slug === 'test-category'
+			);
 			expect(testCategory).toBeDefined();
-			expect(testCategory.postCount).toBeGreaterThan(0);
+			expect(testCategory?.postCount).toBeGreaterThan(0);
 		});
 	});
 });
