@@ -1,0 +1,35 @@
+# アップロードディレクトリのセキュリティ設定
+
+# PHP、CGI、その他のスクリプト実行を無効化
+<Files "*">
+    <IfModule mod_php.c>
+        php_flag engine off
+    </IfModule>
+    <IfModule mod_cgi.c>
+        Options -ExecCGI
+    </IfModule>
+    <IfModule mod_fcgid.c>
+        Options -ExecCGI
+    </IfModule>
+</Files>
+
+# 危険なファイル拡張子のアクセスを禁止
+<FilesMatch "\.(php|phtml|php3|php4|php5|pl|py|jsp|asp|sh|cgi)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ディレクトリリスティングを無効化
+Options -Indexes
+
+# 実行権限を削除
+Options -ExecCGI
+
+# サーバーサイドインクルードを無効化
+Options -Includes
+
+# .htaccessファイル自体へのアクセスを禁止
+<Files ".htaccess">
+    Order Allow,Deny
+    Deny from all
+</Files>
