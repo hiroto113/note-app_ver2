@@ -44,7 +44,7 @@
 	<!-- カテゴリフィルタ -->
 	{#if data.categories && data.categories.length > 0}
 		<div class="flex justify-center">
-			<div class="w-full max-w-xs">
+			<div class="w-full max-w-xs sm:max-w-sm">
 				<label for="category-filter" class="mb-2 block text-sm font-medium text-gray-700">
 					カテゴリで絞り込み
 				</label>
@@ -64,7 +64,7 @@
 	{/if}
 
 	{#if data.posts.length > 0}
-		<section class="space-y-6">
+		<section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each data.posts as post}
 				<PostCard {post} />
 			{/each}
@@ -72,15 +72,17 @@
 
 		<!-- ページネーション -->
 		{#if data.pagination && data.pagination.totalPages > 1}
-			<nav class="flex justify-center">
-				<div class="flex space-x-2">
+			<nav class="flex justify-center" aria-label="ページネーション">
+				<div class="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
 					<!-- 前のページ -->
 					{#if data.pagination.page > 1}
 						<button
-							class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
+							class="rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 sm:px-3"
 							on:click={() => goToPage(data.pagination.page - 1)}
+							aria-label="前のページ"
 						>
-							前へ
+							<span class="hidden sm:inline">前へ</span>
+							<span class="sm:hidden">‹</span>
 						</button>
 					{/if}
 
@@ -88,29 +90,33 @@
 					{#each Array.from({ length: data.pagination.totalPages }, (_, i) => i + 1) as pageNum}
 						{#if pageNum === data.pagination.page}
 							<span
-								class="rounded-md border border-indigo-600 bg-indigo-600 px-3 py-2 text-sm font-medium text-white"
+								class="rounded-md border border-indigo-600 bg-indigo-600 px-2 py-2 text-sm font-medium text-white sm:px-3"
+								aria-current="page"
 							>
 								{pageNum}
 							</span>
 						{:else if Math.abs(pageNum - data.pagination.page) <= 2 || pageNum === 1 || pageNum === data.pagination.totalPages}
 							<button
-								class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
+								class="rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 sm:px-3"
 								on:click={() => goToPage(pageNum)}
+								aria-label="ページ {pageNum}"
 							>
 								{pageNum}
 							</button>
 						{:else if Math.abs(pageNum - data.pagination.page) === 3}
-							<span class="px-3 py-2 text-sm font-medium text-gray-500">...</span>
+							<span class="px-2 py-2 text-sm font-medium text-gray-500 sm:px-3">...</span>
 						{/if}
 					{/each}
 
 					<!-- 次のページ -->
 					{#if data.pagination.page < data.pagination.totalPages}
 						<button
-							class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50"
+							class="rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 sm:px-3"
 							on:click={() => goToPage(data.pagination.page + 1)}
+							aria-label="次のページ"
 						>
-							次へ
+							<span class="hidden sm:inline">次へ</span>
+							<span class="sm:hidden">›</span>
 						</button>
 					{/if}
 				</div>
