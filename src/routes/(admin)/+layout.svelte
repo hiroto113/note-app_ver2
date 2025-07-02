@@ -15,7 +15,9 @@
 			<div class="flex h-16 justify-between">
 				<div class="flex">
 					<div class="flex flex-shrink-0 items-center">
-						<a href="/admin" class="text-lg font-bold text-gray-900 md:text-xl"> 管理画面 </a>
+						<a href="/admin" class="text-lg font-bold text-gray-900 md:text-xl">
+							管理画面
+						</a>
 					</div>
 					<div class="hidden sm:ml-6 sm:flex sm:space-x-4 md:space-x-8">
 						<a
@@ -59,7 +61,11 @@
 					>
 						ログアウト
 					</button>
-					<a href="/" class="text-xs text-gray-500 hover:text-gray-700 sm:text-sm" target="_blank">
+					<a
+						href="/"
+						class="text-xs text-gray-500 hover:text-gray-700 sm:text-sm"
+						target="_blank"
+					>
 						<span class="hidden sm:inline">サイトを表示</span>
 						<span class="sm:hidden">サイト</span>
 					</a>

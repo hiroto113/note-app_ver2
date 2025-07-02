@@ -48,8 +48,12 @@
 
 			<!-- デスクトップナビゲーション -->
 			<div class="hidden md:flex md:space-x-8">
-				<a href="/" class="text-gray-600 hover:text-gray-900 transition-colors"> 記事一覧 </a>
-				<a href="/about" class="text-gray-600 hover:text-gray-900 transition-colors"> 学習ログ </a>
+				<a href="/" class="text-gray-600 transition-colors hover:text-gray-900">
+					記事一覧
+				</a>
+				<a href="/about" class="text-gray-600 transition-colors hover:text-gray-900">
+					学習ログ
+				</a>
 			</div>
 
 			<!-- モバイルメニューボタン -->
@@ -106,14 +110,14 @@
 				<div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
 					<a
 						href="/"
-						class="block rounded-md px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+						class="block rounded-md px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
 						on:click={() => (isMenuOpen = false)}
 					>
 						記事一覧
 					</a>
 					<a
 						href="/about"
-						class="block rounded-md px-3 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+						class="block rounded-md px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
 						on:click={() => (isMenuOpen = false)}
 					>
 						学習ログ

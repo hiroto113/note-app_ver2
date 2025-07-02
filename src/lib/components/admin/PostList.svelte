@@ -24,7 +24,9 @@
 
 <div class="space-y-6">
 	<!-- Header with stats and actions -->
-	<div class="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+	<div
+		class="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0"
+	>
 		<div>
 			<h1 class="text-xl font-bold text-gray-900 sm:text-2xl">記事管理</h1>
 			<p class="mt-1 text-sm text-gray-600">

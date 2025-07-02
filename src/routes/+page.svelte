@@ -104,7 +104,9 @@
 								{pageNum}
 							</button>
 						{:else if Math.abs(pageNum - data.pagination.page) === 3}
-							<span class="px-2 py-2 text-sm font-medium text-gray-500 sm:px-3">...</span>
+							<span class="px-2 py-2 text-sm font-medium text-gray-500 sm:px-3"
+								>...</span
+							>
 						{/if}
 					{/each}
 

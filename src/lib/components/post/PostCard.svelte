@@ -14,9 +14,7 @@
 	const displayCategories = (categories: any[]) => {
 		if (!categories || categories.length === 0) return [];
 		// API response の形式に応じて調整
-		return categories.map(cat => 
-			typeof cat === 'string' ? cat : cat.name || cat
-		);
+		return categories.map((cat) => (typeof cat === 'string' ? cat : cat.name || cat));
 	};
 </script>
 
@@ -24,7 +22,9 @@
 	class="rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow duration-200 hover:shadow-lg"
 >
 	<a href="/posts/{post.slug}" class="block">
-		<h2 class="mb-2 text-lg font-bold text-gray-900 transition-colors hover:text-blue-600 md:text-xl">
+		<h2
+			class="mb-2 text-lg font-bold text-gray-900 transition-colors hover:text-blue-600 md:text-xl"
+		>
 			{post.title}
 		</h2>
 
@@ -32,7 +32,9 @@
 			{post.excerpt || post.description || ''}
 		</p>
 
-		<div class="flex flex-col space-y-2 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+		<div
+			class="flex flex-col space-y-2 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between sm:space-y-0"
+		>
 			<time datetime={post.publishedAt || post.createdAt}>
 				{formatDate(post.publishedAt || post.createdAt)}
 			</time>
