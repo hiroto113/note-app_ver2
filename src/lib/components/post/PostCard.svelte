@@ -11,10 +11,12 @@
 	};
 
 	// カテゴリ表示処理
-	const displayCategories = (categories: any[]) => {
+	const displayCategories = (categories: unknown[]) => {
 		if (!categories || categories.length === 0) return [];
 		// API response の形式に応じて調整
-		return categories.map((cat) => (typeof cat === 'string' ? cat : cat.name || cat));
+		return categories.map((cat) =>
+			typeof cat === 'string' ? cat : (cat as { name?: string }).name || cat
+		);
 	};
 </script>
 
