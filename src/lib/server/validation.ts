@@ -150,6 +150,50 @@ export function validatePagination(data: { page?: string | null; limit?: string 
 	return { page, limit, errors };
 }
 
+// メディアファイル用のバリデーション
+export function validateMediaUpload(data: {
+	filename?: string;
+	mimeType?: string;
+	size?: number;
+	category?: string;
+}): ValidationResult {
+	const errors: ValidationError[] = [];
+
+	// ファイル名の検証
+	if (!data.filename || typeof data.filename !== 'string') {
+		errors.push({ field: 'filename', message: 'Filename is required and must be a string' });
+	} else if (data.filename.trim().length === 0) {
+		errors.push({ field: 'filename', message: 'Filename cannot be empty' });
+	} else if (data.filename.length > 255) {
+		errors.push({ field: 'filename', message: 'Filename must be 255 characters or less' });
+	}
+
+	// MIMEタイプの検証
+	if (!data.mimeType || typeof data.mimeType !== 'string') {
+		errors.push({ field: 'mimeType', message: 'MIME type is required and must be a string' });
+	}
+
+	// ファイルサイズの検証
+	if (data.size !== undefined) {
+		if (!Number.isInteger(data.size) || data.size <= 0) {
+			errors.push({ field: 'size', message: 'File size must be a positive integer' });
+		}
+	}
+
+	// カテゴリの検証
+	if (data.category && !['image', 'document'].includes(data.category)) {
+		errors.push({
+			field: 'category',
+			message: 'Category must be either "image" or "document"'
+		});
+	}
+
+	return {
+		isValid: errors.length === 0,
+		errors
+	};
+}
+
 // バリデーションエラーレスポンス生成
 export function createValidationErrorResponse(errors: ValidationError[]) {
 	return json(

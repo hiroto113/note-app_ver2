@@ -72,10 +72,27 @@ export const postsToCategories = sqliteTable('posts_to_categories', {
 		.references(() => categories.id, { onDelete: 'cascade' })
 });
 
+// Media table for uploaded files
+export const media = sqliteTable('media', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	filename: text('filename').notNull().unique(),
+	originalName: text('original_name').notNull(),
+	mimeType: text('mime_type').notNull(),
+	size: integer('size').notNull(),
+	url: text('url').notNull(),
+	uploadedBy: text('uploaded_by')
+		.notNull()
+		.references(() => users.id, { onDelete: 'cascade' }),
+	uploadedAt: integer('uploaded_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date())
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
 	posts: many(posts),
-	sessions: many(sessions)
+	sessions: many(sessions),
+	media: many(media)
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -108,6 +125,13 @@ export const postsToCategoriesRelations = relations(postsToCategories, ({ one })
 	})
 }));
 
+export const mediaRelations = relations(media, ({ one }) => ({
+	uploadedBy: one(users, {
+		fields: [media.uploadedBy],
+		references: [users.id]
+	})
+}));
+
 // Types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -117,3 +141,5 @@ export type Post = typeof posts.$inferSelect;
 export type NewPost = typeof posts.$inferInsert;
 export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;
+export type Media = typeof media.$inferSelect;
+export type NewMedia = typeof media.$inferInsert;
