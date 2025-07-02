@@ -1,32 +1,24 @@
-import { readFile } from 'fs/promises';
-import { join } from 'path';
-import matter from 'gray-matter';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { PostDetail } from '$lib/types';
+import { publicApi } from '$lib/api';
 
 export const load: PageServerLoad = async ({ params }) => {
 	try {
-		const postsDirectory = join(process.cwd(), 'src/posts');
-		const filePath = join(postsDirectory, `${params.slug}.md`);
-
-		const fileContent = await readFile(filePath, 'utf-8');
-		const { data, content } = matter(fileContent);
-
-		const post: PostDetail = {
-			slug: params.slug,
-			title: data.title || 'Untitled',
-			publishedAt: data.publishedAt || new Date().toISOString().split('T')[0],
-			description: data.description || '',
-			categories: data.categories || [],
-			content
-		};
+		// 公開用APIから記事詳細を取得
+		const data = await publicApi.getPost(params.slug);
 
 		return {
-			post
+			post: data.post
 		};
 	} catch (err) {
 		console.error(`Error loading post ${params.slug}:`, err);
+
+		// APIエラーの場合は適切なステータスコードで応答
+		if (err instanceof Error && 'status' in err) {
+			throw error(err.status as number, err.message);
+		}
+
+		// その他のエラーは404として処理（記事が見つからない）
 		throw error(404, 'Post not found');
 	}
 };
