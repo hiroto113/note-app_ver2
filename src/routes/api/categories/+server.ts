@@ -26,20 +26,16 @@ export const GET: RequestHandler = async () => {
 			.leftJoin(posts, eq(postsToCategories.postId, posts.id))
 			.groupBy(categories.id)
 			.orderBy(categories.name);
-		
+
 		// レスポンスの構築
 		return json({
-			categories: results.map(cat => ({
+			categories: results.map((cat) => ({
 				...cat,
 				postCount: Number(cat.postCount) || 0
 			}))
 		});
-		
 	} catch (error) {
 		console.error('Error fetching categories:', error);
-		return json(
-			{ error: 'Failed to fetch categories' },
-			{ status: 500 }
-		);
+		return json({ error: 'Failed to fetch categories' }, { status: 500 });
 	}
 };

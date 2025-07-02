@@ -7,7 +7,7 @@ import { eq, and, sql } from 'drizzle-orm';
 export const GET: RequestHandler = async ({ params }) => {
 	try {
 		const { slug } = params;
-		
+
 		// 記事の取得（カテゴリ情報含む）
 		const results = await db
 			.select({
@@ -29,39 +29,32 @@ export const GET: RequestHandler = async ({ params }) => {
 			.from(posts)
 			.leftJoin(postsToCategories, eq(posts.id, postsToCategories.postId))
 			.leftJoin(categories, eq(postsToCategories.categoryId, categories.id))
-			.where(and(
-				eq(posts.slug, slug),
-				eq(posts.status, 'published'),
-				sql`${posts.publishedAt} <= datetime('now')`
-			))
+			.where(
+				and(
+					eq(posts.slug, slug),
+					eq(posts.status, 'published'),
+					sql`${posts.publishedAt} <= datetime('now')`
+				)
+			)
 			.groupBy(posts.id)
 			.limit(1);
-		
+
 		// 記事が見つからない場合
 		if (results.length === 0) {
-			return json(
-				{ error: 'Post not found' },
-				{ status: 404 }
-			);
+			return json({ error: 'Post not found' }, { status: 404 });
 		}
-		
+
 		const post = results[0];
-		
+
 		// カテゴリ情報のパース
 		const formattedPost = {
 			...post,
-			categories: post.categories 
-				? post.categories.split(',').map(c => JSON.parse(c))
-				: []
+			categories: post.categories ? post.categories.split(',').map((c) => JSON.parse(c)) : []
 		};
-		
+
 		return json(formattedPost);
-		
 	} catch (error) {
 		console.error('Error fetching post:', error);
-		return json(
-			{ error: 'Failed to fetch post' },
-			{ status: 500 }
-		);
+		return json({ error: 'Failed to fetch post' }, { status: 500 });
 	}
 };

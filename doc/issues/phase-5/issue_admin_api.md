@@ -15,6 +15,7 @@ Phase 4で実装した管理画面UIが、実際のデータベースと連携�
 ## 完了条件
 
 ### 記事管理API
+
 - [ ] `GET /api/admin/posts` - 全記事一覧取得（下書き含む）
 - [ ] `POST /api/admin/posts` - 新規記事作成
 - [ ] `GET /api/admin/posts/[id]` - 個別記事取得
@@ -22,12 +23,14 @@ Phase 4で実装した管理画面UIが、実際のデータベースと連携�
 - [ ] `DELETE /api/admin/posts/[id]` - 記事削除
 
 ### カテゴリ管理API
+
 - [ ] `GET /api/admin/categories` - カテゴリ一覧取得
 - [ ] `POST /api/admin/categories` - カテゴリ作成
 - [ ] `PUT /api/admin/categories/[id]` - カテゴリ更新
 - [ ] `DELETE /api/admin/categories/[id]` - カテゴリ削除
 
 ### 共通要件
+
 - [ ] 認証チェックの実装
 - [ ] 入力値バリデーション
 - [ ] エラーハンドリング
