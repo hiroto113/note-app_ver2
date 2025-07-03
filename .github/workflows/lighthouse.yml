@@ -34,8 +34,8 @@ jobs:
 
       - name: Setup database
         run: |
-          pnpm run migrate
-          pnpm run seed
+          pnpm run db:migrate
+          pnpm run db:seed
         env:
           NODE_ENV: production
 
