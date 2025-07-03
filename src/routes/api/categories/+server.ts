@@ -2,37 +2,45 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
 import { categories, posts, postsToCategories } from '$lib/server/db/schema';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, and } from 'drizzle-orm';
 
 export const GET: RequestHandler = async () => {
 	try {
-		// カテゴリ一覧と各カテゴリの公開記事数を取得
-		const results = await db
+		// カテゴリ一覧を取得
+		const categoriesResult = await db
 			.select({
 				id: categories.id,
 				name: categories.name,
 				slug: categories.slug,
-				postCount: sql<number>`
-					COUNT(DISTINCT CASE 
-						WHEN ${posts.status} = 'published' 
-						AND ${posts.publishedAt} <= datetime('now') 
-						THEN ${posts.id} 
-						ELSE NULL 
-					END)
-				`.as('postCount')
+				description: categories.description
 			})
 			.from(categories)
-			.leftJoin(postsToCategories, eq(categories.id, postsToCategories.categoryId))
-			.leftJoin(posts, eq(postsToCategories.postId, posts.id))
-			.groupBy(categories.id)
 			.orderBy(categories.name);
+
+		// 各カテゴリの公開記事数を取得
+		const categoriesWithCount = await Promise.all(
+			categoriesResult.map(async (category) => {
+				const [{ count }] = await db
+					.select({ count: sql<number>`COUNT(*)` })
+					.from(posts)
+					.innerJoin(postsToCategories, eq(posts.id, postsToCategories.postId))
+					.where(
+						and(
+							eq(postsToCategories.categoryId, category.id),
+							eq(posts.status, 'published')
+						)
+					);
+
+				return {
+					...category,
+					postCount: Number(count) || 0
+				};
+			})
+		);
 
 		// レスポンスの構築
 		return json({
-			categories: results.map((cat) => ({
-				...cat,
-				postCount: Number(cat.postCount) || 0
-			}))
+			categories: categoriesWithCount
 		});
 	} catch (error) {
 		console.error('Error fetching categories:', error);

@@ -27,6 +27,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		};
 	} catch (err) {
 		console.error('Error loading posts:', err);
+		console.error('Error stack:', err instanceof Error ? err.stack : 'No stack trace');
 
 		// APIエラーの場合は適切なステータスコードで応答
 		if (err instanceof Error && 'status' in err) {

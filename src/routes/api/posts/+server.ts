@@ -9,81 +9,64 @@ export const GET: RequestHandler = async ({ url }) => {
 		// クエリパラメータの取得
 		const page = parseInt(url.searchParams.get('page') || '1');
 		const limit = Math.min(parseInt(url.searchParams.get('limit') || '10'), 50);
-		const categoryId = url.searchParams.get('category');
+		const categorySlug = url.searchParams.get('category');
 
 		// オフセットの計算
 		const offset = (page - 1) * limit;
 
-		// 基本的なWHERE条件
-		const whereConditions = [
-			eq(posts.status, 'published'),
-			sql`${posts.publishedAt} <= datetime('now')`
-		];
-
-		// クエリの構築
-		const baseQuery = db
+		// まずはシンプルな記事取得
+		const postsResult = await db
 			.select({
 				id: posts.id,
 				slug: posts.slug,
 				title: posts.title,
 				excerpt: posts.excerpt,
 				publishedAt: posts.publishedAt,
-				categories: sql<string>`
-					GROUP_CONCAT(
-						json_object(
-							'id', ${categories.id},
-							'name', ${categories.name}
-						)
-					)
-				`.as('categories')
+				status: posts.status
 			})
-			.from(posts);
+			.from(posts)
+			.where(eq(posts.status, 'published'))
+			.orderBy(desc(posts.publishedAt))
+			.limit(limit)
+			.offset(offset);
 
-		// カテゴリフィルタリング
-		let results;
-		if (categoryId) {
-			results = await baseQuery
-				.innerJoin(postsToCategories, eq(posts.id, postsToCategories.postId))
-				.leftJoin(categories, eq(postsToCategories.categoryId, categories.id))
-				.where(
-					and(...whereConditions, eq(postsToCategories.categoryId, parseInt(categoryId)))
-				)
-				.groupBy(posts.id)
-				.orderBy(desc(posts.publishedAt))
-				.limit(limit)
-				.offset(offset);
-		} else {
-			results = await baseQuery
-				.leftJoin(postsToCategories, eq(posts.id, postsToCategories.postId))
-				.leftJoin(categories, eq(postsToCategories.categoryId, categories.id))
-				.where(and(...whereConditions))
-				.groupBy(posts.id)
-				.orderBy(desc(posts.publishedAt))
-				.limit(limit)
-				.offset(offset);
+		// 各記事のカテゴリ情報を取得
+		const postsWithCategories = await Promise.all(
+			postsResult.map(async (post) => {
+				const postCategories = await db
+					.select({
+						id: categories.id,
+						name: categories.name,
+						slug: categories.slug
+					})
+					.from(categories)
+					.innerJoin(postsToCategories, eq(categories.id, postsToCategories.categoryId))
+					.where(eq(postsToCategories.postId, post.id));
+
+				return {
+					...post,
+					categories: postCategories
+				};
+			})
+		);
+
+		// カテゴリフィルタリング（取得後）
+		let filteredPosts = postsWithCategories;
+		if (categorySlug) {
+			filteredPosts = postsWithCategories.filter((post) =>
+				post.categories.some((cat) => cat.slug === categorySlug)
+			);
 		}
 
 		// 総件数の取得
 		const [{ count }] = await db
-			.select({ count: sql<number>`COUNT(DISTINCT ${posts.id})` })
+			.select({ count: sql<number>`COUNT(*)` })
 			.from(posts)
-			.leftJoin(postsToCategories, eq(posts.id, postsToCategories.postId))
-			.where(
-				and(
-					...whereConditions,
-					categoryId ? eq(postsToCategories.categoryId, parseInt(categoryId)) : undefined
-				)
-			);
-
-		// カテゴリ情報のパース
-		const formattedPosts = results.map((post) => ({
-			...post,
-			categories: post.categories ? post.categories.split(',').map((c) => JSON.parse(c)) : []
-		}));
+			.where(eq(posts.status, 'published'));
 
 		// レスポンスの構築
 		return json({
-			posts: formattedPosts,
+			posts: filteredPosts,
 			pagination: {
 				page,
 				limit,
