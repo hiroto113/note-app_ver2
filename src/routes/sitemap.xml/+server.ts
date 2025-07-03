@@ -7,23 +7,31 @@ import { eq } from 'drizzle-orm';
 export const GET: RequestHandler = async () => {
 	const baseUrl = dev ? 'http://localhost:5173' : 'https://mynotes.example.com';
 
-	// 公開されている記事を取得
-	const publishedPosts = await db
-		.select({
-			slug: posts.slug,
-			updatedAt: posts.updatedAt,
-			publishedAt: posts.publishedAt
-		})
-		.from(posts)
-		.where(eq(posts.status, 'published'));
+	let publishedPosts: Array<{ slug: string; updatedAt: Date; publishedAt: Date | null }> = [];
+	let allCategories: Array<{ slug: string; updatedAt: Date }> = [];
 
-	// カテゴリを取得
-	const allCategories = await db
-		.select({
-			slug: categories.slug,
-			updatedAt: categories.updatedAt
-		})
-		.from(categories);
+	try {
+		// 公開されている記事を取得
+		publishedPosts = await db
+			.select({
+				slug: posts.slug,
+				updatedAt: posts.updatedAt,
+				publishedAt: posts.publishedAt
+			})
+			.from(posts)
+			.where(eq(posts.status, 'published'));
+
+		// カテゴリを取得
+		allCategories = await db
+			.select({
+				slug: categories.slug,
+				updatedAt: categories.updatedAt
+			})
+			.from(categories);
+	} catch (error) {
+		console.error('Database error in sitemap generation:', error);
+		// データベースエラーの場合は基本的なサイトマップのみ返す
+	}
 
 	const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -37,6 +45,7 @@ export const GET: RequestHandler = async () => {
 	
 	<!-- 記事ページ -->
 	${publishedPosts
+		.filter((post) => post.publishedAt) // publishedAtがnullでないもののみ
 		.map(
 			(post) => `
 	<url>

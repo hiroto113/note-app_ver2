@@ -6,8 +6,8 @@
  * 文字列を指定された長さに切り詰める
  */
 export function truncateText(text: string, maxLength: number): string {
-	if (text.length <= maxLength) {
-		return text;
+	if (!text || text.length <= maxLength) {
+		return text || '';
 	}
 	return text.substring(0, maxLength - 3) + '...';
 }
@@ -24,6 +24,8 @@ export function generateSeoTitle(title: string, siteName: string = ''): string {
  * SEO用の説明文を生成（最大160文字）
  */
 export function generateSeoDescription(text: string): string {
+	if (!text) return '';
+	
 	// HTMLタグを除去
 	const plainText = text.replace(/<[^>]*>/g, '');
 	// 改行を空白に変換
@@ -35,18 +37,27 @@ export function generateSeoDescription(text: string): string {
  * 記事の内容から自動的にメタ情報を生成
  */
 export function generateMetaFromContent(content: string, title: string) {
+	if (!content && !title) {
+		return {
+			description: '',
+			keywords: ''
+		};
+	}
+
 	// 最初の段落を抽出して説明文に使用
 	const firstParagraph = content
-		.split('\n')
-		.find((line) => line.trim().length > 0 && !line.startsWith('#'));
+		? content
+			.split('\n')
+			.find((line) => line.trim().length > 0 && !line.startsWith('#'))
+		: null;
 
 	const description = firstParagraph
 		? generateSeoDescription(firstParagraph)
-		: generateSeoDescription(title);
+		: generateSeoDescription(title || '');
 
 	// キーワードの抽出（簡易版）
 	// TODO: より高度なキーワード抽出アルゴリズムの実装
-	const keywords = extractKeywords(content);
+	const keywords = extractKeywords(content || '');
 
 	return {
 		description,
@@ -58,6 +69,8 @@ export function generateMetaFromContent(content: string, title: string) {
  * コンテンツから重要なキーワードを抽出
  */
 function extractKeywords(content: string): string[] {
+	if (!content) return [];
+	
 	// HTMLタグを除去
 	const plainText = content.replace(/<[^>]*>/g, '');
 
