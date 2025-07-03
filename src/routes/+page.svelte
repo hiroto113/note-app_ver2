@@ -2,12 +2,30 @@
 	import PostCard from '$lib/components/post/PostCard.svelte';
 	import SlideUp from '$lib/components/ui/SlideUp.svelte';
 	import FadeIn from '$lib/components/ui/FadeIn.svelte';
+	import MetaHead from '$lib/components/seo/MetaHead.svelte';
+	import StructuredData from '$lib/components/seo/StructuredData.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { getStaggerDelay } from '$lib/utils/animations';
+	import { generateBreadcrumbs } from '$lib/utils/seo';
 
 	/** @type {import('./$types').PageData} */
 	export let data;
+
+	// メタタグ用の情報
+	const baseUrl = 'https://mynotes.example.com'; // TODO: 環境変数から取得
+	const siteName = 'My Notes';
+	
+	$: pageTitle = data.currentCategory 
+		? `${data.currentCategory}の記事一覧`
+		: siteName;
+		
+	$: pageDescription = data.currentCategory
+		? `${data.currentCategory}カテゴリの記事一覧ページです。最新の学習記録とメモをご覧いただけます。`
+		: '個人的な学習記録とメモを公開しています。AI×開発に関する知見や技術的な発見を記録しています。';
+
+	// パンくずリスト
+	$: breadcrumbs = generateBreadcrumbs($page.url.pathname, baseUrl);
 
 	// カテゴリフィルタ変更時の処理
 	function handleCategoryChange(event: Event) {
@@ -33,10 +51,17 @@
 	}
 </script>
 
-<svelte:head>
-	<title>My Notes</title>
-	<meta name="description" content="個人的な学習記録とメモ" />
-</svelte:head>
+<!-- SEOメタタグ -->
+<MetaHead 
+	title={pageTitle}
+	description={pageDescription}
+	type="website"
+	keywords="学習記録,メモ,AI,開発,技術ブログ,プログラミング"
+/>
+
+<!-- 構造化データ -->
+<StructuredData type="WebSite" />
+<StructuredData type="BreadcrumbList" data={{ items: breadcrumbs }} />
 
 <div class="space-y-8">
 	<FadeIn>

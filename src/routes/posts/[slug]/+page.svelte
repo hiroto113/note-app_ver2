@@ -1,8 +1,35 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import MetaHead from '$lib/components/seo/MetaHead.svelte';
+	import StructuredData from '$lib/components/seo/StructuredData.svelte';
+	import { page } from '$app/stores';
+	import { generateBreadcrumbs, generateMetaFromContent } from '$lib/utils/seo';
 
 	/** @type {import('./$types').PageData} */
 	export let data;
+
+	// メタタグ用の情報
+	const baseUrl = 'https://mynotes.example.com'; // TODO: 環境変数から取得
+
+	// 記事の内容からメタ情報を生成
+	$: metaInfo = generateMetaFromContent(data.post.content, data.post.title);
+	
+	// SEO用の情報
+	$: seoDescription = data.post.description || metaInfo.description;
+	$: seoKeywords = metaInfo.keywords;
+
+	// パンくずリスト
+	$: breadcrumbs = generateBreadcrumbs($page.url.pathname, baseUrl);
+
+	// 構造化データ用の記事情報
+	$: articleData = {
+		title: data.post.title,
+		description: seoDescription,
+		publishedTime: data.post.publishedAt,
+		modifiedTime: data.post.updatedAt,
+		author: 'サイト管理者',
+		image: `${baseUrl}/api/og/${data.post.slug}` // 動的OGP画像
+	};
 
 	const formatDate = (dateString: string) => {
 		return new Date(dateString).toLocaleDateString('ja-JP', {
@@ -31,10 +58,21 @@
 	});
 </script>
 
-<svelte:head>
-	<title>{data.post.title} - My Notes</title>
-	<meta name="description" content={data.post.description} />
-</svelte:head>
+<!-- SEOメタタグ -->
+<MetaHead 
+	title={data.post.title}
+	description={seoDescription}
+	type="article"
+	keywords={seoKeywords}
+	image={articleData.image}
+	publishedTime={data.post.publishedAt}
+	modifiedTime={data.post.updatedAt}
+	author={articleData.author}
+/>
+
+<!-- 構造化データ -->
+<StructuredData type="Article" data={articleData} />
+<StructuredData type="BreadcrumbList" data={{ items: breadcrumbs }} />
 
 <article class="mx-auto max-w-4xl">
 	<header class="mb-8">

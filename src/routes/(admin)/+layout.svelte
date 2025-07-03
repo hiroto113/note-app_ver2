@@ -10,6 +10,11 @@
 	}
 </script>
 
+<svelte:head>
+	<meta name="robots" content="noindex, nofollow" />
+	<title>管理画面 | My Notes</title>
+</svelte:head>
+
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
 	<nav class="border-b border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
