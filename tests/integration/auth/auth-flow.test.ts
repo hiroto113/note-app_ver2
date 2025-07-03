@@ -28,13 +28,16 @@ describe('Authentication Flow Integration', () => {
 			const password = 'testpass123';
 			const hashedPassword = await bcrypt.hash(password, 10);
 
-			const [user] = await db.insert(users).values({
-				id: crypto.randomUUID(),
-				username,
-				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [user] = await db
+				.insert(users)
+				.values({
+					id: crypto.randomUUID(),
+					username,
+					hashedPassword,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			expect(user).toBeDefined();
 			expect(user.username).toBe(username);
@@ -93,13 +96,16 @@ describe('Authentication Flow Integration', () => {
 
 		beforeEach(async () => {
 			const hashedPassword = await bcrypt.hash('testpass', 10);
-			const [user] = await db.insert(users).values({
-				id: crypto.randomUUID(),
-				username: 'testuser',
-				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [user] = await db
+				.insert(users)
+				.values({
+					id: crypto.randomUUID(),
+					username: 'testuser',
+					hashedPassword,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 			testUserId = user.id;
 		});
 
@@ -107,12 +113,15 @@ describe('Authentication Flow Integration', () => {
 			const sessionId = crypto.randomUUID();
 			const expiresAt = new Date(Date.now() + 86400000); // 24 hours
 
-			const [session] = await db.insert(sessions).values({
-				id: sessionId,
-				userId: testUserId,
-				expiresAt,
-				createdAt: new Date()
-			}).returning();
+			const [session] = await db
+				.insert(sessions)
+				.values({
+					id: sessionId,
+					userId: testUserId,
+					expiresAt,
+					createdAt: new Date()
+				})
+				.returning();
 
 			expect(session).toBeDefined();
 			expect(session.userId).toBe(testUserId);
@@ -185,7 +194,10 @@ describe('Authentication Flow Integration', () => {
 			await db.delete(users).where(eq(users.id, testUserId));
 
 			// Session should be deleted too
-			const sessionResult = await db.select().from(sessions).where(eq(sessions.id, sessionId));
+			const sessionResult = await db
+				.select()
+				.from(sessions)
+				.where(eq(sessions.id, sessionId));
 			expect(sessionResult).toHaveLength(0);
 		});
 	});
@@ -238,9 +250,9 @@ describe('Authentication Flow Integration', () => {
 
 			// Create session that expires in 1ms
 			const session = authMock.createSession(user.id, 1);
-			
+
 			// Wait for expiration
-			await new Promise(resolve => setTimeout(resolve, 10));
+			await new Promise((resolve) => setTimeout(resolve, 10));
 
 			const validation = authMock.validateSession(session.id);
 			expect(validation).toBeNull();
@@ -253,7 +265,7 @@ describe('Authentication Flow Integration', () => {
 			});
 
 			const session = authMock.createSession(user.id);
-			
+
 			// Validate session exists
 			let validation = authMock.validateSession(session.id);
 			expect(validation).not.toBeNull();
@@ -308,26 +320,32 @@ describe('Authentication Flow Integration', () => {
 			const username = 'user@example.com';
 			const hashedPassword = await bcrypt.hash('password', 10);
 
-			const [user] = await db.insert(users).values({
-				id: crypto.randomUUID(),
-				username,
-				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [user] = await db
+				.insert(users)
+				.values({
+					id: crypto.randomUUID(),
+					username,
+					hashedPassword,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			expect(user.username).toBe(username);
 		});
 
 		it('should handle session cleanup for deleted users', async () => {
 			const hashedPassword = await bcrypt.hash('password', 10);
-			const [user] = await db.insert(users).values({
-				id: crypto.randomUUID(),
-				username: 'tempuser',
-				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [user] = await db
+				.insert(users)
+				.values({
+					id: crypto.randomUUID(),
+					username: 'tempuser',
+					hashedPassword,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			const sessionId = crypto.randomUUID();
 			await db.insert(sessions).values({
@@ -341,7 +359,10 @@ describe('Authentication Flow Integration', () => {
 			await db.delete(users).where(eq(users.id, user.id));
 
 			// Verify session is gone
-			const sessionResult = await db.select().from(sessions).where(eq(sessions.userId, user.id));
+			const sessionResult = await db
+				.select()
+				.from(sessions)
+				.where(eq(sessions.userId, user.id));
 			expect(sessionResult).toHaveLength(0);
 		});
 	});
@@ -359,7 +380,7 @@ describe('Authentication Flow Integration', () => {
 
 		it('should generate unique session IDs', async () => {
 			const sessionIds = new Set();
-			
+
 			for (let i = 0; i < 100; i++) {
 				const id = crypto.randomUUID();
 				expect(sessionIds.has(id)).toBe(false);
@@ -369,13 +390,16 @@ describe('Authentication Flow Integration', () => {
 
 		it('should handle concurrent sessions for same user', async () => {
 			const hashedPassword = await bcrypt.hash('password', 10);
-			const [user] = await db.insert(users).values({
-				id: crypto.randomUUID(),
-				username: 'multiuser',
-				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [user] = await db
+				.insert(users)
+				.values({
+					id: crypto.randomUUID(),
+					username: 'multiuser',
+					hashedPassword,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Create multiple sessions for same user
 			const session1Id = crypto.randomUUID();
@@ -396,7 +420,10 @@ describe('Authentication Flow Integration', () => {
 				}
 			]);
 
-			const userSessions = await db.select().from(sessions).where(eq(sessions.userId, user.id));
+			const userSessions = await db
+				.select()
+				.from(sessions)
+				.where(eq(sessions.userId, user.id));
 			expect(userSessions).toHaveLength(2);
 		});
 	});

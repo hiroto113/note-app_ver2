@@ -20,84 +20,105 @@ describe('Public API Integration', () => {
 
 		// Create test user
 		const hashedPassword = await bcrypt.hash('testpass', 10);
-		const [user] = await db.insert(users).values({
-			id: crypto.randomUUID(),
-			username: 'testuser',
-			hashedPassword,
-			createdAt: new Date(),
-			updatedAt: new Date()
-		}).returning();
+		const [user] = await db
+			.insert(users)
+			.values({
+				id: crypto.randomUUID(),
+				username: 'testuser',
+				hashedPassword,
+				createdAt: new Date(),
+				updatedAt: new Date()
+			})
+			.returning();
 		testUserId = user.id;
 
 		// Create test categories
-		const [techCategory] = await db.insert(categories).values({
-			name: 'Technology',
-			slug: 'technology',
-			description: 'Tech posts',
-			createdAt: new Date(),
-			updatedAt: new Date()
-		}).returning();
+		const [techCategory] = await db
+			.insert(categories)
+			.values({
+				name: 'Technology',
+				slug: 'technology',
+				description: 'Tech posts',
+				createdAt: new Date(),
+				updatedAt: new Date()
+			})
+			.returning();
 
-		const [webCategory] = await db.insert(categories).values({
-			name: 'Web Development',
-			slug: 'web-dev',
-			description: 'Web dev posts',
-			createdAt: new Date(),
-			updatedAt: new Date()
-		}).returning();
+		const [webCategory] = await db
+			.insert(categories)
+			.values({
+				name: 'Web Development',
+				slug: 'web-dev',
+				description: 'Web dev posts',
+				createdAt: new Date(),
+				updatedAt: new Date()
+			})
+			.returning();
 
 		// Create test posts
 		const now = new Date();
 		const yesterday = new Date(now.getTime() - 86400000);
 		const tomorrow = new Date(now.getTime() + 86400000);
 
-		const [post1] = await db.insert(posts).values({
-			title: 'Published Post 1',
-			slug: 'published-post-1',
-			content: '# Published Post 1\n\nThis is the content.',
-			excerpt: 'This is post 1',
-			status: 'published',
-			publishedAt: yesterday,
-			userId: testUserId,
-			createdAt: yesterday,
-			updatedAt: yesterday
-		}).returning();
+		const [post1] = await db
+			.insert(posts)
+			.values({
+				title: 'Published Post 1',
+				slug: 'published-post-1',
+				content: '# Published Post 1\n\nThis is the content.',
+				excerpt: 'This is post 1',
+				status: 'published',
+				publishedAt: yesterday,
+				userId: testUserId,
+				createdAt: yesterday,
+				updatedAt: yesterday
+			})
+			.returning();
 
-		const [post2] = await db.insert(posts).values({
-			title: 'Published Post 2',
-			slug: 'published-post-2',
-			content: '# Published Post 2\n\nThis is the content.',
-			excerpt: 'This is post 2',
-			status: 'published',
-			publishedAt: now,
-			userId: testUserId,
-			createdAt: now,
-			updatedAt: now
-		}).returning();
+		const [post2] = await db
+			.insert(posts)
+			.values({
+				title: 'Published Post 2',
+				slug: 'published-post-2',
+				content: '# Published Post 2\n\nThis is the content.',
+				excerpt: 'This is post 2',
+				status: 'published',
+				publishedAt: now,
+				userId: testUserId,
+				createdAt: now,
+				updatedAt: now
+			})
+			.returning();
 
-		const [draftPost] = await db.insert(posts).values({
-			title: 'Draft Post',
-			slug: 'draft-post',
-			content: '# Draft Post\n\nThis is draft content.',
-			excerpt: 'This is a draft',
-			status: 'draft',
-			publishedAt: null,
-			userId: testUserId,
-			createdAt: now,
-			updatedAt: now
-		}).returning();
+		const [draftPost] = await db
+			.insert(posts)
+			.values({
+				title: 'Draft Post',
+				slug: 'draft-post',
+				content: '# Draft Post\n\nThis is draft content.',
+				excerpt: 'This is a draft',
+				status: 'draft',
+				publishedAt: null,
+				userId: testUserId,
+				createdAt: now,
+				updatedAt: now
+			})
+			.returning();
 
-		const [futurePost] = await db.insert(posts).values({
-			title: 'Future Post',
-			slug: 'future-post',
-			content: '# Future Post\n\nThis is future content.',
-			excerpt: 'This is scheduled',
-			status: 'published',
-			publishedAt: tomorrow,
-			userId: testUserId,
-			createdAt: now,
-			updatedAt: now
-		}).returning();
+		const [futurePost] = await db
+			.insert(posts)
+			.values({
+				title: 'Future Post',
+				slug: 'future-post',
+				content: '# Future Post\n\nThis is future content.',
+				excerpt: 'This is scheduled',
+				status: 'published',
+				publishedAt: tomorrow,
+				userId: testUserId,
+				createdAt: now,
+				updatedAt: now
+			})
+			.returning();
 
 		// Associate posts with categories
 		await db.insert(postsToCategories).values([
@@ -134,7 +155,7 @@ describe('Public API Integration', () => {
 
 			expect(data.posts[0].categories).toBeDefined();
 			expect(Array.isArray(data.posts[0].categories)).toBe(true);
-			
+
 			// Post 2 should have 2 categories
 			const post2 = data.posts.find((p: any) => p.slug === 'published-post-2');
 			expect(post2.categories).toHaveLength(2);
@@ -190,10 +211,10 @@ describe('Public API Integration', () => {
 		it('should return a single published post', async () => {
 			const request = new Request('http://localhost:5173/api/posts/published-post-1');
 			const params = { slug: 'published-post-1' };
-			const response = await postDetailApi.GET({ 
-				request, 
+			const response = await postDetailApi.GET({
+				request,
 				params,
-				url: new URL(request.url) 
+				url: new URL(request.url)
 			} as any);
 			const data = await response.json();
 
@@ -206,10 +227,10 @@ describe('Public API Integration', () => {
 		it('should return post with categories', async () => {
 			const request = new Request('http://localhost:5173/api/posts/published-post-2');
 			const params = { slug: 'published-post-2' };
-			const response = await postDetailApi.GET({ 
-				request, 
+			const response = await postDetailApi.GET({
+				request,
 				params,
-				url: new URL(request.url) 
+				url: new URL(request.url)
 			} as any);
 			const data = await response.json();
 
@@ -222,10 +243,10 @@ describe('Public API Integration', () => {
 		it('should not return draft posts', async () => {
 			const request = new Request('http://localhost:5173/api/posts/draft-post');
 			const params = { slug: 'draft-post' };
-			const response = await postDetailApi.GET({ 
-				request, 
+			const response = await postDetailApi.GET({
+				request,
 				params,
-				url: new URL(request.url) 
+				url: new URL(request.url)
 			} as any);
 
 			expect(response.status).toBe(404);
@@ -234,10 +255,10 @@ describe('Public API Integration', () => {
 		it('should not return future posts', async () => {
 			const request = new Request('http://localhost:5173/api/posts/future-post');
 			const params = { slug: 'future-post' };
-			const response = await postDetailApi.GET({ 
-				request, 
+			const response = await postDetailApi.GET({
+				request,
 				params,
-				url: new URL(request.url) 
+				url: new URL(request.url)
 			} as any);
 
 			expect(response.status).toBe(404);
@@ -246,10 +267,10 @@ describe('Public API Integration', () => {
 		it('should return 404 for non-existent post', async () => {
 			const request = new Request('http://localhost:5173/api/posts/non-existent');
 			const params = { slug: 'non-existent' };
-			const response = await postDetailApi.GET({ 
-				request, 
+			const response = await postDetailApi.GET({
+				request,
 				params,
-				url: new URL(request.url) 
+				url: new URL(request.url)
 			} as any);
 
 			expect(response.status).toBe(404);

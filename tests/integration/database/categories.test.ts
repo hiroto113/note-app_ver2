@@ -17,13 +17,16 @@ describe('Categories Database Integration', () => {
 
 		// Create test user
 		const hashedPassword = await bcrypt.hash('testpass', 10);
-		const [user] = await db.insert(users).values({
-			id: crypto.randomUUID(),
-			username: 'testuser',
-			hashedPassword,
-			createdAt: new Date(),
-			updatedAt: new Date()
-		}).returning();
+		const [user] = await db
+			.insert(users)
+			.values({
+				id: crypto.randomUUID(),
+				username: 'testuser',
+				hashedPassword,
+				createdAt: new Date(),
+				updatedAt: new Date()
+			})
+			.returning();
 		testUserId = user.id;
 	});
 
@@ -54,13 +57,16 @@ describe('Categories Database Integration', () => {
 		});
 
 		it('should read a category by id', async () => {
-			const [created] = await db.insert(categories).values({
-				name: 'Test Category',
-				slug: 'test-category',
-				description: 'Test description',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [created] = await db
+				.insert(categories)
+				.values({
+					name: 'Test Category',
+					slug: 'test-category',
+					description: 'Test description',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			const [found] = await db.select().from(categories).where(eq(categories.id, created.id));
 
@@ -70,18 +76,22 @@ describe('Categories Database Integration', () => {
 		});
 
 		it('should update a category', async () => {
-			const [created] = await db.insert(categories).values({
-				name: 'Original Name',
-				slug: 'original-slug',
-				description: 'Original description',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [created] = await db
+				.insert(categories)
+				.values({
+					name: 'Original Name',
+					slug: 'original-slug',
+					description: 'Original description',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			const newName = 'Updated Name';
 			const newDescription = 'Updated description';
 
-			await db.update(categories)
+			await db
+				.update(categories)
 				.set({
 					name: newName,
 					description: newDescription,
@@ -89,7 +99,10 @@ describe('Categories Database Integration', () => {
 				})
 				.where(eq(categories.id, created.id));
 
-			const [updated] = await db.select().from(categories).where(eq(categories.id, created.id));
+			const [updated] = await db
+				.select()
+				.from(categories)
+				.where(eq(categories.id, created.id));
 
 			expect(updated.name).toBe(newName);
 			expect(updated.description).toBe(newDescription);
@@ -97,13 +110,16 @@ describe('Categories Database Integration', () => {
 		});
 
 		it('should delete a category', async () => {
-			const [created] = await db.insert(categories).values({
-				name: 'To Delete',
-				slug: 'to-delete',
-				description: 'Delete me',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [created] = await db
+				.insert(categories)
+				.values({
+					name: 'To Delete',
+					slug: 'to-delete',
+					description: 'Delete me',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			await db.delete(categories).where(eq(categories.id, created.id));
 
@@ -115,34 +131,43 @@ describe('Categories Database Integration', () => {
 	describe('Category-Post Relationships', () => {
 		it('should count posts per category', async () => {
 			// Create categories
-			const [cat1] = await db.insert(categories).values({
-				name: 'Category 1',
-				slug: 'category-1',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [cat1] = await db
+				.insert(categories)
+				.values({
+					name: 'Category 1',
+					slug: 'category-1',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
-			const [cat2] = await db.insert(categories).values({
-				name: 'Category 2',
-				slug: 'category-2',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [cat2] = await db
+				.insert(categories)
+				.values({
+					name: 'Category 2',
+					slug: 'category-2',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Create posts
 			const postIds = [];
 			for (let i = 0; i < 5; i++) {
-				const [post] = await db.insert(posts).values({
-					title: `Post ${i}`,
-					slug: `post-${i}`,
-					content: 'Content',
-					excerpt: 'Excerpt',
-					status: 'published',
-					publishedAt: new Date(),
-					userId: testUserId,
-					createdAt: new Date(),
-					updatedAt: new Date()
-				}).returning();
+				const [post] = await db
+					.insert(posts)
+					.values({
+						title: `Post ${i}`,
+						slug: `post-${i}`,
+						content: 'Content',
+						excerpt: 'Excerpt',
+						status: 'published',
+						publishedAt: new Date(),
+						userId: testUserId,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					})
+					.returning();
 				postIds.push(post.id);
 			}
 
@@ -172,49 +197,61 @@ describe('Categories Database Integration', () => {
 		});
 
 		it('should get categories with published post count', async () => {
-			const [category] = await db.insert(categories).values({
-				name: 'Test Category',
-				slug: 'test-category',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [category] = await db
+				.insert(categories)
+				.values({
+					name: 'Test Category',
+					slug: 'test-category',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Create mixed posts
-			const [publishedPost1] = await db.insert(posts).values({
-				title: 'Published 1',
-				slug: 'published-1',
-				content: 'Content',
-				excerpt: 'Excerpt',
-				status: 'published',
-				publishedAt: new Date(),
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [publishedPost1] = await db
+				.insert(posts)
+				.values({
+					title: 'Published 1',
+					slug: 'published-1',
+					content: 'Content',
+					excerpt: 'Excerpt',
+					status: 'published',
+					publishedAt: new Date(),
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
-			const [publishedPost2] = await db.insert(posts).values({
-				title: 'Published 2',
-				slug: 'published-2',
-				content: 'Content',
-				excerpt: 'Excerpt',
-				status: 'published',
-				publishedAt: new Date(),
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [publishedPost2] = await db
+				.insert(posts)
+				.values({
+					title: 'Published 2',
+					slug: 'published-2',
+					content: 'Content',
+					excerpt: 'Excerpt',
+					status: 'published',
+					publishedAt: new Date(),
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
-			const [draftPost] = await db.insert(posts).values({
-				title: 'Draft',
-				slug: 'draft',
-				content: 'Content',
-				excerpt: 'Excerpt',
-				status: 'draft',
-				publishedAt: null,
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [draftPost] = await db
+				.insert(posts)
+				.values({
+					title: 'Draft',
+					slug: 'draft',
+					content: 'Content',
+					excerpt: 'Excerpt',
+					status: 'draft',
+					publishedAt: null,
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Associate all posts with category
 			await db.insert(postsToCategories).values([
@@ -229,32 +266,37 @@ describe('Categories Database Integration', () => {
 				.from(posts)
 				.innerJoin(postsToCategories, eq(posts.id, postsToCategories.postId))
 				.where(
-					eq(postsToCategories.categoryId, category.id) &&
-					eq(posts.status, 'published')
+					eq(postsToCategories.categoryId, category.id) && eq(posts.status, 'published')
 				);
 
 			expect(Number(publishedCount[0].count)).toBe(2);
 		});
 
 		it('should handle category deletion with posts', async () => {
-			const [category] = await db.insert(categories).values({
-				name: 'Category to Delete',
-				slug: 'category-to-delete',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [category] = await db
+				.insert(categories)
+				.values({
+					name: 'Category to Delete',
+					slug: 'category-to-delete',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
-			const [post] = await db.insert(posts).values({
-				title: 'Associated Post',
-				slug: 'associated-post',
-				content: 'Content',
-				excerpt: 'Excerpt',
-				status: 'published',
-				publishedAt: new Date(),
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [post] = await db
+				.insert(posts)
+				.values({
+					title: 'Associated Post',
+					slug: 'associated-post',
+					content: 'Content',
+					excerpt: 'Excerpt',
+					status: 'published',
+					publishedAt: new Date(),
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			await db.insert(postsToCategories).values({
 				postId: post.id,
@@ -273,10 +315,7 @@ describe('Categories Database Integration', () => {
 			expect(relationships).toHaveLength(0);
 
 			// But post should still exist
-			const [remainingPost] = await db
-				.select()
-				.from(posts)
-				.where(eq(posts.id, post.id));
+			const [remainingPost] = await db.select().from(posts).where(eq(posts.id, post.id));
 
 			expect(remainingPost).toBeDefined();
 		});
@@ -302,10 +341,7 @@ describe('Categories Database Integration', () => {
 		});
 
 		it('should list all categories alphabetically', async () => {
-			const allCategories = await db
-				.select()
-				.from(categories)
-				.orderBy(categories.name);
+			const allCategories = await db.select().from(categories).orderBy(categories.name);
 
 			expect(allCategories).toHaveLength(4);
 			expect(allCategories[0].name).toBe('AI & ML');
@@ -316,10 +352,7 @@ describe('Categories Database Integration', () => {
 
 		it('should find category by slug', async () => {
 			const slug = 'web-dev';
-			const [category] = await db
-				.select()
-				.from(categories)
-				.where(eq(categories.slug, slug));
+			const [category] = await db.select().from(categories).where(eq(categories.slug, slug));
 
 			expect(category).toBeDefined();
 			expect(category.slug).toBe(slug);
@@ -329,7 +362,7 @@ describe('Categories Database Integration', () => {
 		it('should search categories by name pattern', async () => {
 			// This would need LIKE operator support
 			const allCategories = await db.select().from(categories);
-			const techCategories = allCategories.filter(c => 
+			const techCategories = allCategories.filter((c) =>
 				c.name.toLowerCase().includes('tech')
 			);
 
@@ -382,13 +415,16 @@ describe('Categories Database Integration', () => {
 		});
 
 		it('should allow null descriptions', async () => {
-			const [category] = await db.insert(categories).values({
-				name: 'No Description',
-				slug: 'no-description',
-				description: null,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [category] = await db
+				.insert(categories)
+				.values({
+					name: 'No Description',
+					slug: 'no-description',
+					description: null,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			expect(category.description).toBeNull();
 		});

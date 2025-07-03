@@ -17,6 +17,7 @@ Playwrightを使用して、アプリケーション全体のE2Eテストスイ�
 ### 1. 一般訪問者のジャーニー
 
 **記事閲覧フロー:**
+
 - [ ] トップページアクセス
 - [ ] 記事一覧表示
 - [ ] 記事詳細表示
@@ -24,6 +25,7 @@ Playwrightを使用して、アプリケーション全体のE2Eテストスイ�
 - [ ] レスポンシブデザイン確認
 
 **ナビゲーション:**
+
 - [ ] ヘッダーナビゲーション
 - [ ] フッターナビゲーション
 - [ ] ページネーション
@@ -32,6 +34,7 @@ Playwrightを使用して、アプリケーション全体のE2Eテストスイ�
 ### 2. 管理者のジャーニー
 
 **認証フロー:**
+
 - [ ] ログインページアクセス
 - [ ] 認証情報入力
 - [ ] ログイン成功・失敗
@@ -39,6 +42,7 @@ Playwrightを使用して、アプリケーション全体のE2Eテストスイ�
 - [ ] ログアウト
 
 **記事管理フロー:**
+
 - [ ] 管理画面アクセス
 - [ ] 記事一覧表示
 - [ ] 記事作成
@@ -47,12 +51,14 @@ Playwrightを使用して、アプリケーション全体のE2Eテストスイ�
 - [ ] 記事プレビュー
 
 **カテゴリ管理フロー:**
+
 - [ ] カテゴリ一覧表示
 - [ ] カテゴリ作成
 - [ ] カテゴリ編集
 - [ ] カテゴリ削除
 
 **リッチテキストエディタ:**
+
 - [ ] テキスト入力
 - [ ] フォーマット適用
 - [ ] 画像挿入
@@ -61,12 +67,14 @@ Playwrightを使用して、アプリケーション全体のE2Eテストスイ�
 ### 3. クロスブラウザ・デバイステスト
 
 **ブラウザテスト:**
+
 - [ ] Chrome（デスクトップ・モバイル）
 - [ ] Firefox（デスクトップ・モバイル）
 - [ ] Safari（デスクトップ・モバイル）
 - [ ] Edge（デスクトップ）
 
 **デバイステスト:**
+
 - [ ] デスクトップ（1920x1080）
 - [ ] タブレット（768x1024）
 - [ ] モバイル（375x667）
@@ -100,94 +108,98 @@ tests/e2e/
 ### 2. 主要テストケース
 
 **一般訪問者テスト:**
+
 ```typescript
 // tests/e2e/pages/home.spec.ts
 import { test, expect } from '@playwright/test';
 
 test.describe('ホームページ', () => {
-  test('記事一覧が表示される', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.locator('article')).toHaveCount(10);
-    await expect(page.locator('h1')).toContainText('最新の記事');
-  });
+	test('記事一覧が表示される', async ({ page }) => {
+		await page.goto('/');
+		await expect(page.locator('article')).toHaveCount(10);
+		await expect(page.locator('h1')).toContainText('最新の記事');
+	});
 
-  test('記事詳細ページに遷移できる', async ({ page }) => {
-    await page.goto('/');
-    await page.locator('article').first().click();
-    await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('.post-content')).toBeVisible();
-  });
+	test('記事詳細ページに遷移できる', async ({ page }) => {
+		await page.goto('/');
+		await page.locator('article').first().click();
+		await expect(page.locator('h1')).toBeVisible();
+		await expect(page.locator('.post-content')).toBeVisible();
+	});
 });
 ```
 
 **管理者テスト:**
+
 ```typescript
 // tests/e2e/pages/admin/posts.spec.ts
 import { test, expect } from '@playwright/test';
 import { loginAsAdmin } from '../../utils/auth-helpers';
 
 test.describe('記事管理', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginAsAdmin(page);
-  });
+	test.beforeEach(async ({ page }) => {
+		await loginAsAdmin(page);
+	});
 
-  test('記事を作成できる', async ({ page }) => {
-    await page.goto('/admin/posts');
-    await page.locator('button:has-text("新規作成")').click();
-    await page.fill('[data-testid="title-input"]', 'テスト記事');
-    await page.fill('[data-testid="content-input"]', 'テスト内容');
-    await page.locator('button:has-text("保存")').click();
-    await expect(page.locator('text=記事を作成しました')).toBeVisible();
-  });
+	test('記事を作成できる', async ({ page }) => {
+		await page.goto('/admin/posts');
+		await page.locator('button:has-text("新規作成")').click();
+		await page.fill('[data-testid="title-input"]', 'テスト記事');
+		await page.fill('[data-testid="content-input"]', 'テスト内容');
+		await page.locator('button:has-text("保存")').click();
+		await expect(page.locator('text=記事を作成しました')).toBeVisible();
+	});
 });
 ```
 
 ### 3. パフォーマンステスト
 
 **Lighthouse テスト:**
+
 ```typescript
 // tests/e2e/performance/lighthouse.spec.ts
 import { test, expect } from '@playwright/test';
 import { playAudit } from 'playwright-lighthouse';
 
 test.describe('Lighthouse テスト', () => {
-  test('トップページのパフォーマンス', async ({ page }) => {
-    await page.goto('/');
-    
-    await playAudit({
-      page,
-      thresholds: {
-        performance: 90,
-        accessibility: 95,
-        'best-practices': 90,
-        seo: 95
-      }
-    });
-  });
+	test('トップページのパフォーマンス', async ({ page }) => {
+		await page.goto('/');
+
+		await playAudit({
+			page,
+			thresholds: {
+				performance: 90,
+				accessibility: 95,
+				'best-practices': 90,
+				seo: 95
+			}
+		});
+	});
 });
 ```
 
 **Core Web Vitals テスト:**
+
 ```typescript
 // tests/e2e/performance/core-web-vitals.spec.ts
 import { test, expect } from '@playwright/test';
 
 test.describe('Core Web Vitals', () => {
-  test('LCP が 2.5s 以下', async ({ page }) => {
-    await page.goto('/');
-    
-    const lcp = await page.evaluate(() => {
-      return new Promise((resolve) => {
-        new PerformanceObserver((list) => {
-          const entries = list.getEntries();
-          const lastEntry = entries[entries.length - 1];
-          resolve(lastEntry.startTime);
-        }).observe({ entryTypes: ['largest-contentful-paint'] });
-      });
-    });
-    
-    expect(lcp).toBeLessThan(2500);
-  });
+	test('LCP が 2.5s 以下', async ({ page }) => {
+		await page.goto('/');
+
+		const lcp = await page.evaluate(() => {
+			return new Promise((resolve) => {
+				new PerformanceObserver((list) => {
+					const entries = list.getEntries();
+					const lastEntry = entries[entries.length - 1];
+					resolve(lastEntry.startTime);
+				}).observe({ entryTypes: ['largest-contentful-paint'] });
+			});
+		});
+
+		expect(lcp).toBeLessThan(2500);
+	});
 });
 ```
 
@@ -199,21 +211,21 @@ import { test, expect } from '@playwright/test';
 import { injectAxe, checkA11y } from 'axe-playwright';
 
 test.describe('アクセシビリティテスト', () => {
-  test.beforeEach(async ({ page }) => {
-    await injectAxe(page);
-  });
+	test.beforeEach(async ({ page }) => {
+		await injectAxe(page);
+	});
 
-  test('WCAG 2.1 AA準拠', async ({ page }) => {
-    await page.goto('/');
-    await checkA11y(page, null, {
-      axeOptions: {
-        rules: {
-          'color-contrast': { enabled: true },
-          'keyboard-navigation': { enabled: true }
-        }
-      }
-    });
-  });
+	test('WCAG 2.1 AA準拠', async ({ page }) => {
+		await page.goto('/');
+		await checkA11y(page, null, {
+			axeOptions: {
+				rules: {
+					'color-contrast': { enabled: true },
+					'keyboard-navigation': { enabled: true }
+				}
+			}
+		});
+	});
 });
 ```
 
@@ -226,79 +238,79 @@ test.describe('アクセシビリティテスト', () => {
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests/e2e',
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: [
-    ['html'],
-    ['json', { outputFile: 'test-results.json' }],
-    ['github']
-  ],
-  use: {
-    baseURL: 'http://localhost:4173',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure'
-  },
-  projects: [
-    {
-      name: 'setup',
-      testMatch: '**/setup.ts'
-    },
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-      dependencies: ['setup']
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-      dependencies: ['setup']
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-      dependencies: ['setup']
-    },
-    {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
-      dependencies: ['setup']
-    },
-    {
-      name: 'mobile-safari',
-      use: { ...devices['iPhone 12'] },
-      dependencies: ['setup']
-    }
-  ],
-  webServer: {
-    command: 'pnpm run build && pnpm run preview',
-    url: 'http://localhost:4173',
-    reuseExistingServer: !process.env.CI
-  }
+	testDir: './tests/e2e',
+	fullyParallel: true,
+	forbidOnly: !!process.env.CI,
+	retries: process.env.CI ? 2 : 0,
+	workers: process.env.CI ? 1 : undefined,
+	reporter: [['html'], ['json', { outputFile: 'test-results.json' }], ['github']],
+	use: {
+		baseURL: 'http://localhost:4173',
+		trace: 'on-first-retry',
+		screenshot: 'only-on-failure',
+		video: 'retain-on-failure'
+	},
+	projects: [
+		{
+			name: 'setup',
+			testMatch: '**/setup.ts'
+		},
+		{
+			name: 'chromium',
+			use: { ...devices['Desktop Chrome'] },
+			dependencies: ['setup']
+		},
+		{
+			name: 'firefox',
+			use: { ...devices['Desktop Firefox'] },
+			dependencies: ['setup']
+		},
+		{
+			name: 'webkit',
+			use: { ...devices['Desktop Safari'] },
+			dependencies: ['setup']
+		},
+		{
+			name: 'mobile-chrome',
+			use: { ...devices['Pixel 5'] },
+			dependencies: ['setup']
+		},
+		{
+			name: 'mobile-safari',
+			use: { ...devices['iPhone 12'] },
+			dependencies: ['setup']
+		}
+	],
+	webServer: {
+		command: 'pnpm run build && pnpm run preview',
+		url: 'http://localhost:4173',
+		reuseExistingServer: !process.env.CI
+	}
 });
 ```
 
 ## 完了基準
 
 ### 基本機能テスト
+
 - [ ] 全ユーザージャーニーのテストが実装されている
 - [ ] 全テストが通過している
 - [ ] クロスブラウザテストが通過している
 
 ### パフォーマンステスト
+
 - [ ] Lighthouse スコア目標値達成
 - [ ] Core Web Vitals 基準値達成
 - [ ] レスポンシブデザイン確認
 
 ### アクセシビリティテスト
+
 - [ ] WCAG 2.1 AA準拠確認
 - [ ] キーボードナビゲーション確認
 - [ ] スクリーンリーダー対応確認
 
 ### CI/CD統合
+
 - [ ] GitHub Actions でのテスト実行
 - [ ] テスト結果の可視化
 - [ ] 失敗時のスクリーンショット・動画保存
@@ -306,10 +318,12 @@ export default defineConfig({
 ## 関連ファイル
 
 ### 新規作成
+
 - `tests/e2e/`
 - `playwright.config.ts`
 
 ### 既存ファイル修正
+
 - `package.json`
 - `.github/workflows/`
 

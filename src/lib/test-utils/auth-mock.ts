@@ -26,11 +26,7 @@ export class AuthMock {
 	/**
 	 * テストユーザーを作成
 	 */
-	async createUser(data: {
-		id?: string;
-		username: string;
-		password: string;
-	}): Promise<User> {
+	async createUser(data: { id?: string; username: string; password: string }): Promise<User> {
 		const hashedPassword = await bcrypt.hash(data.password, 10);
 		const user: User = {
 			id: data.id || crypto.randomUUID(),
@@ -140,12 +136,7 @@ export function createMockRequest(options: {
 	headers?: Record<string, string>;
 	body?: any;
 }): Request {
-	const {
-		url = 'http://localhost:5173',
-		method = 'GET',
-		headers = {},
-		body
-	} = options;
+	const { url = 'http://localhost:5173', method = 'GET', headers = {}, body } = options;
 
 	return new Request(url, {
 		method,

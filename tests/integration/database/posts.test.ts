@@ -18,13 +18,16 @@ describe('Posts Database Integration', () => {
 
 		// Create test user
 		const hashedPassword = await bcrypt.hash('testpass', 10);
-		const [user] = await db.insert(users).values({
-			id: crypto.randomUUID(),
-			username: 'testuser',
-			hashedPassword,
-			createdAt: new Date(),
-			updatedAt: new Date()
-		}).returning();
+		const [user] = await db
+			.insert(users)
+			.values({
+				id: crypto.randomUUID(),
+				username: 'testuser',
+				hashedPassword,
+				createdAt: new Date(),
+				updatedAt: new Date()
+			})
+			.returning();
 		testUserId = user.id;
 	});
 
@@ -60,17 +63,20 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should read a post by id', async () => {
-			const [created] = await db.insert(posts).values({
-				title: 'Test Post',
-				slug: 'test-post',
-				content: 'Test content',
-				excerpt: 'Test excerpt',
-				status: 'published',
-				publishedAt: new Date(),
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [created] = await db
+				.insert(posts)
+				.values({
+					title: 'Test Post',
+					slug: 'test-post',
+					content: 'Test content',
+					excerpt: 'Test excerpt',
+					status: 'published',
+					publishedAt: new Date(),
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			const [found] = await db.select().from(posts).where(eq(posts.id, created.id));
 
@@ -80,21 +86,25 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should update a post', async () => {
-			const [created] = await db.insert(posts).values({
-				title: 'Original Title',
-				slug: 'original-slug',
-				content: 'Original content',
-				excerpt: 'Original excerpt',
-				status: 'draft',
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [created] = await db
+				.insert(posts)
+				.values({
+					title: 'Original Title',
+					slug: 'original-slug',
+					content: 'Original content',
+					excerpt: 'Original excerpt',
+					status: 'draft',
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			const newTitle = 'Updated Title';
 			const newContent = 'Updated content';
 
-			await db.update(posts)
+			await db
+				.update(posts)
 				.set({
 					title: newTitle,
 					content: newContent,
@@ -113,16 +123,19 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should delete a post', async () => {
-			const [created] = await db.insert(posts).values({
-				title: 'To Delete',
-				slug: 'to-delete',
-				content: 'Delete me',
-				excerpt: 'Delete excerpt',
-				status: 'draft',
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [created] = await db
+				.insert(posts)
+				.values({
+					title: 'To Delete',
+					slug: 'to-delete',
+					content: 'Delete me',
+					excerpt: 'Delete excerpt',
+					status: 'draft',
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			await db.delete(posts).where(eq(posts.id, created.id));
 
@@ -136,28 +149,34 @@ describe('Posts Database Integration', () => {
 
 		beforeEach(async () => {
 			// Create test category
-			const [category] = await db.insert(categories).values({
-				name: 'Test Category',
-				slug: 'test-category',
-				description: 'Test description',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [category] = await db
+				.insert(categories)
+				.values({
+					name: 'Test Category',
+					slug: 'test-category',
+					description: 'Test description',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 			categoryId = category.id;
 		});
 
 		it('should associate posts with categories', async () => {
-			const [post] = await db.insert(posts).values({
-				title: 'Categorized Post',
-				slug: 'categorized-post',
-				content: 'Content',
-				excerpt: 'Excerpt',
-				status: 'published',
-				publishedAt: new Date(),
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [post] = await db
+				.insert(posts)
+				.values({
+					title: 'Categorized Post',
+					slug: 'categorized-post',
+					content: 'Content',
+					excerpt: 'Excerpt',
+					status: 'published',
+					publishedAt: new Date(),
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Associate post with category
 			await db.insert(postsToCategories).values({
@@ -166,7 +185,8 @@ describe('Posts Database Integration', () => {
 			});
 
 			// Verify association
-			const associations = await db.select()
+			const associations = await db
+				.select()
 				.from(postsToCategories)
 				.where(eq(postsToCategories.postId, post.id));
 
@@ -175,17 +195,20 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should retrieve posts with their categories', async () => {
-			const [post] = await db.insert(posts).values({
-				title: 'Post with Categories',
-				slug: 'post-with-categories',
-				content: 'Content',
-				excerpt: 'Excerpt',
-				status: 'published',
-				publishedAt: new Date(),
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [post] = await db
+				.insert(posts)
+				.values({
+					title: 'Post with Categories',
+					slug: 'post-with-categories',
+					content: 'Content',
+					excerpt: 'Excerpt',
+					status: 'published',
+					publishedAt: new Date(),
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			await db.insert(postsToCategories).values({
 				postId: post.id,
@@ -210,31 +233,40 @@ describe('Posts Database Integration', () => {
 
 		it('should handle multiple categories per post', async () => {
 			// Create additional categories
-			const [cat2] = await db.insert(categories).values({
-				name: 'Category 2',
-				slug: 'category-2',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [cat2] = await db
+				.insert(categories)
+				.values({
+					name: 'Category 2',
+					slug: 'category-2',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
-			const [cat3] = await db.insert(categories).values({
-				name: 'Category 3',
-				slug: 'category-3',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [cat3] = await db
+				.insert(categories)
+				.values({
+					name: 'Category 3',
+					slug: 'category-3',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
-			const [post] = await db.insert(posts).values({
-				title: 'Multi-category Post',
-				slug: 'multi-category-post',
-				content: 'Content',
-				excerpt: 'Excerpt',
-				status: 'published',
-				publishedAt: new Date(),
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [post] = await db
+				.insert(posts)
+				.values({
+					title: 'Multi-category Post',
+					slug: 'multi-category-post',
+					content: 'Content',
+					excerpt: 'Excerpt',
+					status: 'published',
+					publishedAt: new Date(),
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Associate with multiple categories
 			await db.insert(postsToCategories).values([
@@ -315,19 +347,17 @@ describe('Posts Database Integration', () => {
 				.orderBy(desc(posts.publishedAt));
 
 			expect(publishedPosts).toHaveLength(3); // Including future post
-			expect(publishedPosts.every(p => p.status === 'published')).toBe(true);
+			expect(publishedPosts.every((p) => p.status === 'published')).toBe(true);
 		});
 
 		it('should filter posts by publish date', async () => {
 			const now = new Date();
-			
+
 			// This would need SQL functions to compare dates properly
 			// For now, we'll do it in application code
 			const allPosts = await db.select().from(posts);
-			const currentlyPublished = allPosts.filter(p => 
-				p.status === 'published' && 
-				p.publishedAt && 
-				p.publishedAt <= now
+			const currentlyPublished = allPosts.filter(
+				(p) => p.status === 'published' && p.publishedAt && p.publishedAt <= now
 			);
 
 			expect(currentlyPublished).toHaveLength(2);
@@ -349,7 +379,7 @@ describe('Posts Database Integration', () => {
 
 		it('should count total posts', async () => {
 			const allPosts = await db.select().from(posts);
-			const publishedPosts = allPosts.filter(p => p.status === 'published');
+			const publishedPosts = allPosts.filter((p) => p.status === 'published');
 
 			expect(allPosts).toHaveLength(4);
 			expect(publishedPosts).toHaveLength(3);
@@ -389,24 +419,30 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should cascade delete post-category relationships', async () => {
-			const [category] = await db.insert(categories).values({
-				name: 'Test Category',
-				slug: 'test-category',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [category] = await db
+				.insert(categories)
+				.values({
+					name: 'Test Category',
+					slug: 'test-category',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
-			const [post] = await db.insert(posts).values({
-				title: 'Post to Delete',
-				slug: 'post-to-delete',
-				content: 'Content',
-				excerpt: 'Excerpt',
-				status: 'published',
-				publishedAt: new Date(),
-				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [post] = await db
+				.insert(posts)
+				.values({
+					title: 'Post to Delete',
+					slug: 'post-to-delete',
+					content: 'Content',
+					excerpt: 'Excerpt',
+					status: 'published',
+					publishedAt: new Date(),
+					userId: testUserId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			await db.insert(postsToCategories).values({
 				postId: post.id,

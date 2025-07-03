@@ -6,11 +6,7 @@ export default defineConfig({
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
 	workers: process.env.CI ? 1 : undefined,
-	reporter: [
-		['html'],
-		['json', { outputFile: 'test-results/e2e-results.json' }],
-		['github']
-	],
+	reporter: [['html'], ['json', { outputFile: 'test-results/e2e-results.json' }], ['github']],
 	use: {
 		baseURL: 'http://localhost:4173', // Use preview server for E2E tests
 		trace: 'on-first-retry',

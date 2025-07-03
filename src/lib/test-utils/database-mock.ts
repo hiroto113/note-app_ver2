@@ -102,11 +102,13 @@ export class DatabaseMock {
 		return Array.from(this.data.posts.values()).find((p) => p.slug === slug) || null;
 	}
 
-	async getPosts(options: {
-		status?: 'published' | 'draft';
-		limit?: number;
-		offset?: number;
-	} = {}): Promise<Post[]> {
+	async getPosts(
+		options: {
+			status?: 'published' | 'draft';
+			limit?: number;
+			offset?: number;
+		} = {}
+	): Promise<Post[]> {
 		let posts = Array.from(this.data.posts.values());
 
 		// Filter by status
@@ -178,7 +180,7 @@ export class DatabaseMock {
 	}
 
 	async getCategories(): Promise<Category[]> {
-		return Array.from(this.data.categories.values()).sort((a, b) => 
+		return Array.from(this.data.categories.values()).sort((a, b) =>
 			a.name.localeCompare(b.name)
 		);
 	}

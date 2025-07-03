@@ -5,6 +5,7 @@
 Phase 7.5は、これまで実装してきた全ての機能（Phase 1-7）を対象とした包括的な統合テストと品質保証を実施するフェーズです。特に、Phase 7の最終段階で先送りされたLighthouse CI 500エラーの解決を含む、アプリケーション全体の品質保証を行います。
 
 **解決する課題：**
+
 - Lighthouse CI実行時の500エラー
 - 全実装機能の統合動作確認
 - 本番環境での品質基準の確保
@@ -13,6 +14,7 @@ Phase 7.5は、これまで実装してきた全ての機能（Phase 1-7）を�
 - 品質ゲートの確立
 
 **対象機能（Phase 1-7の全実装内容）：**
+
 - Phase 1: プロジェクト初期化・GitHub設定
 - Phase 2: MDsvex設定・基本機能
 - Phase 3: データベース設定・認証・CRUD API
@@ -22,6 +24,7 @@ Phase 7.5は、これまで実装してきた全ての機能（Phase 1-7）を�
 - Phase 7: SEO最適化・OGP対応・パフォーマンス改善・Lighthouse対応
 
 **関連する全体設計項目：**
+
 - 8.1 品質保証戦略
 - 8.2 テスト自動化
 - 8.3 継続的品質改善
@@ -33,23 +36,23 @@ Phase 7.5は、これまで実装してきた全ての機能（Phase 1-7）を�
 **問題の特定と対策：**
 
 1. **環境変数の設定**
-   - CI環境での環境変数の適切な設定
-   - データベースURL、セッションシークレット、認証設定の確認
+    - CI環境での環境変数の適切な設定
+    - データベースURL、セッションシークレット、認証設定の確認
 
 2. **公開APIの検証**
-   - `src/routes/+page.server.ts`のpublicApi呼び出し確認
-   - `src/lib/api/index.ts`のAPIクライアント実装確認
-   - エラーハンドリングの改善
+    - `src/routes/+page.server.ts`のpublicApi呼び出し確認
+    - `src/lib/api/index.ts`のAPIクライアント実装確認
+    - エラーハンドリングの改善
 
 3. **データベースの初期化**
-   - CI環境でのデータベースマイグレーション確認
-   - シードデータの適切な投入
-   - テストデータの準備
+    - CI環境でのデータベースマイグレーション確認
+    - シードデータの適切な投入
+    - テストデータの準備
 
 4. **認証システムの検証**
-   - Auth.jsの設定確認
-   - セッション管理の検証
-   - 管理画面アクセス権限の確認
+    - Auth.jsの設定確認
+    - セッション管理の検証
+    - 管理画面アクセス権限の確認
 
 ### 2.2 全機能統合テストフレームワーク
 
@@ -70,51 +73,57 @@ graph TB
 **実装コンポーネント：**
 
 1. **テストユーティリティ**
-   - `src/lib/test-utils/`
-   - テストヘルパー関数
-   - モックデータ生成
-   - 認証モック
+    - `src/lib/test-utils/`
+    - テストヘルパー関数
+    - モックデータ生成
+    - 認証モック
 
 2. **統合テストスイート**
-   - `tests/integration/`
-   - API統合テスト
-   - データベース統合テスト
-   - 認証フローテスト
+    - `tests/integration/`
+    - API統合テスト
+    - データベース統合テスト
+    - 認証フローテスト
 
 3. **E2Eテストスイート**
-   - `tests/e2e/`
-   - 全ユーザージャーニーテスト
-   - 管理画面操作テスト
-   - レスポンシブデザインテスト
+    - `tests/e2e/`
+    - 全ユーザージャーニーテスト
+    - 管理画面操作テスト
+    - レスポンシブデザインテスト
 
 ### 2.3 機能別テスト計画
 
 **Phase 1-2: 基盤機能テスト**
+
 - プロジェクト構成の確認
 - MDsvex動作確認
 - 基本ルーティング確認
 
 **Phase 3: データベース・認証テスト**
+
 - データベース接続・マイグレーション
 - CRUD API動作確認
 - 認証フロー確認
 
 **Phase 4: 管理画面テスト**
+
 - 管理画面UI動作確認
 - 記事・カテゴリCRUD操作
 - リッチテキストエディタ動作
 
 **Phase 5: API統合テスト**
+
 - 公開API動作確認
 - 管理API動作確認
 - メディアアップロード機能
 
 **Phase 6: UI/UX テスト**
+
 - レスポンシブデザイン確認
 - ダークモード動作確認
 - アクセシビリティ基準確認
 
 **Phase 7: SEO・パフォーマンステスト**
+
 - メタタグ最適化確認
 - OGP対応確認
 - パフォーマンス指標確認
@@ -124,19 +133,19 @@ graph TB
 **GitHub Actions ワークフロー：**
 
 1. **品質ゲート設定**
-   - 必須チェック項目の明確化
-   - 失敗時のロールバック戦略
-   - 段階的テスト実行
+    - 必須チェック項目の明確化
+    - 失敗時のロールバック戦略
+    - 段階的テスト実行
 
 2. **並列テスト実行**
-   - テスト実行時間の短縮
-   - リソースの効率的利用
-   - テストマトリックスの最適化
+    - テスト実行時間の短縮
+    - リソースの効率的利用
+    - テストマトリックスの最適化
 
 3. **レポート生成**
-   - テスト結果の可視化
-   - 品質メトリクスの追跡
-   - カバレッジレポート
+    - テスト結果の可視化
+    - 品質メトリクスの追跡
+    - カバレッジレポート
 
 ## 3. データモデル
 
@@ -147,54 +156,54 @@ graph TB
 ```typescript
 // src/lib/test-utils/seed-test-data.ts
 export interface TestDataSet {
-  posts: Post[];
-  categories: Category[];
-  users: User[];
-  sessions: Session[];
+	posts: Post[];
+	categories: Category[];
+	users: User[];
+	sessions: Session[];
 }
 
 export const createTestData = (): TestDataSet => {
-  return {
-    posts: [
-      {
-        id: 'test-post-1',
-        title: 'テスト記事1',
-        slug: 'test-post-1',
-        content: 'テスト記事の内容',
-        excerpt: 'テスト記事の概要',
-        status: 'published',
-        categoryId: 'test-category-1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        metaTitle: 'テスト記事1 - メタタイトル',
-        metaDescription: 'テスト記事1のメタディスクリプション',
-        ogTitle: 'テスト記事1 - OGタイトル',
-        ogDescription: 'テスト記事1のOGディスクリプション',
-        ogImage: '/images/test-og-image.jpg'
-      }
-    ],
-    categories: [
-      {
-        id: 'test-category-1',
-        name: 'テストカテゴリ1',
-        slug: 'test-category-1',
-        description: 'テストカテゴリの説明',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ],
-    users: [
-      {
-        id: 'test-user-1',
-        email: 'test@example.com',
-        name: 'テストユーザー',
-        role: 'admin',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ],
-    sessions: []
-  };
+	return {
+		posts: [
+			{
+				id: 'test-post-1',
+				title: 'テスト記事1',
+				slug: 'test-post-1',
+				content: 'テスト記事の内容',
+				excerpt: 'テスト記事の概要',
+				status: 'published',
+				categoryId: 'test-category-1',
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				metaTitle: 'テスト記事1 - メタタイトル',
+				metaDescription: 'テスト記事1のメタディスクリプション',
+				ogTitle: 'テスト記事1 - OGタイトル',
+				ogDescription: 'テスト記事1のOGディスクリプション',
+				ogImage: '/images/test-og-image.jpg'
+			}
+		],
+		categories: [
+			{
+				id: 'test-category-1',
+				name: 'テストカテゴリ1',
+				slug: 'test-category-1',
+				description: 'テストカテゴリの説明',
+				createdAt: new Date(),
+				updatedAt: new Date()
+			}
+		],
+		users: [
+			{
+				id: 'test-user-1',
+				email: 'test@example.com',
+				name: 'テストユーザー',
+				role: 'admin',
+				createdAt: new Date(),
+				updatedAt: new Date()
+			}
+		],
+		sessions: []
+	};
 };
 ```
 
@@ -205,32 +214,32 @@ export const createTestData = (): TestDataSet => {
 ```typescript
 // src/lib/types/quality-metrics.ts
 export interface QualityMetrics {
-  lighthouse: {
-    performance: number;
-    accessibility: number;
-    bestPractices: number;
-    seo: number;
-    pwa: number;
-  };
-  coreWebVitals: {
-    lcp: number;
-    fid: number;
-    cls: number;
-  };
-  testResults: {
-    unit: TestResult;
-    integration: TestResult;
-    e2e: TestResult;
-  };
-  timestamp: Date;
-  commitHash: string;
+	lighthouse: {
+		performance: number;
+		accessibility: number;
+		bestPractices: number;
+		seo: number;
+		pwa: number;
+	};
+	coreWebVitals: {
+		lcp: number;
+		fid: number;
+		cls: number;
+	};
+	testResults: {
+		unit: TestResult;
+		integration: TestResult;
+		e2e: TestResult;
+	};
+	timestamp: Date;
+	commitHash: string;
 }
 
 export interface TestResult {
-  total: number;
-  passed: number;
-  failed: number;
-  coverage: number;
+	total: number;
+	passed: number;
+	failed: number;
+	coverage: number;
 }
 ```
 
@@ -263,90 +272,90 @@ export interface TestResult {
 **テストシナリオ：**
 
 1. **環境変数テスト**
-   - CI環境での環境変数設定の検証
-   - 各種APIキーの有効性確認
-   - データベース接続情報の確認
+    - CI環境での環境変数設定の検証
+    - 各種APIキーの有効性確認
+    - データベース接続情報の確認
 
 2. **データベース接続テスト**
-   - マイグレーション実行の確認
-   - データアクセスの正常性確認
-   - テストデータの投入確認
+    - マイグレーション実行の確認
+    - データアクセスの正常性確認
+    - テストデータの投入確認
 
 3. **API動作テスト**
-   - 全APIエンドポイントの200レスポンス確認
-   - エラーハンドリングの検証
-   - 認証APIの動作確認
+    - 全APIエンドポイントの200レスポンス確認
+    - エラーハンドリングの検証
+    - 認証APIの動作確認
 
 4. **認証システムテスト**
-   - Auth.jsの設定確認
-   - セッション管理の検証
-   - 管理画面アクセス権限の確認
+    - Auth.jsの設定確認
+    - セッション管理の検証
+    - 管理画面アクセス権限の確認
 
 ### 5.2 全機能統合テスト
 
 **テストケース：**
 
 1. **基盤機能テスト**
-   - プロジェクト構成の検証
-   - 基本ルーティングの確認
-   - MDsvex動作の確認
+    - プロジェクト構成の検証
+    - 基本ルーティングの確認
+    - MDsvex動作の確認
 
 2. **データベース・API テスト**
-   - 記事CRUD操作の確認
-   - カテゴリCRUD操作の確認
-   - 認証フローの確認
-   - データ整合性の確認
+    - 記事CRUD操作の確認
+    - カテゴリCRUD操作の確認
+    - 認証フローの確認
+    - データ整合性の確認
 
 3. **管理画面テスト**
-   - ログイン・ログアウト機能
-   - 記事作成・編集・削除機能
-   - カテゴリ管理機能
-   - リッチテキストエディタ機能
-   - メディアアップロード機能
+    - ログイン・ログアウト機能
+    - 記事作成・編集・削除機能
+    - カテゴリ管理機能
+    - リッチテキストエディタ機能
+    - メディアアップロード機能
 
 4. **公開サイトテスト**
-   - 記事一覧表示の確認
-   - 記事詳細表示の確認
-   - カテゴリ別表示の確認
-   - 検索機能の確認
+    - 記事一覧表示の確認
+    - 記事詳細表示の確認
+    - カテゴリ別表示の確認
+    - 検索機能の確認
 
 5. **パフォーマンステスト**
-   - Core Web Vitals の基準値確認
-   - レスポンス時間の測定
-   - リソース使用量の監視
-   - 画像最適化の効果確認
+    - Core Web Vitals の基準値確認
+    - レスポンス時間の測定
+    - リソース使用量の監視
+    - 画像最適化の効果確認
 
 6. **アクセシビリティテスト**
-   - WCAG 2.1 AA準拠の確認
-   - スクリーンリーダー対応の検証
-   - キーボードナビゲーションの確認
-   - 色覚異常対応の確認
+    - WCAG 2.1 AA準拠の確認
+    - スクリーンリーダー対応の検証
+    - キーボードナビゲーションの確認
+    - 色覚異常対応の確認
 
 7. **SEOテスト**
-   - メタタグの適切な設定確認
-   - OGPタグの検証
-   - 構造化データの確認
-   - サイトマップの生成確認
+    - メタタグの適切な設定確認
+    - OGPタグの検証
+    - 構造化データの確認
+    - サイトマップの生成確認
 
 ### 5.3 E2Eテスト
 
 **テストシナリオ：**
 
 1. **ユーザージャーニーテスト**
-   - 一般訪問者の記事閲覧フロー
-   - 管理者のコンテンツ管理フロー
-   - レスポンシブデザインの検証
+    - 一般訪問者の記事閲覧フロー
+    - 管理者のコンテンツ管理フロー
+    - レスポンシブデザインの検証
 
 2. **ブラウザ互換性テスト**
-   - Chrome、Firefox、Safari、Edge対応確認
-   - モバイルブラウザ対応確認
-   - 異なる解像度での表示確認
+    - Chrome、Firefox、Safari、Edge対応確認
+    - モバイルブラウザ対応確認
+    - 異なる解像度での表示確認
 
 3. **パフォーマンステスト**
-   - 各ページの読み込み時間測定
-   - 画像最適化の効果確認
-   - キャッシュ動作の検証
-   - PWA機能の検証
+    - 各ページの読み込み時間測定
+    - 画像最適化の効果確認
+    - キャッシュ動作の検証
+    - PWA機能の検証
 
 ## 6. 実装マイルストーン
 
@@ -361,6 +370,7 @@ export interface TestResult {
 5. テスト環境の構築
 
 **完了基準：**
+
 - エラー原因の特定完了
 - 修正方針の確定
 - テスト環境の稼働確認
@@ -377,6 +387,7 @@ export interface TestResult {
 5. 環境変数の整備
 
 **完了基準：**
+
 - Lighthouse CI の正常動作確認
 - 全テストの通過
 - 品質基準の達成
@@ -393,6 +404,7 @@ export interface TestResult {
 5. SEOテストの実装
 
 **完了基準：**
+
 - 全機能統合テストスイートの完成
 - 全テストの通過確認
 - 品質メトリクスの可視化
@@ -409,6 +421,7 @@ export interface TestResult {
 5. 運用ガイドラインの作成
 
 **完了基準：**
+
 - E2Eテストの完成
 - 品質保証プロセスの確立
 - 運用ドキュメントの完成
@@ -419,12 +432,14 @@ export interface TestResult {
 ### 7.1 パフォーマンス基準
 
 **Lighthouse スコア：**
+
 - Performance: 90+
 - Accessibility: 95+
 - Best Practices: 90+
 - SEO: 95+
 
 **Core Web Vitals：**
+
 - LCP: 2.5s以下
 - FID: 100ms以下
 - CLS: 0.1以下
@@ -432,6 +447,7 @@ export interface TestResult {
 ### 7.2 アクセシビリティ基準
 
 **WCAG 2.1 AA準拠：**
+
 - 色覚異常対応
 - キーボードナビゲーション
 - スクリーンリーダー対応
@@ -440,6 +456,7 @@ export interface TestResult {
 ### 7.3 SEO基準
 
 **検索エンジン最適化：**
+
 - 適切なメタタグ設定
 - OGP対応
 - 構造化データ
@@ -448,6 +465,7 @@ export interface TestResult {
 ### 7.4 機能品質基準
 
 **全機能の動作確認：**
+
 - 記事CRUD操作の正常動作
 - カテゴリ管理の正常動作
 - 認証システムの正常動作
@@ -457,35 +475,41 @@ export interface TestResult {
 ## 8. 対象機能詳細
 
 ### 8.1 Phase 1-2: 基盤機能
+
 - プロジェクト初期化
 - GitHub設定
 - MDsvex設定
 - 基本ルーティング
 
 ### 8.2 Phase 3: バックエンド機能
+
 - データベース設定（SQLite + Drizzle ORM）
 - 認証システム（Auth.js）
 - 記事CRUD API
 - カテゴリCRUD API
 
 ### 8.3 Phase 4: 管理画面
+
 - 管理画面UI
 - 記事管理インターフェース
 - カテゴリ管理インターフェース
 - リッチテキストエディタ
 
 ### 8.4 Phase 5: API統合
+
 - 公開API
 - 管理API
 - メディアアップロードAPI
 
 ### 8.5 Phase 6: UI/UX
+
 - レスポンシブデザイン
 - ダークモード
 - アニメーション
 - アクセシビリティ対応
 
 ### 8.6 Phase 7: SEO・パフォーマンス
+
 - メタタグ最適化
 - OGP対応
 - パフォーマンス改善
@@ -496,6 +520,7 @@ export interface TestResult {
 ### 9.1 継続的品質監視
 
 **監視項目：**
+
 - Lighthouse スコアの推移
 - エラー発生状況
 - パフォーマンス指標
@@ -505,6 +530,7 @@ export interface TestResult {
 ### 9.2 アラート設定
 
 **通知条件：**
+
 - スコア低下時の通知
 - エラー発生時の通知
 - パフォーマンス劣化時の通知
@@ -523,12 +549,14 @@ export interface TestResult {
 ### 11.1 技術的リスク
 
 **リスク項目：**
+
 - 500エラーの複雑な原因
 - CI環境の制約
 - テスト実行時間の増加
 - 既存機能の回帰
 
 **対策：**
+
 - 段階的な修正アプローチ
 - 並列テスト実行
 - タイムアウト設定の調整
@@ -537,11 +565,13 @@ export interface TestResult {
 ### 11.2 スケジュールリスク
 
 **リスク項目：**
+
 - 原因特定の遅延
 - 修正作業の長期化
 - テスト作成の工数増加
 
 **対策：**
+
 - 詳細な問題分析
 - 代替案の準備
 - 段階的リリース
@@ -550,11 +580,13 @@ export interface TestResult {
 ### 11.3 品質リスク
 
 **リスク項目：**
+
 - テストカバレッジの不足
 - 品質基準の未達成
 - 本番環境での問題発生
 
 **対策：**
+
 - 包括的テスト計画
 - 品質基準の段階的達成
 - 本番環境での継続監視

@@ -34,12 +34,13 @@ export async function apiCall<T = unknown>(
 	options: RequestInit & { baseUrl?: string } = {}
 ): Promise<T> {
 	const { baseUrl = '', ...fetchOptions } = options;
-	
+
 	// サーバーサイドでは絶対URLが必要
 	const isServer = typeof window === 'undefined';
-	const fullUrl = isServer && !baseUrl && !endpoint.startsWith('http') 
-		? `http://localhost:5173${endpoint}`
-		: `${baseUrl}${endpoint}`;
+	const fullUrl =
+		isServer && !baseUrl && !endpoint.startsWith('http')
+			? `http://localhost:5173${endpoint}`
+			: `${baseUrl}${endpoint}`;
 
 	try {
 		const response = await fetch(fullUrl, {
