@@ -58,7 +58,7 @@ describe('OGP Utils', () => {
 
 		it('should handle empty or null input', () => {
 			expect(optimizeOGPDescription('')).toBe('');
-			expect(optimizeOGPDescription(null as any)).toBe('');
+			expect(optimizeOGPDescription(null as unknown as string)).toBe('');
 		});
 	});
 

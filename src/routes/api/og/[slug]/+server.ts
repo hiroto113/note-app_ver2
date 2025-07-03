@@ -6,7 +6,7 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 		const { slug } = params;
 
 		// 記事データを取得
-		let post: any = null;
+		let post: { title?: string; category?: { name?: string } } | null = null;
 		try {
 			const response = await fetch(`/api/posts/${slug}`);
 			if (response.ok) {
