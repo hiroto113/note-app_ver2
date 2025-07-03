@@ -18,7 +18,7 @@
 	$: fullTitle = title === siteName ? title : `${title} | ${siteName}`;
 
 	// Canonical URLを生成
-	$: canonicalUrl = `${baseUrl}${$page.url.pathname}`;
+	$: canonicalUrl = `${baseUrl}${$page?.url?.pathname || ''}`;
 
 	// デフォルトのOGP画像
 	const defaultImage = `${baseUrl}/og-default.png`;

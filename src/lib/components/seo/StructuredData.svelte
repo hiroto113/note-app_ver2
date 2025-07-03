@@ -31,13 +31,13 @@
 	}
 
 	// Articleスキーマ
-	function getArticleSchema() {
+	function getArticleSchemaForPath(currentPath: string) {
 		return {
 			'@context': 'https://schema.org',
 			'@type': 'Article',
 			headline: data.title,
 			description: data.description,
-			url: `${baseUrl}${$page.url.pathname}`,
+			url: `${baseUrl}${currentPath}`,
 			datePublished: data.publishedTime,
 			dateModified: data.modifiedTime || data.publishedTime,
 			author: {
@@ -55,7 +55,7 @@
 			image: data.image || `${baseUrl}/og-default.png`,
 			mainEntityOfPage: {
 				'@type': 'WebPage',
-				'@id': `${baseUrl}${$page.url.pathname}`
+				'@id': `${baseUrl}${currentPath}`
 			}
 		};
 	}
@@ -75,13 +75,16 @@
 		};
 	}
 
+	// 現在のパスを取得
+	$: currentPath = $page?.url?.pathname || '';
+
 	// スキーマを選択
 	$: schema = (() => {
 		switch (type) {
 			case 'WebSite':
 				return getWebSiteSchema();
 			case 'Article':
-				return getArticleSchema();
+				return getArticleSchemaForPath(currentPath);
 			case 'BreadcrumbList':
 				return getBreadcrumbListSchema();
 			default:

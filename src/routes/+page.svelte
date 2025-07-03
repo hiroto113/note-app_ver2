@@ -25,7 +25,7 @@
 		: '個人的な学習記録とメモを公開しています。AI×開発に関する知見や技術的な発見を記録しています。';
 
 	// パンくずリスト
-	$: breadcrumbs = generateBreadcrumbs($page.url.pathname, baseUrl);
+	$: breadcrumbs = generateBreadcrumbs($page?.url?.pathname || '/', baseUrl);
 
 	// カテゴリフィルタ変更時の処理
 	function handleCategoryChange(event: Event) {
@@ -51,12 +51,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{pageTitle}</title>
-	<meta name="description" content={pageDescription} />
-</svelte:head>
-
-<!-- TODO: 一時的に無効化 - CI問題調査のため
+<!-- SEOメタタグ -->
 <MetaHead 
 	title={pageTitle}
 	description={pageDescription}
@@ -64,9 +59,9 @@
 	keywords="学習記録,メモ,AI,開発,技術ブログ,プログラミング"
 />
 
+<!-- 構造化データ -->
 <StructuredData type="WebSite" />
 <StructuredData type="BreadcrumbList" data={{ items: breadcrumbs }} />
--->
 
 <div class="space-y-8">
 	<FadeIn>

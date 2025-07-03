@@ -19,14 +19,16 @@
 	$: seoKeywords = metaInfo.keywords;
 
 	// パンくずリスト
-	$: breadcrumbs = generateBreadcrumbs($page.url.pathname, baseUrl);
+	$: breadcrumbs = generateBreadcrumbs($page?.url?.pathname || '', baseUrl);
 
 	// 構造化データ用の記事情報
 	$: articleData = {
 		title: data.post.title,
 		description: seoDescription,
-		publishedTime: data.post.publishedAt,
-		modifiedTime: data.post.updatedAt,
+		publishedTime: data.post.publishedAt ? 
+			(typeof data.post.publishedAt === 'string' ? data.post.publishedAt : new Date(data.post.publishedAt).toISOString()) : '',
+		modifiedTime: data.post.updatedAt ? 
+			(typeof data.post.updatedAt === 'string' ? data.post.updatedAt : new Date(data.post.updatedAt).toISOString()) : '',
 		author: 'サイト管理者',
 		image: `${baseUrl}/api/og/${data.post.slug}` // 動的OGP画像
 	};
@@ -58,26 +60,21 @@
 	});
 </script>
 
-<svelte:head>
-	<title>{data.post.title} - My Notes</title>
-	<meta name="description" content={seoDescription} />
-</svelte:head>
-
-<!-- TODO: 一時的に無効化 - CI問題調査のため
+<!-- SEOメタタグ -->
 <MetaHead 
 	title={data.post.title}
 	description={seoDescription}
 	type="article"
 	keywords={seoKeywords}
 	image={articleData.image}
-	publishedTime={data.post.publishedAt}
-	modifiedTime={data.post.updatedAt}
+	publishedTime={articleData.publishedTime}
+	modifiedTime={articleData.modifiedTime}
 	author={articleData.author}
 />
 
+<!-- 構造化データ -->
 <StructuredData type="Article" data={articleData} />
 <StructuredData type="BreadcrumbList" data={{ items: breadcrumbs }} />
--->
 
 <article class="mx-auto max-w-4xl">
 	<header class="mb-8">
