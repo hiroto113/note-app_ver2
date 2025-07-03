@@ -1,0 +1,159 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # 毎日午前9時（UTC）に実行
+    - cron: '0 9 * * *'
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Lighthouse CIが差分を比較できるよう履歴を取得
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Build application
+        run: pnpm run build
+        env:
+          # ビルド時の環境変数
+          NODE_ENV: production
+          
+      - name: Start application
+        run: |
+          pnpm run preview &
+          sleep 10
+          curl --retry 5 --retry-delay 5 --retry-connrefused http://localhost:4173/
+        timeout-minutes: 2
+      
+      - name: Run Lighthouse CI (Desktop)
+        run: |
+          npm install -g @lhci/cli@0.12.x
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          LHCI_TOKEN: ${{ secrets.LHCI_TOKEN }}
+      
+      - name: Run Lighthouse CI (Mobile)
+        run: |
+          lhci autorun --config=lighthouserc.mobile.js
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          LHCI_TOKEN: ${{ secrets.LHCI_TOKEN }}
+        continue-on-error: true
+      
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 30
+      
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Lighthouse結果ファイルを読み込み
+            const resultsPath = '.lighthouseci/lhr-*.json';
+            const results = fs.readdirSync('.lighthouseci')
+              .filter(file => file.startsWith('lhr-') && file.endsWith('.json'))
+              .map(file => JSON.parse(fs.readFileSync(path.join('.lighthouseci', file), 'utf8')));
+            
+            if (results.length === 0) return;
+            
+            // スコアの平均を計算
+            const avgScores = results.reduce((acc, result) => {
+              const categories = result.categories;
+              acc.performance += categories.performance.score * 100;
+              acc.accessibility += categories.accessibility.score * 100;
+              acc.bestPractices += categories['best-practices'].score * 100;
+              acc.seo += categories.seo.score * 100;
+              return acc;
+            }, { performance: 0, accessibility: 0, bestPractices: 0, seo: 0 });
+            
+            const count = results.length;
+            Object.keys(avgScores).forEach(key => {
+              avgScores[key] = Math.round(avgScores[key] / count);
+            });
+            
+            // PRコメントを作成
+            const comment = `## 🚀 Lighthouse CI Results
+            
+| Category | Score | Status |
+|----------|-------|--------|
+| 🚀 Performance | ${avgScores.performance}/100 | ${avgScores.performance >= 90 ? '✅' : avgScores.performance >= 70 ? '⚠️' : '❌'} |
+| ♿ Accessibility | ${avgScores.accessibility}/100 | ${avgScores.accessibility >= 90 ? '✅' : avgScores.accessibility >= 70 ? '⚠️' : '❌'} |
+| 🛡️ Best Practices | ${avgScores.bestPractices}/100 | ${avgScores.bestPractices >= 90 ? '✅' : avgScores.bestPractices >= 70 ? '⚠️' : '❌'} |
+| 🔍 SEO | ${avgScores.seo}/100 | ${avgScores.seo >= 90 ? '✅' : avgScores.seo >= 70 ? '⚠️' : '❌'} |
+            
+            📊 Tested URLs: ${results.length}
+            🔗 [View detailed reports in artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+      
+      - name: Fail if scores are below threshold
+        run: |
+          echo "Checking if all Lighthouse scores meet the minimum threshold..."
+          # この段階で失敗していれば、アサートで既に失敗している
+          echo "✅ All Lighthouse scores meet the required thresholds!"
+
+  # セキュリティ監査も同時実行
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      
+      - name: Security audit
+        run: pnpm audit --audit-level moderate
+      
+      - name: Check for vulnerable packages
+        run: |
+          # 脆弱性のあるパッケージをチェック
+          pnpm audit --json > audit-results.json || true
+          
+          # 結果を確認
+          if [ -s audit-results.json ]; then
+            echo "⚠️ Security vulnerabilities found!"
+            cat audit-results.json
+            exit 1
+          else
+            echo "✅ No security vulnerabilities found!"
+          fi

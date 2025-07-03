@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# 管理画面とAPIエンドポイントをクロール対象外にする
+Disallow: /admin/
+Disallow: /api/
+
+# サイトマップの場所を指定
+Sitemap: https://my-notes.vercel.app/sitemap.xml
+
+# 一般的なクローラーガイドライン
+Crawl-delay: 1
+
+# Googlebot専用設定
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# 検索エンジンがインデックスしてほしくないファイル
+Disallow: /*.json$
+Disallow: /sw.js
+Disallow: /offline

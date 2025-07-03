@@ -2,12 +2,30 @@
 	import { signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
 	import ThemeToggle from '$lib/components/ui/ThemeToggle.svelte';
+	import { onMount } from 'svelte';
 
 	export let data;
+
+	let isAdminRoute = false;
 
 	async function handleSignOut() {
 		await signOut({ callbackUrl: '/' });
 	}
+
+	// 管理画面の重要でないコンポーネントを遅延読み込み
+	const loadAdminComponents = () => Promise.all([
+		// 将来的にダッシュボードウィジェットなどを遅延読み込み
+		Promise.resolve()
+	]);
+
+	onMount(() => {
+		isAdminRoute = $page.url.pathname.startsWith('/admin');
+		
+		// 管理画面の場合、追加コンポーネントを事前読み込み
+		if (isAdminRoute) {
+			loadAdminComponents();
+		}
+	});
 </script>
 
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
