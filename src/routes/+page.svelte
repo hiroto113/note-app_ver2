@@ -51,7 +51,12 @@
 	}
 </script>
 
-<!-- SEOメタタグ -->
+<svelte:head>
+	<title>{pageTitle}</title>
+	<meta name="description" content={pageDescription} />
+</svelte:head>
+
+<!-- TODO: 一時的に無効化 - CI問題調査のため
 <MetaHead 
 	title={pageTitle}
 	description={pageDescription}
@@ -59,9 +64,9 @@
 	keywords="学習記録,メモ,AI,開発,技術ブログ,プログラミング"
 />
 
-<!-- 構造化データ -->
 <StructuredData type="WebSite" />
 <StructuredData type="BreadcrumbList" data={{ items: breadcrumbs }} />
+-->
 
 <div class="space-y-8">
 	<FadeIn>

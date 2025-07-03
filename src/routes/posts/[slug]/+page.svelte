@@ -58,7 +58,12 @@
 	});
 </script>
 
-<!-- SEOメタタグ -->
+<svelte:head>
+	<title>{data.post.title} - My Notes</title>
+	<meta name="description" content={seoDescription} />
+</svelte:head>
+
+<!-- TODO: 一時的に無効化 - CI問題調査のため
 <MetaHead 
 	title={data.post.title}
 	description={seoDescription}
@@ -70,9 +75,9 @@
 	author={articleData.author}
 />
 
-<!-- 構造化データ -->
 <StructuredData type="Article" data={articleData} />
 <StructuredData type="BreadcrumbList" data={{ items: breadcrumbs }} />
+-->
 
 <article class="mx-auto max-w-4xl">
 	<header class="mb-8">
