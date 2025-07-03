@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import OGPTags from '$lib/components/seo/OGPTags.svelte';
 
 	/** @type {import('./$types').PageData} */
 	export let data;
@@ -35,6 +36,18 @@
 	<title>{data.post.title} - My Notes</title>
 	<meta name="description" content={data.post.description} />
 </svelte:head>
+
+<!-- OGP Tags -->
+<OGPTags
+	title={data.post.title}
+	description={data.post.description}
+	type="article"
+	slug={data.post.slug}
+	publishedTime={data.post.publishedAt}
+	modifiedTime={data.post.updatedAt}
+	section={data.post.category?.name}
+	author="管理者"
+/>
 
 <article class="mx-auto max-w-4xl">
 	<header class="mb-8">

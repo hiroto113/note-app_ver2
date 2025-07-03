@@ -19,9 +19,9 @@ SEO効果を最大化するため、各ページに適切なメタタグを設�
 - [ ] MetaHeadコンポーネントの作成
 - [ ] 各ページへのメタタグ実装
 - [ ] 構造化データ（JSON-LD）の実装
-  - [ ] WebSiteスキーマ（トップページ）
-  - [ ] Articleスキーマ（記事ページ）
-  - [ ] BreadcrumbListスキーマ（全ページ）
+    - [ ] WebSiteスキーマ（トップページ）
+    - [ ] Articleスキーマ（記事ページ）
+    - [ ] BreadcrumbListスキーマ（全ページ）
 - [ ] 動的メタタグ生成機能
 - [ ] canonicalタグの適切な設定
 - [ ] 管理画面でのSEO設定機能
@@ -31,13 +31,13 @@ SEO効果を最大化するため、各ページに適切なメタタグを設�
 
 - **コンポーネント**: MetaHead.svelte
 - **スキーマ**: Schema.org準拠
-- **文字数制限**: 
-  - タイトル: 60文字以内
-  - 説明文: 160文字以内
+- **文字数制限**:
+    - タイトル: 60文字以内
+    - 説明文: 160文字以内
 - **データベース拡張フィールド**:
-  - seoTitle
-  - seoDescription
-  - seoKeywords
+    - seoTitle
+    - seoDescription
+    - seoKeywords
 
 ## 関連Issue
 

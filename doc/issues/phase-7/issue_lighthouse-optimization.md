@@ -17,25 +17,25 @@ Lighthouseスコアは、Webサイトの品質を総合的に評価する指標�
 ## 完了条件
 
 - [ ] Performance最適化
-  - [ ] 未使用JavaScriptの削除
-  - [ ] レンダリングブロッキングリソースの排除
-  - [ ] サーバー応答時間の改善
+    - [ ] 未使用JavaScriptの削除
+    - [ ] レンダリングブロッキングリソースの排除
+    - [ ] サーバー応答時間の改善
 - [ ] Accessibility最適化
-  - [ ] コントラスト比の改善
-  - [ ] ランドマークの適切な使用
-  - [ ] 見出し階層の整理
+    - [ ] コントラスト比の改善
+    - [ ] ランドマークの適切な使用
+    - [ ] 見出し階層の整理
 - [ ] Best Practices最適化
-  - [ ] セキュリティヘッダーの実装
-  - [ ] HTTPS強制
-  - [ ] 脆弱性のあるパッケージの更新
+    - [ ] セキュリティヘッダーの実装
+    - [ ] HTTPS強制
+    - [ ] 脆弱性のあるパッケージの更新
 - [ ] SEO最適化
-  - [ ] robots.txtの作成
-  - [ ] XMLサイトマップの自動生成
-  - [ ] モバイル対応の確認
+    - [ ] robots.txtの作成
+    - [ ] XMLサイトマップの自動生成
+    - [ ] モバイル対応の確認
 - [ ] Lighthouse CI設定
-  - [ ] GitHub Actionsワークフロー
-  - [ ] スコア閾値の設定
-  - [ ] PR毎の自動チェック
+    - [ ] GitHub Actionsワークフロー
+    - [ ] スコア閾値の設定
+    - [ ] PR毎の自動チェック
 
 ## 技術仕様
 
@@ -43,9 +43,9 @@ Lighthouseスコアは、Webサイトの品質を総合的に評価する指標�
 - **CI/CDツール**: Lighthouse CI + GitHub Actions
 - **監視頻度**: PR毎 + 日次
 - **セキュリティヘッダー**:
-  - X-Frame-Options: DENY
-  - X-Content-Type-Options: nosniff
-  - Referrer-Policy: strict-origin-when-cross-origin
+    - X-Frame-Options: DENY
+    - X-Content-Type-Options: nosniff
+    - Referrer-Policy: strict-origin-when-cross-origin
 
 ## 関連Issue
 
