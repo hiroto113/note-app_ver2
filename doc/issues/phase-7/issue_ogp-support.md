@@ -18,18 +18,18 @@ SNSでのシェア時に適切な画像とテキストが表示されること�
 
 - [ ] OGPTagsコンポーネントの作成
 - [ ] 基本OGPメタタグの実装
-  - [ ] og:title, og:description
-  - [ ] og:type, og:url
-  - [ ] og:image, og:site_name
-  - [ ] og:locale
+    - [ ] og:title, og:description
+    - [ ] og:type, og:url
+    - [ ] og:image, og:site_name
+    - [ ] og:locale
 - [ ] Twitter Cards対応
-  - [ ] twitter:card
-  - [ ] twitter:title, twitter:description
-  - [ ] twitter:image
+    - [ ] twitter:card
+    - [ ] twitter:title, twitter:description
+    - [ ] twitter:image
 - [ ] 動的OGP画像生成API
-  - [ ] /api/og/[slug]エンドポイント
-  - [ ] SVGベースのレンダリング
-  - [ ] キャッシュ機能
+    - [ ] /api/og/[slug]エンドポイント
+    - [ ] SVGベースのレンダリング
+    - [ ] キャッシュ機能
 - [ ] デフォルトOGP画像の作成
 - [ ] 管理画面でのプレビュー機能
 

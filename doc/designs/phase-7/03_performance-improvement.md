@@ -11,88 +11,85 @@
 ### 2.1 画像最適化
 
 #### 実装内容
+
 1. **WebP対応**
-   - 画像をWebP形式で配信
-   - pictureタグでフォールバック対応
+    - 画像をWebP形式で配信
+    - pictureタグでフォールバック対応
 
 2. **遅延読み込み**
-   - Intersection Observerを使用
-   - loading="lazy"属性の活用
+    - Intersection Observerを使用
+    - loading="lazy"属性の活用
 
 3. **レスポンシブ画像**
-   - srcset属性で複数サイズ提供
-   - sizesで適切なサイズ選択
+    - srcset属性で複数サイズ提供
+    - sizesで適切なサイズ選択
 
 #### Image.svelteコンポーネント
+
 ```svelte
 <picture>
-  <source 
-    type="image/webp"
-    srcset={generateSrcSet(src, 'webp')}
-    sizes={sizes}
-  />
-  <img 
-    src={src}
-    srcset={generateSrcSet(src, 'jpg')}
-    sizes={sizes}
-    loading="lazy"
-    alt={alt}
-  />
+	<source type="image/webp" srcset={generateSrcSet(src, 'webp')} {sizes} />
+	<img {src} srcset={generateSrcSet(src, 'jpg')} {sizes} loading="lazy" {alt} />
 </picture>
 ```
 
 ### 2.2 Code Splitting
 
 #### 実装方針
+
 - 動的インポートの活用
 - ルートベースの分割
 - コンポーネントレベルの遅延読み込み
 
 #### 適用箇所
+
 1. **管理画面**
-   - 管理画面全体を別バンドルに分離
-   - リッチテキストエディタの遅延読み込み
+    - 管理画面全体を別バンドルに分離
+    - リッチテキストエディタの遅延読み込み
 
 2. **アニメーション**
-   - アニメーションライブラリの遅延読み込み
-   - 必要時のみロード
+    - アニメーションライブラリの遅延読み込み
+    - 必要時のみロード
 
 ### 2.3 Critical CSS
 
 #### 実装内容
+
 1. **インラインCSS**
-   - Above-the-foldのCSSをインライン化
-   - 残りのCSSは非同期読み込み
+    - Above-the-foldのCSSをインライン化
+    - 残りのCSSは非同期読み込み
 
 2. **CSS最小化**
-   - 未使用CSSの削除
-   - PurgeCSSの設定最適化
+    - 未使用CSSの削除
+    - PurgeCSSの設定最適化
 
 ### 2.4 キャッシュ戦略
 
 #### 実装方針
+
 1. **静的アセット**
-   - 長期キャッシュ（1年）
-   - ファイル名にハッシュ付与
+    - 長期キャッシュ（1年）
+    - ファイル名にハッシュ付与
 
 2. **APIレスポンス**
-   - 適切なCache-Controlヘッダー
-   - ETagの活用
+    - 適切なCache-Controlヘッダー
+    - ETagの活用
 
 3. **Service Worker**
-   - オフライン対応
-   - キャッシュファースト戦略
+    - オフライン対応
+    - キャッシュファースト戦略
 
 ### 2.5 フォント最適化
 
 #### 実装内容
+
 1. **サブセット化**
-   - 日本語フォントのサブセット作成
-   - 使用文字のみ含める
+    - 日本語フォントのサブセット作成
+    - 使用文字のみ含める
 
 2. **プリロード**
-   - 重要フォントのpreload
-   - font-displayの最適化
+    - 重要フォントのpreload
+    - font-displayの最適化
 
 ## 3. データモデル
 
@@ -107,11 +104,13 @@
 ## 5. テスト計画
 
 ### パフォーマンステスト
+
 - Lighthouse CI の導入
 - Web Vitals の継続的監視
 - 各種デバイスでの実機テスト
 
 ### 測定項目
+
 - First Contentful Paint (FCP)
 - Largest Contentful Paint (LCP)
 - First Input Delay (FID)

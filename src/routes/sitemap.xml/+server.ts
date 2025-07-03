@@ -61,7 +61,10 @@ export const GET: RequestHandler = async () => {
 
 		dynamicUrls = postUrls + categoryUrls;
 	} catch (error) {
-		console.warn('Database not available for sitemap generation, using static sitemap only:', error);
+		console.warn(
+			'Database not available for sitemap generation, using static sitemap only:',
+			error
+		);
 		// データベースエラーの場合は静的サイトマップのみ返す
 	}
 

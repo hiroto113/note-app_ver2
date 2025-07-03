@@ -25,7 +25,7 @@ export function generateSeoTitle(title: string, siteName: string = ''): string {
  */
 export function generateSeoDescription(text: string): string {
 	if (!text) return '';
-	
+
 	// HTMLタグを除去
 	const plainText = text.replace(/<[^>]*>/g, '');
 	// 改行を空白に変換
@@ -46,9 +46,7 @@ export function generateMetaFromContent(content: string, title: string) {
 
 	// 最初の段落を抽出して説明文に使用
 	const firstParagraph = content
-		? content
-			.split('\n')
-			.find((line) => line.trim().length > 0 && !line.startsWith('#'))
+		? content.split('\n').find((line) => line.trim().length > 0 && !line.startsWith('#'))
 		: null;
 
 	const description = firstParagraph
@@ -70,7 +68,7 @@ export function generateMetaFromContent(content: string, title: string) {
  */
 function extractKeywords(content: string): string[] {
 	if (!content) return [];
-	
+
 	// HTMLタグを除去
 	const plainText = content.replace(/<[^>]*>/g, '');
 

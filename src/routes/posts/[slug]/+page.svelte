@@ -13,7 +13,7 @@
 
 	// 記事の内容からメタ情報を生成
 	$: metaInfo = generateMetaFromContent(data.post.content, data.post.title);
-	
+
 	// SEO用の情報
 	$: seoDescription = data.post.description || metaInfo.description;
 	$: seoKeywords = metaInfo.keywords;
@@ -25,10 +25,16 @@
 	$: articleData = {
 		title: data.post.title,
 		description: seoDescription,
-		publishedTime: data.post.publishedAt ? 
-			(typeof data.post.publishedAt === 'string' ? data.post.publishedAt : new Date(data.post.publishedAt).toISOString()) : '',
-		modifiedTime: data.post.updatedAt ? 
-			(typeof data.post.updatedAt === 'string' ? data.post.updatedAt : new Date(data.post.updatedAt).toISOString()) : '',
+		publishedTime: data.post.publishedAt
+			? typeof data.post.publishedAt === 'string'
+				? data.post.publishedAt
+				: new Date(data.post.publishedAt).toISOString()
+			: '',
+		modifiedTime: data.post.updatedAt
+			? typeof data.post.updatedAt === 'string'
+				? data.post.updatedAt
+				: new Date(data.post.updatedAt).toISOString()
+			: '',
 		author: 'サイト管理者',
 		image: `${baseUrl}/api/og/${data.post.slug}` // 動的OGP画像
 	};
@@ -61,7 +67,7 @@
 </script>
 
 <!-- SEOメタタグ -->
-<MetaHead 
+<MetaHead
 	title={data.post.title}
 	description={seoDescription}
 	type="article"

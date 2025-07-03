@@ -15,11 +15,9 @@
 	// メタタグ用の情報
 	const baseUrl = 'https://mynotes.example.com'; // TODO: 環境変数から取得
 	const siteName = 'My Notes';
-	
-	$: pageTitle = data.currentCategory 
-		? `${data.currentCategory}の記事一覧`
-		: siteName;
-		
+
+	$: pageTitle = data.currentCategory ? `${data.currentCategory}の記事一覧` : siteName;
+
 	$: pageDescription = data.currentCategory
 		? `${data.currentCategory}カテゴリの記事一覧ページです。最新の学習記録とメモをご覧いただけます。`
 		: '個人的な学習記録とメモを公開しています。AI×開発に関する知見や技術的な発見を記録しています。';
@@ -52,7 +50,7 @@
 </script>
 
 <!-- SEOメタタグ -->
-<MetaHead 
+<MetaHead
 	title={pageTitle}
 	description={pageDescription}
 	type="website"

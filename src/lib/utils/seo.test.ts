@@ -69,7 +69,8 @@ describe('seo utilities', () => {
 
 	describe('generateMetaFromContent', () => {
 		it('should extract description from first paragraph', () => {
-			const content = '# Title\n\nThis is the first paragraph.\n\nThis is the second paragraph.';
+			const content =
+				'# Title\n\nThis is the first paragraph.\n\nThis is the second paragraph.';
 			const result = generateMetaFromContent(content, 'Test Title');
 			expect(result.description).toBe('This is the first paragraph.');
 		});
