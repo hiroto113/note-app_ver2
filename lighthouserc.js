@@ -64,11 +64,11 @@ export default {
 			assertions: {
 				// HTTP status codeは500でも警告のみ
 				'audits:http-status-code': 'warn',
-				
+
 				// 基本的なアクセシビリティのみチェック
 				'audits:html-has-lang': 'warn',
 				'audits:meta-viewport': 'warn',
-				
+
 				// その他は警告レベルで設定
 				'categories:accessibility': ['warn', { minScore: 0.7 }],
 				'categories:best-practices': ['warn', { minScore: 0.6 }],

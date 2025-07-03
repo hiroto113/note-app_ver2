@@ -56,7 +56,8 @@ jobs:
       - name: Run Lighthouse CI
         run: |
           npm install -g @lhci/cli@0.12.x
-          lhci autorun
+          lhci collect --staticDistDir=.svelte-kit/output/client --url=http://localhost:4173/ --numberOfRuns=2
+          lhci assert --preset=lighthouserc
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
           LHCI_TOKEN: ${{ secrets.LHCI_TOKEN }}
