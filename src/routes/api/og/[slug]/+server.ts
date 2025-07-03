@@ -62,7 +62,9 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 					${title.length > 50 ? title.substring(0, 47) + '...' : title}
 				</text>
 				
-				${category ? `
+				${
+					category
+						? `
 					<!-- Category -->
 					<rect x="480" y="350" width="240" height="40" rx="20" fill="rgba(255,255,255,0.2)" />
 					<text 
@@ -76,7 +78,9 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 					>
 						${category}
 					</text>
-				` : ''}
+				`
+						: ''
+				}
 				
 				<!-- Site Name -->
 				<text 

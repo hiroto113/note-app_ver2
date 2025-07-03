@@ -11,31 +11,34 @@
 ### 2.1 コンポーネント設計
 
 #### MetaHead.svelte
+
 - **責務**: ページ固有のメタタグを管理
 - **Props**:
-  - `title`: ページタイトル
-  - `description`: ページの説明
-  - `keywords`: キーワード（オプション）
-  - `type`: ページタイプ（article, website等）
-  - `image`: OGP画像URL（オプション）
-  - `publishedTime`: 記事公開日時（記事ページのみ）
-  - `modifiedTime`: 記事更新日時（記事ページのみ）
+    - `title`: ページタイトル
+    - `description`: ページの説明
+    - `keywords`: キーワード（オプション）
+    - `type`: ページタイプ（article, website等）
+    - `image`: OGP画像URL（オプション）
+    - `publishedTime`: 記事公開日時（記事ページのみ）
+    - `modifiedTime`: 記事更新日時（記事ページのみ）
 
 ### 2.2 実装内容
 
 #### 基本メタタグ
+
 ```svelte
 <svelte:head>
-  <title>{title}</title>
-  <meta name="description" content={description} />
-  {#if keywords}
-    <meta name="keywords" content={keywords} />
-  {/if}
-  <link rel="canonical" href={canonicalUrl} />
+	<title>{title}</title>
+	<meta name="description" content={description} />
+	{#if keywords}
+		<meta name="keywords" content={keywords} />
+	{/if}
+	<link rel="canonical" href={canonicalUrl} />
 </svelte:head>
 ```
 
 #### 構造化データ（JSON-LD）
+
 - WebSiteスキーマ（トップページ）
 - Articleスキーマ（記事ページ）
 - BreadcrumbListスキーマ（全ページ）
@@ -43,24 +46,25 @@
 ### 2.3 ページ別メタタグ設定
 
 1. **トップページ**
-   - サイト全体の説明
-   - WebSiteスキーマ
+    - サイト全体の説明
+    - WebSiteスキーマ
 
 2. **記事一覧ページ**
-   - カテゴリ別の動的description
-   - ページネーション対応
+    - カテゴリ別の動的description
+    - ページネーション対応
 
 3. **記事詳細ページ**
-   - 記事の内容から自動生成
-   - Articleスキーマ
-   - 著者情報
+    - 記事の内容から自動生成
+    - Articleスキーマ
+    - 著者情報
 
 4. **aboutページ**
-   - 固定のメタタグ
+    - 固定のメタタグ
 
 ## 3. データモデル
 
 ### 記事テーブルの拡張
+
 - `seoTitle`: SEO用タイトル（オプション）
 - `seoDescription`: SEO用説明文（オプション）
 - `seoKeywords`: SEOキーワード（オプション）

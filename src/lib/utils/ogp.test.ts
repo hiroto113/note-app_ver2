@@ -8,7 +8,9 @@ describe('OGP Utils', () => {
 				title: 'Test Title',
 				category: 'Tech'
 			});
-			expect(url).toBe('https://example.com/api/og?title=Test+Title&category=Tech&type=default');
+			expect(url).toBe(
+				'https://example.com/api/og?title=Test+Title&category=Tech&type=default'
+			);
 		});
 
 		it('should generate article OGP image URL with slug', () => {

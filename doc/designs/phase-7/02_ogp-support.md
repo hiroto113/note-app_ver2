@@ -11,19 +11,21 @@
 ### 2.1 コンポーネント設計
 
 #### OGPTags.svelte
+
 - **責務**: OGPメタタグの管理
 - **Props**:
-  - `title`: OGPタイトル
-  - `description`: OGP説明文
-  - `type`: コンテンツタイプ（website, article等）
-  - `image`: OGP画像URL
-  - `url`: ページURL
-  - `siteName`: サイト名
-  - `locale`: 言語設定（ja_JP）
+    - `title`: OGPタイトル
+    - `description`: OGP説明文
+    - `type`: コンテンツタイプ（website, article等）
+    - `image`: OGP画像URL
+    - `url`: ページURL
+    - `siteName`: サイト名
+    - `locale`: 言語設定（ja_JP）
 
 ### 2.2 OGPメタタグ実装
 
 #### 基本OGPタグ
+
 ```svelte
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
@@ -35,6 +37,7 @@
 ```
 
 #### Twitter Cards
+
 ```svelte
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
@@ -45,15 +48,17 @@
 ### 2.3 動的OGP画像生成
 
 #### 実装方針
+
 - SvelteKitのAPIルートで動的に画像を生成
 - `@vercel/og`または`satori`を使用
 - キャッシュ戦略の実装
 
 #### APIエンドポイント
+
 - `GET /api/og/[slug]`
-  - 記事タイトルとカテゴリを含むOGP画像を生成
-  - SVGベースでレンダリング
-  - PNGに変換して返却
+    - 記事タイトルとカテゴリを含むOGP画像を生成
+    - SVGベースでレンダリング
+    - PNGに変換して返却
 
 ### 2.4 デフォルトOGP画像
 
@@ -64,17 +69,20 @@
 ## 3. データモデル
 
 ### 記事テーブルの拡張
+
 - `ogImage`: カスタムOGP画像URL（オプション）
 - デフォルトは動的生成画像を使用
 
 ## 4. UI/UXデザイン
 
 ### 管理画面での設定
+
 - OGP画像のプレビュー機能
 - カスタム画像のアップロード機能
 - Facebook/Twitterでの表示プレビュー
 
 ### 生成される画像デザイン
+
 - サイトロゴ
 - 記事タイトル（最大2行）
 - カテゴリタグ
@@ -83,8 +91,8 @@
 ## 5. テスト計画
 
 - OGPデバッガーでの検証
-  - Facebook Sharing Debugger
-  - Twitter Card Validator
+    - Facebook Sharing Debugger
+    - Twitter Card Validator
 - 画像生成のパフォーマンステスト
 - キャッシュ機能の動作確認
 - 各SNSでの実際の表示確認

@@ -24,17 +24,17 @@
 	$: optimizedDescription = optimizeOGPDescription(description);
 
 	// 使用する画像URL（カスタム画像がない場合は動的生成）
-	$: ogImage = image || generateOGPImageUrl(baseUrl, {
-		title,
-		category: section,
-		type: type === 'article' ? 'article' : 'default',
-		slug
-	});
+	$: ogImage =
+		image ||
+		generateOGPImageUrl(baseUrl, {
+			title,
+			category: section,
+			type: type === 'article' ? 'article' : 'default',
+			slug
+		});
 
 	// 絶対URLに変換
-	$: absoluteImageUrl = ogImage.startsWith('http') 
-		? ogImage 
-		: `${baseUrl}${ogImage}`;
+	$: absoluteImageUrl = ogImage.startsWith('http') ? ogImage : `${baseUrl}${ogImage}`;
 </script>
 
 <svelte:head>

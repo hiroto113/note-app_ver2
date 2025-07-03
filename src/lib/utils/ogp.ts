@@ -31,26 +31,26 @@ export function generateOGPImageUrl(
  */
 export function optimizeOGPDescription(text: string, maxLength: number = 160): string {
 	if (!text) return '';
-	
+
 	// HTMLタグを除去
 	const stripped = text.replace(/<[^>]*>/g, '');
-	
+
 	// 改行文字を空白に置換
 	const normalized = stripped.replace(/\s+/g, ' ').trim();
-	
+
 	// 指定文字数でトランケート
 	if (normalized.length <= maxLength) {
 		return normalized;
 	}
-	
+
 	// 単語境界でカット
 	const truncated = normalized.substring(0, maxLength - 3);
 	const lastSpace = truncated.lastIndexOf(' ');
-	
+
 	if (lastSpace > maxLength * 0.8) {
 		return truncated.substring(0, lastSpace) + '...';
 	}
-	
+
 	return truncated + '...';
 }
 
@@ -59,12 +59,12 @@ export function optimizeOGPDescription(text: string, maxLength: number = 160): s
  */
 export function optimizeOGPTitle(title: string, siteName?: string, maxLength: number = 60): string {
 	if (!title) return siteName || '';
-	
+
 	// サイト名を含める場合の調整
 	if (siteName && title !== siteName) {
 		const separator = ' - ';
 		const availableLength = maxLength - siteName.length - separator.length;
-		
+
 		if (title.length <= availableLength) {
 			return `${title}${separator}${siteName}`;
 		} else {
@@ -73,11 +73,11 @@ export function optimizeOGPTitle(title: string, siteName?: string, maxLength: nu
 			return `${truncated}${separator}${siteName}`;
 		}
 	}
-	
+
 	// サイト名なしの場合
 	if (title.length <= maxLength) {
 		return title;
 	}
-	
+
 	return title.substring(0, maxLength - 3) + '...';
 }

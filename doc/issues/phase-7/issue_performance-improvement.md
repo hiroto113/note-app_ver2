@@ -17,25 +17,25 @@ Webサイトのパフォーマンスを向上させ、Core Web Vitalsの各指�
 ## 完了条件
 
 - [ ] 画像最適化
-  - [ ] WebP対応（pictureタグ）
-  - [ ] 遅延読み込み（loading="lazy"）
-  - [ ] レスポンシブ画像（srcset）
-  - [ ] Image.svelteコンポーネント作成
+    - [ ] WebP対応（pictureタグ）
+    - [ ] 遅延読み込み（loading="lazy"）
+    - [ ] レスポンシブ画像（srcset）
+    - [ ] Image.svelteコンポーネント作成
 - [ ] Code Splitting
-  - [ ] 管理画面の分離
-  - [ ] 動的インポートの実装
-  - [ ] リッチテキストエディタの遅延読み込み
+    - [ ] 管理画面の分離
+    - [ ] 動的インポートの実装
+    - [ ] リッチテキストエディタの遅延読み込み
 - [ ] Critical CSS
-  - [ ] Above-the-foldのCSS抽出
-  - [ ] インラインCSS化
-  - [ ] 未使用CSS削除
+    - [ ] Above-the-foldのCSS抽出
+    - [ ] インラインCSS化
+    - [ ] 未使用CSS削除
 - [ ] キャッシュ戦略
-  - [ ] 静的アセットの長期キャッシュ
-  - [ ] APIレスポンスのキャッシュ
-  - [ ] Service Worker実装
+    - [ ] 静的アセットの長期キャッシュ
+    - [ ] APIレスポンスのキャッシュ
+    - [ ] Service Worker実装
 - [ ] フォント最適化
-  - [ ] 日本語フォントのサブセット化
-  - [ ] font-display最適化
+    - [ ] 日本語フォントのサブセット化
+    - [ ] font-display最適化
 
 ## 技術仕様
 
