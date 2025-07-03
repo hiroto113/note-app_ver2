@@ -26,7 +26,7 @@ const securityHandle: Handle = async ({ event, resolve }) => {
 	response.headers.set('X-Content-Type-Options', 'nosniff');
 	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 	response.headers.set('X-XSS-Protection', '1; mode=block');
-	
+
 	// Content Security Policy (CSP)
 	const cspDirectives = [
 		"default-src 'self'",
@@ -39,12 +39,15 @@ const securityHandle: Handle = async ({ event, resolve }) => {
 		"base-uri 'self'",
 		"form-action 'self'"
 	].join('; ');
-	
+
 	response.headers.set('Content-Security-Policy', cspDirectives);
 
 	// HTTPS強制（本番環境のみ）
 	if (event.url.hostname !== 'localhost' && event.url.protocol === 'http:') {
-		return Response.redirect(`https://${event.url.host}${event.url.pathname}${event.url.search}`, 301);
+		return Response.redirect(
+			`https://${event.url.host}${event.url.pathname}${event.url.search}`,
+			301
+		);
 	}
 
 	// パフォーマンス最適化のためのヘッダー
@@ -68,9 +71,9 @@ const securityHandle: Handle = async ({ event, resolve }) => {
 // パフォーマンス監視
 const monitoringHandle: Handle = async ({ event, resolve }) => {
 	const startTime = Date.now();
-	
+
 	const response = await resolve(event);
-	
+
 	// パフォーマンス監視（開発環境でのみログ出力）
 	if (process.env.NODE_ENV === 'development') {
 		const duration = Date.now() - startTime;

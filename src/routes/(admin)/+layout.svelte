@@ -13,14 +13,15 @@
 	}
 
 	// 管理画面の重要でないコンポーネントを遅延読み込み
-	const loadAdminComponents = () => Promise.all([
-		// 将来的にダッシュボードウィジェットなどを遅延読み込み
-		Promise.resolve()
-	]);
+	const loadAdminComponents = () =>
+		Promise.all([
+			// 将来的にダッシュボードウィジェットなどを遅延読み込み
+			Promise.resolve()
+		]);
 
 	onMount(() => {
 		isAdminRoute = $page.url.pathname.startsWith('/admin');
-		
+
 		// 管理画面の場合、追加コンポーネントを事前読み込み
 		if (isAdminRoute) {
 			loadAdminComponents();

@@ -190,7 +190,7 @@ export function loadNonCriticalCSS(href: string) {
 	link.rel = 'preload';
 	link.as = 'style';
 	link.href = href;
-	link.onload = function() {
+	link.onload = function () {
 		(this as HTMLLinkElement).rel = 'stylesheet';
 	};
 	document.head.appendChild(link);
@@ -209,7 +209,7 @@ export function optimizeCSSLoading() {
 		if (!link.href.includes('critical')) {
 			link.rel = 'preload';
 			link.as = 'style';
-			link.onload = function() {
+			link.onload = function () {
 				(this as HTMLLinkElement).rel = 'stylesheet';
 			};
 		}

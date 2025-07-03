@@ -11,7 +11,8 @@
 	export let webp: boolean = true;
 	export let className: string = '';
 
-	// Generate WebP source URL
+	// Generate WebP source URL (currently unused but available for future use)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function generateWebPSrc(originalSrc: string): string {
 		if (originalSrc.startsWith('http') || originalSrc.includes('.webp')) {
 			return originalSrc;
@@ -24,7 +25,7 @@
 	function generateSrcSet(baseSrc: string, format: 'webp' | 'original' = 'original'): string {
 		const extension = baseSrc.split('.').pop();
 		const baseName = baseSrc.replace(`.${extension}`, '');
-		
+
 		if (format === 'webp') {
 			return [
 				`${baseName}-480w.webp 480w`,
@@ -33,7 +34,7 @@
 				`${baseName}.webp 1920w`
 			].join(', ');
 		}
-		
+
 		return [
 			`${baseName}-480w.${extension} 480w`,
 			`${baseName}-800w.${extension} 800w`,
@@ -89,11 +90,7 @@
 	{#if shouldLoad}
 		{#if webp}
 			<picture>
-				<source
-					type="image/webp"
-					srcset={generateSrcSet(src, 'webp')}
-					{sizes}
-				/>
+				<source type="image/webp" srcset={generateSrcSet(src, 'webp')} {sizes} />
 				<img
 					{src}
 					{alt}
@@ -103,7 +100,9 @@
 					{sizes}
 					loading={lazy ? 'lazy' : 'eager'}
 					decoding="async"
-					class="h-auto w-full transition-opacity duration-300 {isLoaded ? 'opacity-100' : 'opacity-0'}"
+					class="h-auto w-full transition-opacity duration-300 {isLoaded
+						? 'opacity-100'
+						: 'opacity-0'}"
 					on:load={handleLoad}
 					on:error={handleError}
 				/>
@@ -118,7 +117,9 @@
 				{sizes}
 				loading={lazy ? 'lazy' : 'eager'}
 				decoding="async"
-				class="h-auto w-full transition-opacity duration-300 {isLoaded ? 'opacity-100' : 'opacity-0'}"
+				class="h-auto w-full transition-opacity duration-300 {isLoaded
+					? 'opacity-100'
+					: 'opacity-0'}"
 				on:load={handleLoad}
 				on:error={handleError}
 			/>
@@ -131,7 +132,11 @@
 		>
 			<div class="text-gray-400 dark:text-gray-500">
 				<svg class="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
-					<path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+					<path
+						fill-rule="evenodd"
+						d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+						clip-rule="evenodd"
+					/>
 				</svg>
 			</div>
 		</div>

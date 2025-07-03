@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LazyComponent from '$lib/components/ui/LazyComponent.svelte';
-	
+
 	// Currently unused but may be needed for future dashboard data
 	export let data;
 	// Suppress unused warning

@@ -1,30 +1,30 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	
+
 	export let message = '';
 	export let level: 'polite' | 'assertive' | 'off' = 'polite';
 	export let clearOnUpdate = true;
 	export let delay = 100; // メッセージ表示の遅延（ms）
-	
+
 	let liveRegion: HTMLElement;
 	let displayMessage = '';
 	let timeoutId: number | null = null;
-	
+
 	// メッセージが変更されたときの処理
 	$: if (message && liveRegion) {
 		updateMessage(message);
 	}
-	
+
 	function updateMessage(newMessage: string) {
 		// 既存のタイムアウトをクリア
 		if (timeoutId) {
 			clearTimeout(timeoutId);
 		}
-		
+
 		// clearOnUpdateが有効な場合、一旦メッセージをクリア
 		if (clearOnUpdate && displayMessage) {
 			displayMessage = '';
-			
+
 			// 少し遅延してからメッセージを設定（スクリーンリーダーが変更を検知しやすくする）
 			timeoutId = window.setTimeout(() => {
 				displayMessage = newMessage;
@@ -36,7 +36,7 @@
 			}, delay);
 		}
 	}
-	
+
 	// メッセージをクリアする外部関数
 	export function clear() {
 		if (timeoutId) {
@@ -44,7 +44,7 @@
 		}
 		displayMessage = '';
 	}
-	
+
 	// メッセージを即座に設定する外部関数
 	export function announce(text: string, immediate = false) {
 		if (immediate) {
@@ -53,7 +53,7 @@
 			updateMessage(text);
 		}
 	}
-	
+
 	onMount(() => {
 		return () => {
 			if (timeoutId) {

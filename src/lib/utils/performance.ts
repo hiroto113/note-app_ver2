@@ -32,7 +32,9 @@ export function measureCoreWebVitals(): Promise<PerformanceMetrics> {
 				new PerformanceObserver((entryList) => {
 					const entries = entryList.getEntries();
 					if (entries.length > 0) {
-						const lastEntry = entries[entries.length - 1] as PerformanceEntry & { startTime: number };
+						const lastEntry = entries[entries.length - 1] as PerformanceEntry & {
+							startTime: number;
+						};
 						metrics.lcp = lastEntry.startTime;
 					}
 				}).observe({ entryTypes: ['largest-contentful-paint'] });
@@ -41,8 +43,12 @@ export function measureCoreWebVitals(): Promise<PerformanceMetrics> {
 				new PerformanceObserver((entryList) => {
 					const entries = entryList.getEntries();
 					entries.forEach((entry) => {
-						if ((entry as any).name === 'first-input') {
-							metrics.fid = (entry as any).processingStart - entry.startTime;
+						const fidEntry = entry as PerformanceEntry & {
+							name: string;
+							processingStart: number;
+						};
+						if (fidEntry.name === 'first-input') {
+							metrics.fid = fidEntry.processingStart - entry.startTime;
 						}
 					});
 				}).observe({ entryTypes: ['first-input'] });
@@ -52,19 +58,24 @@ export function measureCoreWebVitals(): Promise<PerformanceMetrics> {
 				new PerformanceObserver((entryList) => {
 					const entries = entryList.getEntries();
 					entries.forEach((entry) => {
-						if (!(entry as any).hadRecentInput) {
-							clsValue += (entry as any).value;
+						const clsEntry = entry as PerformanceEntry & {
+							hadRecentInput: boolean;
+							value: number;
+						};
+						if (!clsEntry.hadRecentInput) {
+							clsValue += clsEntry.value;
 						}
 					});
 					metrics.cls = clsValue;
 				}).observe({ entryTypes: ['layout-shift'] });
 
 				// Navigation Timing API でTTFBを取得
-				const navigationEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+				const navigationEntry = performance.getEntriesByType(
+					'navigation'
+				)[0] as PerformanceNavigationTiming;
 				if (navigationEntry) {
 					metrics.ttfb = navigationEntry.responseStart - navigationEntry.requestStart;
 				}
-
 			} catch (error) {
 				console.warn('Performance measurement failed:', error);
 			}
@@ -92,34 +103,46 @@ export function measureCoreWebVitals(): Promise<PerformanceMetrics> {
  */
 export function logPerformanceMetrics(metrics: PerformanceMetrics) {
 	console.group('🚀 Performance Metrics');
-	
+
 	if (metrics.fcp) {
-		console.log(`📊 FCP: ${Math.round(metrics.fcp)}ms ${getScoreColor(metrics.fcp, 1800, 3000)}`);
+		console.log(
+			`📊 FCP: ${Math.round(metrics.fcp)}ms ${getScoreColor(metrics.fcp, 1800, 3000)}`
+		);
 	}
-	
+
 	if (metrics.lcp) {
-		console.log(`📊 LCP: ${Math.round(metrics.lcp)}ms ${getScoreColor(metrics.lcp, 2500, 4000)}`);
+		console.log(
+			`📊 LCP: ${Math.round(metrics.lcp)}ms ${getScoreColor(metrics.lcp, 2500, 4000)}`
+		);
 	}
-	
+
 	if (metrics.fid) {
 		console.log(`📊 FID: ${Math.round(metrics.fid)}ms ${getScoreColor(metrics.fid, 100, 300)}`);
 	}
-	
+
 	if (metrics.cls) {
-		console.log(`📊 CLS: ${metrics.cls.toFixed(3)} ${getScoreColor(metrics.cls * 1000, 100, 250)}`);
+		console.log(
+			`📊 CLS: ${metrics.cls.toFixed(3)} ${getScoreColor(metrics.cls * 1000, 100, 250)}`
+		);
 	}
-	
+
 	if (metrics.ttfb) {
-		console.log(`📊 TTFB: ${Math.round(metrics.ttfb)}ms ${getScoreColor(metrics.ttfb, 800, 1800)}`);
+		console.log(
+			`📊 TTFB: ${Math.round(metrics.ttfb)}ms ${getScoreColor(metrics.ttfb, 800, 1800)}`
+		);
 	}
-	
+
 	console.groupEnd();
 }
 
 /**
  * スコアに基づいて色分けを取得
  */
-function getScoreColor(value: number, goodThreshold: number, needsImprovementThreshold: number): string {
+function getScoreColor(
+	value: number,
+	goodThreshold: number,
+	needsImprovementThreshold: number
+): string {
 	if (value <= goodThreshold) {
 		return '🟢 Good';
 	} else if (value <= needsImprovementThreshold) {
@@ -136,7 +159,7 @@ export function measureResourceTiming() {
 	if (typeof window === 'undefined' || !window.performance) return;
 
 	const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
-	const resourceData = resources.map(resource => ({
+	const resourceData = resources.map((resource) => ({
 		name: resource.name,
 		duration: Math.round(resource.duration),
 		size: resource.transferSize || 0,
@@ -147,8 +170,10 @@ export function measureResourceTiming() {
 	resourceData.sort((a, b) => b.size - a.size);
 
 	console.group('📦 Resource Loading Times');
-	resourceData.slice(0, 10).forEach(resource => {
-		console.log(`${resource.type}: ${resource.name.split('/').pop()} - ${resource.duration}ms (${formatBytes(resource.size)})`);
+	resourceData.slice(0, 10).forEach((resource) => {
+		console.log(
+			`${resource.type}: ${resource.name.split('/').pop()} - ${resource.duration}ms (${formatBytes(resource.size)})`
+		);
 	});
 	console.groupEnd();
 }
@@ -183,8 +208,8 @@ export function startPerformanceMonitoring() {
 
 	// ページロード完了後に測定開始
 	window.addEventListener('load', async () => {
-		await new Promise(resolve => setTimeout(resolve, 1000)); // 1秒待機
-		
+		await new Promise((resolve) => setTimeout(resolve, 1000)); // 1秒待機
+
 		const metrics = await measureCoreWebVitals();
 		logPerformanceMetrics(metrics);
 		measureResourceTiming();

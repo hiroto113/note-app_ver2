@@ -13,7 +13,11 @@ export const GET: RequestHandler = async () => {
 	try {
 		// データベースから記事とカテゴリを取得
 		const [allPosts, allCategories] = await Promise.all([
-			db.select().from(posts).where(eq(posts.status, 'published')).orderBy(desc(posts.publishedAt)),
+			db
+				.select()
+				.from(posts)
+				.where(eq(posts.status, 'published'))
+				.orderBy(desc(posts.publishedAt)),
 			db.select().from(categories).orderBy(categories.name)
 		]);
 
@@ -53,13 +57,17 @@ export const GET: RequestHandler = async () => {
 	</url>
 
 	<!-- 各記事ページ -->
-	${publishedPosts.map(post => `
+	${publishedPosts
+		.map(
+			(post) => `
 	<url>
 		<loc>${BASE_URL}/posts/${post.slug}</loc>
 		<lastmod>${post.updatedAt.toISOString()}</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.9</priority>
-		${post.excerpt ? `
+		${
+			post.excerpt
+				? `
 		<news:news>
 			<news:publication>
 				<news:name>My Notes</news:name>
@@ -67,17 +75,25 @@ export const GET: RequestHandler = async () => {
 			</news:publication>
 			<news:publication_date>${post.publishedAt?.toISOString() || post.createdAt.toISOString()}</news:publication_date>
 			<news:title><![CDATA[${post.title}]]></news:title>
-		</news:news>` : ''}
-	</url>`).join('')}
+		</news:news>`
+				: ''
+		}
+	</url>`
+		)
+		.join('')}
 
 	<!-- 各カテゴリページ -->
-	${allCategories.map(category => `
+	${allCategories
+		.map(
+			(category) => `
 	<url>
 		<loc>${BASE_URL}/categories/${category.slug}</loc>
 		<lastmod>${category.updatedAt.toISOString()}</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.6</priority>
-	</url>`).join('')}
+	</url>`
+		)
+		.join('')}
 
 	<!-- 静的ページ -->
 	<url>
@@ -116,10 +132,9 @@ export const GET: RequestHandler = async () => {
 				'Cache-Control': 'public, max-age=3600, s-maxage=3600'
 			}
 		});
-
 	} catch (error) {
 		console.error('Sitemap generation failed:', error);
-		
+
 		// エラー時は最小限のサイトマップを返す
 		const fallbackSitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
