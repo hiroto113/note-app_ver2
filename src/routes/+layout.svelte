@@ -8,11 +8,39 @@
 	import SkipLink from '$lib/components/a11y/SkipLink.svelte';
 	import Announce from '$lib/components/a11y/Announce.svelte';
 	import { setupKeyboardShortcuts, initializeA11yPreferences } from '$lib/stores/accessibility';
+	import { preloadFonts, observeFontLoading } from '$lib/utils/fonts';
+	import { loadNonCriticalCSS, optimizeCSSLoading } from '$lib/utils/critical-css';
+	import { startPerformanceMonitoring } from '$lib/utils/performance';
+	import { registerServiceWorker, setupOfflineMonitoring } from '$lib/utils/sw';
+	import { dev } from '$app/environment';
 
 	onMount(() => {
 		// アクセシビリティ機能の初期化
 		setupKeyboardShortcuts();
 		initializeA11yPreferences();
+
+		// パフォーマンス最適化
+		preloadFonts();
+		optimizeCSSLoading();
+
+		// フォント読み込み完了後の処理
+		observeFontLoading(() => {
+			document.documentElement.classList.add('fonts-loaded');
+		});
+
+		// 非クリティカルCSSの遅延読み込み
+		setTimeout(() => {
+			loadNonCriticalCSS('/css/non-critical.css');
+		}, 100);
+
+		// 開発環境でのパフォーマンス監視
+		if (dev) {
+			startPerformanceMonitoring();
+		}
+
+		// Service Worker登録とオフライン監視
+		registerServiceWorker();
+		setupOfflineMonitoring();
 	});
 </script>
 

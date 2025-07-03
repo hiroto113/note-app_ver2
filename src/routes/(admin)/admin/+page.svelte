@@ -1,9 +1,14 @@
 <script lang="ts">
+	import LazyComponent from '$lib/components/ui/LazyComponent.svelte';
+
 	// Currently unused but may be needed for future dashboard data
 	export let data;
 	// Suppress unused warning
 	// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 	data;
+
+	// 管理ダッシュボードコンポーネントを遅延読み込み
+	const loadAdminDashboard = () => import('$lib/components/admin/AdminDashboard.svelte');
 </script>
 
 <svelte:head>
@@ -149,6 +154,11 @@
 				</div>
 			</div>
 		</div>
+	</div>
+
+	<!-- 遅延読み込みされる詳細ダッシュボード -->
+	<div class="mt-8">
+		<LazyComponent componentLoader={loadAdminDashboard} />
 	</div>
 
 	<div class="mt-8">
