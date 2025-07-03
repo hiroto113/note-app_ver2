@@ -25,7 +25,8 @@
 			"Bash(gh pr:*)",
 			"Bash(gh label create:*)",
 			"Bash(gh issue create:*)",
-			"Bash(git checkout:*)"
+			"Bash(git checkout:*)",
+			"Bash(gh issue view:*)"
 		],
 		"deny": []
 	}

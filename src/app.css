@@ -1,3 +1,54 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* prefers-reduced-motion対応 */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* カスタムアニメーションユーティリティ */
+@layer utilities {
+	.animate-fade-in {
+		animation: fadeIn 0.3s ease-out;
+	}
+
+	.animate-slide-up {
+		animation: slideUp 0.3s ease-out;
+	}
+
+	.animate-slide-down {
+		animation: slideDown 0.3s ease-out;
+	}
+
+	.animate-scale-in {
+		animation: scaleIn 0.2s ease-out;
+	}
+
+	.animate-bounce-subtle {
+		animation: bounceSubtle 0.5s ease-out;
+	}
+}
+
+/* フォーカス時のアニメーション */
+.focus-ring {
+	@apply transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+}
+
+/* ホバー時のカード効果 */
+.card-hover {
+	@apply transform transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-105 hover:shadow-xl;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card-hover {
+		@apply hover:translate-y-0 hover:scale-100;
+	}
+}

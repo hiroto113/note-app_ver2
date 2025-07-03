@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { shouldAnimate } from '$lib/utils/animations';
+
 	/** @type {import('$lib/types').Post} */
 	export let post;
 
@@ -18,10 +20,16 @@
 			typeof cat === 'string' ? cat : (cat as { name?: string }).name || cat
 		);
 	};
+
+	// アニメーションを有効にするかどうか
+	const animationsEnabled = shouldAnimate();
+	const hoverClasses = animationsEnabled
+		? 'transform transition-all duration-300 ease-out hover:scale-[1.02] hover:-translate-y-1 hover:shadow-xl'
+		: 'transition-shadow duration-200 hover:shadow-lg';
 </script>
 
 <article
-	class="rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow duration-200 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
+	class="rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800 {hoverClasses}"
 >
 	<a href="/posts/{post.slug}" class="block">
 		<h2

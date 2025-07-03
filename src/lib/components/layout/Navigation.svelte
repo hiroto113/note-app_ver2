@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
+	import { shouldAnimate } from '$lib/utils/animations';
 	import ThemeToggle from '$lib/components/ui/ThemeToggle.svelte';
 
 	let isMenuOpen = false;
@@ -118,7 +120,11 @@
 
 		<!-- モバイルメニュー -->
 		{#if isMenuOpen}
-			<div id="mobile-menu" class="md:hidden">
+			<div
+				id="mobile-menu"
+				class="md:hidden"
+				transition:slide={{ duration: shouldAnimate() ? 200 : 0 }}
+			>
 				<div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
 					<a
 						href="/"
