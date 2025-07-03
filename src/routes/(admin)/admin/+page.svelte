@@ -12,17 +12,17 @@
 
 <div class="px-4 sm:px-0">
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold text-gray-900">管理画面</h1>
-		<p class="mt-2 text-gray-600">記事とカテゴリの管理を行えます</p>
+		<h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">管理画面</h1>
+		<p class="mt-2 text-gray-600 dark:text-gray-300">記事とカテゴリの管理を行えます</p>
 	</div>
 
 	<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-		<div class="overflow-hidden rounded-lg bg-white shadow">
+		<div class="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
 			<div class="p-5">
 				<div class="flex items-center">
 					<div class="flex-shrink-0">
 						<svg
-							class="h-6 w-6 text-gray-400"
+							class="h-6 w-6 text-gray-400 dark:text-gray-500"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor"
@@ -37,27 +37,27 @@
 					</div>
 					<div class="ml-5 w-0 flex-1">
 						<dl>
-							<dt class="truncate text-sm font-medium text-gray-500">総記事数</dt>
-							<dd class="text-lg font-medium text-gray-900">0</dd>
+							<dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">総記事数</dt>
+							<dd class="text-lg font-medium text-gray-900 dark:text-gray-100">0</dd>
 						</dl>
 					</div>
 				</div>
 			</div>
-			<div class="bg-gray-50 px-5 py-3">
+			<div class="bg-gray-50 px-5 py-3 dark:bg-gray-700">
 				<div class="text-sm">
-					<a href="/admin/posts" class="font-medium text-blue-600 hover:text-blue-500">
+					<a href="/admin/posts" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
 						記事管理へ
 					</a>
 				</div>
 			</div>
 		</div>
 
-		<div class="overflow-hidden rounded-lg bg-white shadow">
+		<div class="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
 			<div class="p-5">
 				<div class="flex items-center">
 					<div class="flex-shrink-0">
 						<svg
-							class="h-6 w-6 text-gray-400"
+							class="h-6 w-6 text-gray-400 dark:text-gray-500"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor"
@@ -72,17 +72,17 @@
 					</div>
 					<div class="ml-5 w-0 flex-1">
 						<dl>
-							<dt class="truncate text-sm font-medium text-gray-500">総カテゴリ数</dt>
-							<dd class="text-lg font-medium text-gray-900">0</dd>
+							<dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">総カテゴリ数</dt>
+							<dd class="text-lg font-medium text-gray-900 dark:text-gray-100">0</dd>
 						</dl>
 					</div>
 				</div>
 			</div>
-			<div class="bg-gray-50 px-5 py-3">
+			<div class="bg-gray-50 px-5 py-3 dark:bg-gray-700">
 				<div class="text-sm">
 					<a
 						href="/admin/categories"
-						class="font-medium text-blue-600 hover:text-blue-500"
+						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
 					>
 						カテゴリ管理へ
 					</a>
@@ -90,12 +90,12 @@
 			</div>
 		</div>
 
-		<div class="overflow-hidden rounded-lg bg-white shadow">
+		<div class="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
 			<div class="p-5">
 				<div class="flex items-center">
 					<div class="flex-shrink-0">
 						<svg
-							class="h-6 w-6 text-gray-400"
+							class="h-6 w-6 text-gray-400 dark:text-gray-500"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor"
@@ -116,18 +116,18 @@
 					</div>
 					<div class="ml-5 w-0 flex-1">
 						<dl>
-							<dt class="truncate text-sm font-medium text-gray-500">公開記事数</dt>
-							<dd class="text-lg font-medium text-gray-900">0</dd>
+							<dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">公開記事数</dt>
+							<dd class="text-lg font-medium text-gray-900 dark:text-gray-100">0</dd>
 						</dl>
 					</div>
 				</div>
 			</div>
-			<div class="bg-gray-50 px-5 py-3">
+			<div class="bg-gray-50 px-5 py-3 dark:bg-gray-700">
 				<div class="text-sm">
 					<a
 						href="/"
 						target="_blank"
-						class="font-medium text-blue-600 hover:text-blue-500"
+						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
 					>
 						サイトを表示
 					</a>
@@ -137,9 +137,9 @@
 	</div>
 
 	<div class="mt-8">
-		<div class="rounded-lg bg-white shadow">
+		<div class="rounded-lg bg-white shadow dark:bg-gray-800">
 			<div class="px-4 py-5 sm:p-6">
-				<h3 class="text-lg font-medium leading-6 text-gray-900">クイックアクション</h3>
+				<h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">クイックアクション</h3>
 				<div class="mt-5">
 					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<a
@@ -150,7 +150,7 @@
 						</a>
 						<a
 							href="/admin/categories/new"
-							class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+							class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
 						>
 							新しいカテゴリを作成
 						</a>

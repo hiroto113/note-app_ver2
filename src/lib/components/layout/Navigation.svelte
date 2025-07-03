@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import ThemeToggle from '$lib/components/ui/ThemeToggle.svelte';
 
 	let isMenuOpen = false;
 	let isMobile = false;
@@ -36,31 +37,33 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<nav class="border-b border-gray-200 bg-white">
+<nav class="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
 	<div class="container mx-auto px-4 py-4 md:py-6">
 		<div class="flex items-center justify-between">
 			<!-- ロゴ -->
 			<div class="flex items-center">
-				<a href="/" class="text-xl font-bold text-gray-900 hover:text-gray-700 md:text-2xl">
+				<a href="/" class="text-xl font-bold text-gray-900 hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300 md:text-2xl">
 					My Notes
 				</a>
 			</div>
 
 			<!-- デスクトップナビゲーション -->
 			<div class="hidden md:flex md:space-x-8">
-				<a href="/" class="text-gray-600 transition-colors hover:text-gray-900">
+				<a href="/" class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">
 					記事一覧
 				</a>
-				<a href="/about" class="text-gray-600 transition-colors hover:text-gray-900">
+				<a href="/about" class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">
 					学習ログ
 				</a>
+				<ThemeToggle size="sm" />
 			</div>
 
 			<!-- モバイルメニューボタン -->
-			<div class="md:hidden">
+			<div class="flex items-center space-x-2 md:hidden">
+				<ThemeToggle size="sm" />
 				<button
 					type="button"
-					class="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+					class="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
 					aria-controls="mobile-menu"
 					aria-expanded={isMenuOpen}
 					aria-label="メインメニュー"
@@ -110,14 +113,14 @@
 				<div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
 					<a
 						href="/"
-						class="block rounded-md px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+						class="block rounded-md px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
 						on:click={() => (isMenuOpen = false)}
 					>
 						記事一覧
 					</a>
 					<a
 						href="/about"
-						class="block rounded-md px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+						class="block rounded-md px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
 						on:click={() => (isMenuOpen = false)}
 					>
 						学習ログ

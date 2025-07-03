@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
+	import ThemeToggle from '$lib/components/ui/ThemeToggle.svelte';
 
 	export let data;
 
@@ -9,13 +10,13 @@
 	}
 </script>
 
-<div class="min-h-screen bg-gray-50">
-	<nav class="border-b border-gray-200 bg-white shadow-sm">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+	<nav class="border-b border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-16 justify-between">
 				<div class="flex">
 					<div class="flex flex-shrink-0 items-center">
-						<a href="/admin" class="text-lg font-bold text-gray-900 md:text-xl">
+						<a href="/admin" class="text-lg font-bold text-gray-900 dark:text-gray-100 md:text-xl">
 							管理画面
 						</a>
 					</div>
@@ -24,8 +25,8 @@
 							href="/admin"
 							class="inline-flex items-center px-1 pt-1 text-sm font-medium {$page.url
 								.pathname === '/admin'
-								? 'border-b-2 border-blue-500 text-gray-900'
-								: 'text-gray-500 hover:text-gray-700'}"
+								? 'border-b-2 border-blue-500 text-gray-900 dark:text-gray-100'
+								: 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}"
 						>
 							ダッシュボード
 						</a>
@@ -34,8 +35,8 @@
 							class="inline-flex items-center px-1 pt-1 text-sm font-medium {$page.url.pathname.startsWith(
 								'/admin/posts'
 							)
-								? 'border-b-2 border-blue-500 text-gray-900'
-								: 'text-gray-500 hover:text-gray-700'}"
+								? 'border-b-2 border-blue-500 text-gray-900 dark:text-gray-100'
+								: 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}"
 						>
 							記事管理
 						</a>
@@ -44,26 +45,27 @@
 							class="inline-flex items-center px-1 pt-1 text-sm font-medium {$page.url.pathname.startsWith(
 								'/admin/categories'
 							)
-								? 'border-b-2 border-blue-500 text-gray-900'
-								: 'text-gray-500 hover:text-gray-700'}"
+								? 'border-b-2 border-blue-500 text-gray-900 dark:text-gray-100'
+								: 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}"
 						>
 							カテゴリ管理
 						</a>
 					</div>
 				</div>
 				<div class="flex items-center space-x-2 sm:space-x-4">
-					<span class="hidden text-sm text-gray-700 sm:inline">
+					<span class="hidden text-sm text-gray-700 dark:text-gray-300 sm:inline">
 						{data.session.user?.name || 'ユーザー'}
 					</span>
+					<ThemeToggle size="sm" />
 					<button
 						on:click={handleSignOut}
-						class="rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 sm:px-3 sm:py-2 sm:text-sm"
+						class="rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 sm:px-3 sm:py-2 sm:text-sm"
 					>
 						ログアウト
 					</button>
 					<a
 						href="/"
-						class="text-xs text-gray-500 hover:text-gray-700 sm:text-sm"
+						class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 sm:text-sm"
 						target="_blank"
 					>
 						<span class="hidden sm:inline">サイトを表示</span>

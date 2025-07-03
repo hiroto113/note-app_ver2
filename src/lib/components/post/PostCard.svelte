@@ -21,21 +21,21 @@
 </script>
 
 <article
-	class="rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow duration-200 hover:shadow-lg"
+	class="rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow duration-200 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
 >
 	<a href="/posts/{post.slug}" class="block">
 		<h2
-			class="mb-2 text-lg font-bold text-gray-900 transition-colors hover:text-blue-600 md:text-xl"
+			class="mb-2 text-lg font-bold text-gray-900 transition-colors hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400 md:text-xl"
 		>
 			{post.title}
 		</h2>
 
-		<p class="mb-4 line-clamp-3 text-sm text-gray-600 md:text-base">
+		<p class="mb-4 line-clamp-3 text-sm text-gray-600 dark:text-gray-300 md:text-base">
 			{post.excerpt || post.description || ''}
 		</p>
 
 		<div
-			class="flex flex-col space-y-2 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between sm:space-y-0"
+			class="flex flex-col space-y-2 text-sm text-gray-500 dark:text-gray-400 sm:flex-row sm:items-center sm:justify-between sm:space-y-0"
 		>
 			<time datetime={post.publishedAt || post.createdAt}>
 				{formatDate(post.publishedAt || post.createdAt)}
@@ -43,7 +43,7 @@
 
 			<div class="flex flex-wrap gap-1 sm:gap-2">
 				{#each displayCategories(post.categories) as category}
-					<span class="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+					<span class="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800 dark:bg-blue-900 dark:text-blue-200">
 						{category}
 					</span>
 				{/each}
