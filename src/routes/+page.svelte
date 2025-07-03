@@ -74,7 +74,7 @@
 	{/if}
 
 	{#if data.posts.length > 0}
-		<section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+		<section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-label="記事一覧">
 			{#each data.posts as post, index}
 				<SlideUp delay={getStaggerDelay(index, 400, 100)}>
 					<PostCard {post} />

@@ -52,3 +52,117 @@
 		@apply hover:translate-y-0 hover:scale-100;
 	}
 }
+
+/* アクセシビリティ関連スタイル */
+
+/* フォーカス表示の強化 */
+*:focus {
+	outline: 2px solid #3b82f6;
+	outline-offset: 2px;
+}
+
+*:focus:not(:focus-visible) {
+	outline: none;
+}
+
+/* ハイコントラストモード対応 */
+@media (prefers-contrast: high) {
+	/* テキストのコントラストを強化 */
+	.text-gray-600 {
+		@apply text-gray-800;
+	}
+
+	.dark .text-gray-300 {
+		@apply text-gray-100;
+	}
+
+	/* ボーダーのコントラストを強化 */
+	.border-gray-200 {
+		@apply border-gray-400;
+	}
+
+	.dark .border-gray-700 {
+		@apply border-gray-500;
+	}
+}
+
+/* スキップリンクの改良 */
+.skip-link:focus {
+	position: fixed !important;
+	top: 1rem !important;
+	left: 1rem !important;
+	z-index: 9999 !important;
+	transform: translateY(0) !important;
+}
+
+/* スクリーンリーダー専用テキスト */
+.sr-only {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	padding: 0 !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	white-space: nowrap !important;
+	border: 0 !important;
+}
+
+/* クリック領域の最小サイズ確保 */
+button,
+[role='button'],
+input[type='submit'],
+input[type='button'],
+a {
+	min-height: 44px;
+	min-width: 44px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* リンクのアンダーライン（可視性向上） */
+a:not(.no-underline) {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+}
+
+a:hover:not(.no-underline) {
+	text-decoration-thickness: 2px;
+}
+
+/* フォーム要素のアクセシビリティ */
+input:invalid,
+textarea:invalid,
+select:invalid {
+	border-color: #ef4444;
+	box-shadow: 0 0 0 1px #ef4444;
+}
+
+input:invalid:focus,
+textarea:invalid:focus,
+select:invalid:focus {
+	outline-color: #ef4444;
+	border-color: #ef4444;
+}
+
+/* 大きなフォントサイズ設定時の対応 */
+@media (min-resolution: 192dpi) {
+	html {
+		font-size: 18px;
+	}
+}
+
+/* Windows ハイコントラストモード */
+@media (-ms-high-contrast: active) {
+	* {
+		border-color: WindowText !important;
+		color: WindowText !important;
+		background-color: Window !important;
+	}
+
+	a {
+		color: LinkText !important;
+	}
+}
