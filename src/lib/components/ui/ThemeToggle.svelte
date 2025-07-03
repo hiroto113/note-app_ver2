@@ -27,7 +27,7 @@
 
 <button
 	type="button"
-	class="inline-flex items-center justify-center rounded-md p-2 transition-colors duration-200 
+	class="inline-flex items-center justify-center rounded-md p-2 transition-colors duration-200
 		   hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
 		   dark:hover:bg-gray-700 dark:focus:ring-offset-gray-800 {sizeClasses[size]}"
 	on:click={toggleTheme}

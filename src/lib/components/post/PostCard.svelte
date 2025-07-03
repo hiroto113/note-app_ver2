@@ -43,7 +43,9 @@
 
 			<div class="flex flex-wrap gap-1 sm:gap-2">
 				{#each displayCategories(post.categories) as category}
-					<span class="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+					<span
+						class="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+					>
 						{category}
 					</span>
 				{/each}

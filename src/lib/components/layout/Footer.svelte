@@ -3,12 +3,20 @@
 		<div
 			class="flex flex-col items-center justify-center space-y-2 text-center md:flex-row md:justify-between md:space-y-0"
 		>
-			<p class="text-sm text-gray-500 dark:text-gray-400">© 2024 My Notes. All rights reserved.</p>
+			<p class="text-sm text-gray-500 dark:text-gray-400">
+				© 2024 My Notes. All rights reserved.
+			</p>
 			<div class="flex space-x-4 text-sm text-gray-500 dark:text-gray-400">
-				<a href="/privacy" class="transition-colors hover:text-gray-700 dark:hover:text-gray-200"
+				<a
+					href="/privacy"
+					class="transition-colors hover:text-gray-700 dark:hover:text-gray-200"
 					>プライバシーポリシー</a
 				>
-				<a href="/terms" class="transition-colors hover:text-gray-700 dark:hover:text-gray-200">利用規約</a>
+				<a
+					href="/terms"
+					class="transition-colors hover:text-gray-700 dark:hover:text-gray-200"
+					>利用規約</a
+				>
 			</div>
 		</div>
 	</div>

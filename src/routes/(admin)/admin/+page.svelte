@@ -37,7 +37,11 @@
 					</div>
 					<div class="ml-5 w-0 flex-1">
 						<dl>
-							<dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">総記事数</dt>
+							<dt
+								class="truncate text-sm font-medium text-gray-500 dark:text-gray-400"
+							>
+								総記事数
+							</dt>
 							<dd class="text-lg font-medium text-gray-900 dark:text-gray-100">0</dd>
 						</dl>
 					</div>
@@ -45,7 +49,10 @@
 			</div>
 			<div class="bg-gray-50 px-5 py-3 dark:bg-gray-700">
 				<div class="text-sm">
-					<a href="/admin/posts" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+					<a
+						href="/admin/posts"
+						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+					>
 						記事管理へ
 					</a>
 				</div>
@@ -72,7 +79,11 @@
 					</div>
 					<div class="ml-5 w-0 flex-1">
 						<dl>
-							<dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">総カテゴリ数</dt>
+							<dt
+								class="truncate text-sm font-medium text-gray-500 dark:text-gray-400"
+							>
+								総カテゴリ数
+							</dt>
 							<dd class="text-lg font-medium text-gray-900 dark:text-gray-100">0</dd>
 						</dl>
 					</div>
@@ -116,7 +127,11 @@
 					</div>
 					<div class="ml-5 w-0 flex-1">
 						<dl>
-							<dt class="truncate text-sm font-medium text-gray-500 dark:text-gray-400">公開記事数</dt>
+							<dt
+								class="truncate text-sm font-medium text-gray-500 dark:text-gray-400"
+							>
+								公開記事数
+							</dt>
 							<dd class="text-lg font-medium text-gray-900 dark:text-gray-100">0</dd>
 						</dl>
 					</div>
@@ -139,7 +154,9 @@
 	<div class="mt-8">
 		<div class="rounded-lg bg-white shadow dark:bg-gray-800">
 			<div class="px-4 py-5 sm:p-6">
-				<h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">クイックアクション</h3>
+				<h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+					クイックアクション
+				</h3>
 				<div class="mt-5">
 					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<a

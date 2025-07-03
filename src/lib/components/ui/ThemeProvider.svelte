@@ -8,13 +8,13 @@
 
 	onMount(() => {
 		mounted = true;
-		
+
 		// ブラウザ環境でのみ実行
 		if (browser) {
 			// 初期テーマの適用（重複防止のため）
 			const root = document.documentElement;
 			const isDark = $themeStore.current === 'dark';
-			
+
 			if (isDark && !root.classList.contains('dark')) {
 				root.classList.add('dark');
 			} else if (!isDark && root.classList.contains('dark')) {

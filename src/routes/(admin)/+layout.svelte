@@ -16,7 +16,10 @@
 			<div class="flex h-16 justify-between">
 				<div class="flex">
 					<div class="flex flex-shrink-0 items-center">
-						<a href="/admin" class="text-lg font-bold text-gray-900 dark:text-gray-100 md:text-xl">
+						<a
+							href="/admin"
+							class="text-lg font-bold text-gray-900 dark:text-gray-100 md:text-xl"
+						>
 							管理画面
 						</a>
 					</div>

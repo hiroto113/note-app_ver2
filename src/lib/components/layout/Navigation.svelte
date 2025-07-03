@@ -42,17 +42,26 @@
 		<div class="flex items-center justify-between">
 			<!-- ロゴ -->
 			<div class="flex items-center">
-				<a href="/" class="text-xl font-bold text-gray-900 hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300 md:text-2xl">
+				<a
+					href="/"
+					class="text-xl font-bold text-gray-900 hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300 md:text-2xl"
+				>
 					My Notes
 				</a>
 			</div>
 
 			<!-- デスクトップナビゲーション -->
 			<div class="hidden md:flex md:space-x-8">
-				<a href="/" class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">
+				<a
+					href="/"
+					class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+				>
 					記事一覧
 				</a>
-				<a href="/about" class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">
+				<a
+					href="/about"
+					class="text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+				>
 					学習ログ
 				</a>
 				<ThemeToggle size="sm" />

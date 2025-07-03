@@ -48,20 +48,20 @@ const initialTheme = resolveTheme(initialMode);
 
 // ストアを作成
 function createThemeStore() {
-	const { subscribe, set, update } = writable<ThemeStore>({
+	const { subscribe, update } = writable<ThemeStore>({
 		current: initialTheme,
 		mode: initialMode
 	});
 
 	return {
 		subscribe,
-		
+
 		// テーマモードを設定
 		setMode: (mode: ThemeMode) => {
-			update(store => {
+			update(() => {
 				const newTheme = resolveTheme(mode);
 				const newStore = { current: newTheme, mode };
-				
+
 				// ローカルストレージに保存
 				if (browser) {
 					try {
@@ -70,20 +70,20 @@ function createThemeStore() {
 						console.warn('Failed to save theme preference to localStorage:', error);
 					}
 				}
-				
+
 				// DOMクラスを更新
 				applyTheme(newTheme);
-				
+
 				return newStore;
 			});
 		},
-		
+
 		// ライト/ダークを切り替え
 		toggle: () => {
-			update(store => {
+			update((store) => {
 				const newMode: ThemeMode = store.current === 'light' ? 'dark' : 'light';
 				const newStore = { current: newMode, mode: newMode };
-				
+
 				// ローカルストレージに保存
 				if (browser) {
 					try {
@@ -92,17 +92,17 @@ function createThemeStore() {
 						console.warn('Failed to save theme preference to localStorage:', error);
 					}
 				}
-				
+
 				// DOMクラスを更新
 				applyTheme(newMode);
-				
+
 				return newStore;
 			});
 		},
-		
+
 		// システム設定変更時の更新
 		updateSystemTheme: () => {
-			update(store => {
+			update((store) => {
 				if (store.mode === 'system') {
 					const systemTheme = getSystemTheme();
 					if (systemTheme !== store.current) {
@@ -119,7 +119,7 @@ function createThemeStore() {
 // DOMにテーマクラスを適用
 function applyTheme(theme: Theme) {
 	if (!browser) return;
-	
+
 	const root = document.documentElement;
 	if (theme === 'dark') {
 		root.classList.add('dark');
@@ -135,7 +135,7 @@ export const themeStore = createThemeStore();
 if (browser) {
 	// 初期テーマを適用
 	applyTheme(initialTheme);
-	
+
 	// システム設定変更の監視
 	const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 	mediaQuery.addEventListener('change', () => {

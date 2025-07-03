@@ -45,7 +45,10 @@
 	{#if data.categories && data.categories.length > 0}
 		<div class="flex justify-center">
 			<div class="w-full max-w-xs sm:max-w-sm">
-				<label for="category-filter" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+				<label
+					for="category-filter"
+					class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+				>
 					カテゴリで絞り込み
 				</label>
 				<select
@@ -104,7 +107,8 @@
 								{pageNum}
 							</button>
 						{:else if Math.abs(pageNum - data.pagination.page) === 3}
-							<span class="px-2 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 sm:px-3"
+							<span
+								class="px-2 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 sm:px-3"
 								>...</span
 							>
 						{/if}
