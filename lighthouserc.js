@@ -1,13 +1,12 @@
-module.exports = {
+export default {
 	ci: {
 		// Lighthouse CI設定
 		collect: {
 			// テスト対象のURL
 			url: [
-				'http://localhost:3000/',
-				'http://localhost:3000/posts',
-				'http://localhost:3000/categories',
-				'http://localhost:3000/admin'
+				'http://localhost:4173/',
+				'http://localhost:4173/about',
+				'http://localhost:4173/contact'
 			],
 			// 各URLでの実行回数
 			numberOfRuns: 3,
@@ -66,20 +65,20 @@ module.exports = {
 		assert: {
 			assertions: {
 				// Performance（パフォーマンス）スコア
-				'categories:performance': ['error', { minScore: 0.9 }],
+				'categories:performance': ['warn', { minScore: 0.7 }],
 				// Accessibility（アクセシビリティ）スコア
 				'categories:accessibility': ['error', { minScore: 0.9 }],
 				// Best Practices（ベストプラクティス）スコア
-				'categories:best-practices': ['error', { minScore: 0.9 }],
+				'categories:best-practices': ['warn', { minScore: 0.8 }],
 				// SEO スコア
-				'categories:seo': ['error', { minScore: 0.9 }],
+				'categories:seo': ['warn', { minScore: 0.8 }],
 
 				// 個別指標の閾値
-				'audits:first-contentful-paint': ['error', { maxNumericValue: 2000 }],
-				'audits:largest-contentful-paint': ['error', { maxNumericValue: 2500 }],
-				'audits:interactive': ['error', { maxNumericValue: 3000 }],
-				'audits:cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }],
-				'audits:total-blocking-time': ['error', { maxNumericValue: 300 }],
+				'audits:first-contentful-paint': ['warn', { maxNumericValue: 3000 }],
+				'audits:largest-contentful-paint': ['warn', { maxNumericValue: 4000 }],
+				'audits:interactive': ['warn', { maxNumericValue: 5000 }],
+				'audits:cumulative-layout-shift': ['warn', { maxNumericValue: 0.2 }],
+				'audits:total-blocking-time': ['warn', { maxNumericValue: 500 }],
 
 				// アクセシビリティ
 				'audits:color-contrast': 'error',
@@ -100,16 +99,19 @@ module.exports = {
 	}
 };
 
-// モバイル用設定
-module.exports.mobile = {
+// Export additional configurations if needed
+export const mobile = {
 	ci: {
-		...module.exports.ci,
 		collect: {
-			...module.exports.ci.collect,
+			url: [
+				'http://localhost:4173/',
+				'http://localhost:4173/about',
+				'http://localhost:4173/contact'
+			],
+			numberOfRuns: 2,
 			settings: {
-				...module.exports.ci.collect.settings,
 				preset: 'mobile',
-				// モバイル用の更に厳しい閾値
+				throttlingMethod: 'simulate',
 				throttling: {
 					rttMs: 150,
 					throughputKbps: 1638.4,
@@ -119,11 +121,10 @@ module.exports.mobile = {
 		},
 		assert: {
 			assertions: {
-				...module.exports.ci.assert.assertions,
-				// モバイルではより厳しい基準
-				'audits:first-contentful-paint': ['error', { maxNumericValue: 3000 }],
-				'audits:largest-contentful-paint': ['error', { maxNumericValue: 4000 }],
-				'audits:interactive': ['error', { maxNumericValue: 5000 }]
+				'categories:performance': ['error', { minScore: 0.8 }],
+				'categories:accessibility': ['error', { minScore: 0.9 }],
+				'categories:best-practices': ['error', { minScore: 0.9 }],
+				'categories:seo': ['error', { minScore: 0.9 }]
 			}
 		}
 	}

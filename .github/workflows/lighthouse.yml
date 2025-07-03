@@ -32,6 +32,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Setup database
+        run: |
+          pnpm run migrate
+          pnpm run seed
+        env:
+          NODE_ENV: production
+
       - name: Build application
         run: pnpm run build
         env:
