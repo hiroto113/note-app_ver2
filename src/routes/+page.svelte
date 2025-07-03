@@ -2,6 +2,7 @@
 	import PostCard from '$lib/components/post/PostCard.svelte';
 	import SlideUp from '$lib/components/ui/SlideUp.svelte';
 	import FadeIn from '$lib/components/ui/FadeIn.svelte';
+	import OGPTags from '$lib/components/seo/OGPTags.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { getStaggerDelay } from '$lib/utils/animations';
@@ -37,6 +38,13 @@
 	<title>My Notes</title>
 	<meta name="description" content="個人的な学習記録とメモ" />
 </svelte:head>
+
+<!-- OGP Tags -->
+<OGPTags
+	title="My Notes"
+	description="個人的な学習記録とメモを公開しています。AI×開発に関する知見や技術的な発見を記録しています。"
+	type="website"
+/>
 
 <div class="space-y-8">
 	<FadeIn>
