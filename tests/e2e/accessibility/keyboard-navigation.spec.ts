@@ -73,11 +73,10 @@ test.describe('キーボードナビゲーションテスト', () => {
 			await expect(links.first()).toBeFocused();
 
 			// Enterキーでリンクが動作することを確認
-			const originalUrl = page.url();
 			await page.keyboard.press('Enter');
 			await waitForPageLoad(page);
 
-			// URLが変更されたかリンクが動作したことを確認
+			// ページが応答することを確認
 			const newUrl = page.url();
 			// 同じページの場合もあるため、フォーカスが移動したことを確認
 			expect(newUrl).toBeDefined();
@@ -274,7 +273,6 @@ test.describe('キーボードナビゲーションテスト', () => {
 				// Enterキーでリンクが動作することを確認
 				const firstLink = tableLinks.first();
 				await firstLink.focus();
-				const originalUrl = page.url();
 				await page.keyboard.press('Enter');
 				await waitForPageLoad(page);
 

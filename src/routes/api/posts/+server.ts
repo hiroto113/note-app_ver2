@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
 import { posts, categories, postsToCategories } from '$lib/server/db/schema';
-import { eq, desc, and, sql } from 'drizzle-orm';
+import { eq, desc, sql } from 'drizzle-orm';
 
 export const GET: RequestHandler = async ({ url }) => {
 	try {

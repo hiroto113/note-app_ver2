@@ -48,11 +48,7 @@ export async function submitFormAndWait(
 /**
  * 通知・トーストメッセージの確認
  */
-export async function expectNotification(
-	page: Page,
-	message: string,
-	type: 'success' | 'error' | 'info' = 'success'
-) {
+export async function expectNotification(page: Page, message: string) {
 	const notificationSelectors = [
 		'.toast',
 		'.notification',

@@ -4,7 +4,6 @@ import { loginAsAdmin, logout } from '../utils/auth-helpers';
 import {
 	waitForPageLoad,
 	expectNotification,
-	findTableRow,
 	handleConfirmDialog,
 	expectModal,
 	closeModal

@@ -237,7 +237,6 @@ test.describe('WCAG 2.1 AA準拠アクセシビリティテスト', () => {
 
 		for (let i = 0; i < ariaCount; i++) {
 			const element = ariaElements.nth(i);
-			const ariaLabel = await element.getAttribute('aria-label');
 			const ariaLabelledby = await element.getAttribute('aria-labelledby');
 			const ariaDescribedby = await element.getAttribute('aria-describedby');
 			const role = await element.getAttribute('role');

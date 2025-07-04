@@ -121,7 +121,7 @@ export function createScenarioData(scenario: 'empty' | 'minimal' | 'full'): Test
 				sessions: []
 			};
 
-		case 'full':
+		case 'full': {
 			// Generate more test data
 			const posts: Partial<Post>[] = [];
 			const categories: Partial<Category>[] = [...baseData.categories];
@@ -160,6 +160,7 @@ export function createScenarioData(scenario: 'empty' | 'minimal' | 'full'): Test
 				posts,
 				sessions: baseData.sessions
 			};
+		}
 	}
 }
 

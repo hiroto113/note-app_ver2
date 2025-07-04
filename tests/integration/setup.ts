@@ -1,5 +1,4 @@
 import { beforeAll, afterAll } from 'vitest';
-import { db } from '$lib/server/db';
 
 /**
  * 統合テスト用のセットアップ

@@ -4,9 +4,30 @@ import { posts, categories, postsToCategories, users } from '$lib/server/db/sche
 import bcrypt from 'bcryptjs';
 
 // Import API route handlers directly
+// Import API route handlers directly
 import * as postsApi from '../../../src/routes/api/posts/+server';
 import * as categoriesApi from '../../../src/routes/api/categories/+server';
 import * as postDetailApi from '../../../src/routes/api/posts/[slug]/+server';
+
+type APIContext = {
+	request: Request;
+	url: URL;
+};
+
+type PostResponse = {
+	id: number;
+	slug: string;
+	title: string;
+	status: string;
+	categories: unknown[];
+};
+
+type CategoryResponse = {
+	id: number;
+	name: string;
+	slug: string;
+	postCount: number;
+};
 
 describe('Public API Integration', () => {
 	let testUserId: string;
@@ -105,7 +126,7 @@ describe('Public API Integration', () => {
 			})
 			.returning();
 
-		const [futurePost] = await db
+		await db
 			.insert(posts)
 			.values({
 				title: 'Future Post',
@@ -140,30 +161,39 @@ describe('Public API Integration', () => {
 	describe('GET /api/posts', () => {
 		it('should return published posts only', async () => {
 			const request = new Request('http://localhost:5173/api/posts');
-			const response = await postsApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await postsApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
 			expect(response.status).toBe(200);
 			expect(data.posts).toHaveLength(2); // Only 2 published posts (not draft or future)
-			expect(data.posts.every((p: any) => p.status === 'published')).toBe(true);
+			expect(data.posts.every((p: PostResponse) => p.status === 'published')).toBe(true);
 		});
 
 		it('should return posts with categories', async () => {
 			const request = new Request('http://localhost:5173/api/posts');
-			const response = await postsApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await postsApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
 			expect(data.posts[0].categories).toBeDefined();
 			expect(Array.isArray(data.posts[0].categories)).toBe(true);
 
 			// Post 2 should have 2 categories
-			const post2 = data.posts.find((p: any) => p.slug === 'published-post-2');
+			const post2 = data.posts.find((p: PostResponse) => p.slug === 'published-post-2');
 			expect(post2.categories).toHaveLength(2);
 		});
 
 		it('should support pagination', async () => {
 			const request = new Request('http://localhost:5173/api/posts?page=1&limit=1');
-			const response = await postsApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await postsApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
 			expect(data.posts).toHaveLength(1);
@@ -177,7 +207,10 @@ describe('Public API Integration', () => {
 
 		it('should filter by category', async () => {
 			const request = new Request('http://localhost:5173/api/posts?category=web-dev');
-			const response = await postsApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await postsApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
 			expect(data.posts).toHaveLength(1);
@@ -186,7 +219,10 @@ describe('Public API Integration', () => {
 
 		it('should order posts by publishedAt desc', async () => {
 			const request = new Request('http://localhost:5173/api/posts');
-			const response = await postsApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await postsApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
 			expect(data.posts[0].slug).toBe('published-post-2'); // More recent
@@ -198,7 +234,10 @@ describe('Public API Integration', () => {
 			await db.delete(posts);
 
 			const request = new Request('http://localhost:5173/api/posts');
-			const response = await postsApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await postsApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
 			expect(response.status).toBe(200);
@@ -215,7 +254,7 @@ describe('Public API Integration', () => {
 				request,
 				params,
 				url: new URL(request.url)
-			} as any);
+			} as APIContext);
 			const data = await response.json();
 
 			expect(response.status).toBe(200);
@@ -231,13 +270,15 @@ describe('Public API Integration', () => {
 				request,
 				params,
 				url: new URL(request.url)
-			} as any);
+			} as APIContext);
 			const data = await response.json();
 
 			expect(data.post.categories).toBeDefined();
 			expect(data.post.categories).toHaveLength(2);
-			expect(data.post.categories.map((c: any) => c.slug)).toContain('technology');
-			expect(data.post.categories.map((c: any) => c.slug)).toContain('web-dev');
+			expect(data.post.categories.map((c: CategoryResponse) => c.slug)).toContain(
+				'technology'
+			);
+			expect(data.post.categories.map((c: CategoryResponse) => c.slug)).toContain('web-dev');
 		});
 
 		it('should not return draft posts', async () => {
@@ -247,7 +288,7 @@ describe('Public API Integration', () => {
 				request,
 				params,
 				url: new URL(request.url)
-			} as any);
+			} as APIContext);
 
 			expect(response.status).toBe(404);
 		});
@@ -259,7 +300,7 @@ describe('Public API Integration', () => {
 				request,
 				params,
 				url: new URL(request.url)
-			} as any);
+			} as APIContext);
 
 			expect(response.status).toBe(404);
 		});
@@ -271,7 +312,7 @@ describe('Public API Integration', () => {
 				request,
 				params,
 				url: new URL(request.url)
-			} as any);
+			} as APIContext);
 
 			expect(response.status).toBe(404);
 		});
@@ -280,22 +321,30 @@ describe('Public API Integration', () => {
 	describe('GET /api/categories', () => {
 		it('should return all categories', async () => {
 			const request = new Request('http://localhost:5173/api/categories');
-			const response = await categoriesApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await categoriesApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
 			expect(response.status).toBe(200);
 			expect(data.categories).toHaveLength(2);
-			expect(data.categories.map((c: any) => c.slug)).toContain('technology');
-			expect(data.categories.map((c: any) => c.slug)).toContain('web-dev');
+			expect(data.categories.map((c: CategoryResponse) => c.slug)).toContain('technology');
+			expect(data.categories.map((c: CategoryResponse) => c.slug)).toContain('web-dev');
 		});
 
 		it('should include post count for each category', async () => {
 			const request = new Request('http://localhost:5173/api/categories');
-			const response = await categoriesApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await categoriesApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
-			const techCategory = data.categories.find((c: any) => c.slug === 'technology');
-			const webCategory = data.categories.find((c: any) => c.slug === 'web-dev');
+			const techCategory = data.categories.find(
+				(c: CategoryResponse) => c.slug === 'technology'
+			);
+			const webCategory = data.categories.find((c: CategoryResponse) => c.slug === 'web-dev');
 
 			expect(techCategory.postCount).toBe(2); // 2 published posts
 			expect(webCategory.postCount).toBe(1); // 1 published post (draft doesn't count)
@@ -303,7 +352,10 @@ describe('Public API Integration', () => {
 
 		it('should order categories by name', async () => {
 			const request = new Request('http://localhost:5173/api/categories');
-			const response = await categoriesApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await categoriesApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
 			expect(data.categories[0].name).toBe('Technology');
@@ -316,7 +368,10 @@ describe('Public API Integration', () => {
 			await db.delete(categories);
 
 			const request = new Request('http://localhost:5173/api/categories');
-			const response = await categoriesApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await categoriesApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
 			expect(response.status).toBe(200);
@@ -329,7 +384,10 @@ describe('Public API Integration', () => {
 			// This would require mocking the database to throw an error
 			// For now, we'll test the structure is in place
 			const request = new Request('http://localhost:5173/api/posts');
-			const response = await postsApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await postsApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 
 			expect(response.headers.get('content-type')).toContain('application/json');
 		});
@@ -355,7 +413,10 @@ describe('Public API Integration', () => {
 			await db.insert(posts).values(manyPosts);
 
 			const request = new Request('http://localhost:5173/api/posts?limit=100');
-			const response = await postsApi.GET({ request, url: new URL(request.url) } as any);
+			const response = await postsApi.GET({
+				request,
+				url: new URL(request.url)
+			} as APIContext);
 			const data = await response.json();
 
 			expect(data.posts.length).toBeLessThanOrEqual(50); // Max limit should be enforced

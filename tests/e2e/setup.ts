@@ -15,7 +15,7 @@ setup('prepare database', async ({ page }) => {
 		await execAsync('pnpm run db:migrate');
 		await execAsync('pnpm run db:seed');
 		console.log('Database setup completed');
-	} catch (error) {
+	} catch {
 		console.log('Database already exists or setup skipped');
 	}
 

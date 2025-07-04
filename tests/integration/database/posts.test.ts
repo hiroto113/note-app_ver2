@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { db } from '$lib/server/db';
 import { posts, categories, postsToCategories, users } from '$lib/server/db/schema';
-import { eq, desc, and } from 'drizzle-orm';
-import { createTestData } from '$lib/test-utils';
+import { eq, desc } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
 describe('Posts Database Integration', () => {

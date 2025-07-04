@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { testPosts } from '../fixtures/test-data';
-import { waitForPageLoad, expectVisible, setViewportSize, viewports } from '../utils/page-helpers';
+import { waitForPageLoad, setViewportSize, viewports } from '../utils/page-helpers';
 
 test.describe('記事詳細ページ', () => {
 	test.beforeEach(async ({ page }) => {

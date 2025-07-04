@@ -4,7 +4,7 @@
 
 interface MockResponse {
 	status: number;
-	body: any;
+	body: unknown;
 	headers?: Record<string, string>;
 }
 
@@ -278,6 +278,6 @@ export function mockFetch(mock: ApiMock = apiMock): void {
  * fetchのモックを解除
  */
 export function unmockFetch(): void {
-	// @ts-ignore
+	// @ts-expect-error: Deleting global property for test cleanup
 	delete global.fetch;
 }

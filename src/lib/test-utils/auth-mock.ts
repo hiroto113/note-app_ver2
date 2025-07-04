@@ -134,7 +134,7 @@ export function createMockRequest(options: {
 	url?: string;
 	method?: string;
 	headers?: Record<string, string>;
-	body?: any;
+	body?: unknown;
 }): Request {
 	const { url = 'http://localhost:5173', method = 'GET', headers = {}, body } = options;
 

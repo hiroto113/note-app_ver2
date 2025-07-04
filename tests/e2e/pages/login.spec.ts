@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { testUsers } from '../fixtures/test-data';
-import { waitForPageLoad, expectNotification } from '../utils/page-helpers';
+import { waitForPageLoad } from '../utils/page-helpers';
 import { expectLoginPage } from '../utils/auth-helpers';
 
 test.describe('ログイン機能', () => {

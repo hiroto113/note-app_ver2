@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { testPosts, testCategories } from '../fixtures/test-data';
-import { waitForPageLoad, expectVisible, setViewportSize, viewports } from '../utils/page-helpers';
+import { waitForPageLoad, setViewportSize, viewports } from '../utils/page-helpers';
 
 test.describe('ホームページ', () => {
 	test.beforeEach(async ({ page }) => {
@@ -83,8 +82,8 @@ test.describe('ホームページ', () => {
 			);
 
 			if ((await nextButton.isVisible()) && (await nextButton.isEnabled())) {
-				// 現在のページの記事を記録
-				const currentArticles = await page.locator('article, .post-card').count();
+				// 次のページに移動前の状態を確認
+				await page.locator('article, .post-card').count();
 
 				// 次のページに移動
 				await nextButton.click();
