@@ -16,11 +16,13 @@ test.describe('Lighthouse パフォーマンステスト', () => {
 		await expect(page.locator('nav')).toBeVisible();
 		await expect(page.locator('main')).toBeVisible();
 		
-		// CSSが適用されていることの確認（フォントサイズが設定されている）
-		const bodyFontSize = await page.locator('body').evaluate((el) => 
-			window.getComputedStyle(el).fontSize
-		);
-		expect(bodyFontSize).not.toBe('16px'); // デフォルトから変更されている
+		// CSSが適用されていることの確認（Tailwind CSSが読み込まれている）
+		const hasStyles = await page.evaluate(() => {
+			const styles = window.getComputedStyle(document.body);
+			// Tailwind CSSのリセットスタイルが適用されているかチェック
+			return styles.margin === '0px' && styles.boxSizing === 'border-box';
+		});
+		expect(hasStyles).toBeTruthy();
 	});
 
 	test('記事詳細ページの基本パフォーマンス確認', async ({ page }) => {

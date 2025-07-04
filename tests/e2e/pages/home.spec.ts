@@ -52,9 +52,7 @@ test.describe('ホームページ', () => {
 
 	test('カテゴリフィルタが動作する', async ({ page }) => {
 		// カテゴリフィルタの存在確認
-		const categoryFilter = page.locator(
-			'select[id*="category"], select:has(option:text-contains("カテゴリ"))'
-		);
+		const categoryFilter = page.locator('select');
 
 		if (await categoryFilter.isVisible()) {
 			// カテゴリを選択

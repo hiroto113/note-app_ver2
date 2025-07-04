@@ -11,6 +11,7 @@
 	export let required: boolean = false;
 	export let height: string = '400px';
 	export let showPreview: boolean = true;
+	export let testId: string = '';
 
 	const dispatch = createEventDispatcher<{
 		input: string;
@@ -101,7 +102,7 @@
 		</div>
 	{/if}
 
-	<div class="overflow-hidden rounded-md border border-gray-300" class:border-red-300={error}>
+	<div class="overflow-hidden rounded-md border border-gray-300" class:border-red-300={error} data-testid={testId}>
 		{#if viewMode === 'editor'}
 			<MarkdownEditor
 				bind:this={editorRef}

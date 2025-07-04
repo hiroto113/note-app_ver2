@@ -119,6 +119,7 @@
 				error={errors.content}
 				disabled={loading}
 				height="500px"
+				testId="content-input"
 			/>
 
 			<!-- Excerpt -->
