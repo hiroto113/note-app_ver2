@@ -122,8 +122,21 @@ describe('API パフォーマンステスト', () => {
 			.returning();
 
 		// 大量のテストデータを作成（パフォーマンステスト用）
-		const posts_data = [];
-		const postsToCategories_data = [];
+		const posts_data: Array<{
+			title: string;
+			slug: string;
+			content: string;
+			excerpt: string;
+			status: 'published';
+			publishedAt: Date;
+			userId: string;
+			createdAt: Date;
+			updatedAt: Date;
+		}> = [];
+		const postsToCategories_data: Array<{
+			postId: number;
+			categoryId: number;
+		}> = [];
 		
 		for (let i = 1; i <= 100; i++) {
 			const post = {
