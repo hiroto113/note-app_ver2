@@ -10,6 +10,9 @@ export default defineConfig({
 		setupFiles: ['./tests/setup.ts', './tests/integration/setup.ts'],
 		watch: false,
 		testTimeout: 10000, // 10 seconds for integration tests
-		hookTimeout: 10000 // 10 seconds for setup/teardown
+		hookTimeout: 10000, // 10 seconds for setup/teardown
+		env: {
+			DATABASE_URL: 'file:test.db'
+		}
 	}
 });

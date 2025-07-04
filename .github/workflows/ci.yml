@@ -38,9 +38,13 @@ jobs:
 
       - name: Setup database
         run: pnpm run db:migrate
+        env:
+          DATABASE_URL: file:test.db
 
       - name: Run unit tests
         run: pnpm run test
+        env:
+          DATABASE_URL: file:test.db
 
       - name: Build project
         run: pnpm run build
