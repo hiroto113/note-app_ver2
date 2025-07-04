@@ -13,7 +13,7 @@ beforeAll(async () => {
 	try {
 		execSync('pnpm run db:migrate', { stdio: 'inherit' });
 		console.log('Database migration completed');
-	} catch (error) {
+	} catch {
 		console.log('Migration already applied or skipped');
 	}
 
