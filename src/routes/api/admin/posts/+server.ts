@@ -38,7 +38,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			whereConditions.push(eq(posts.status, status as 'draft' | 'published'));
 		}
 
-		// 記事一覧の取得（カテゴリ情報含む）
+		// 記事一覧の取得（基本情報のみ）
 		const allPosts = await db
 			.select({
 				id: posts.id,
@@ -52,22 +52,11 @@ export const GET: RequestHandler = async ({ url }) => {
 				author: {
 					id: users.id,
 					username: users.username
-				},
-				categories: sql<string>`
-					GROUP_CONCAT(
-						json_object(
-							'id', ${categories.id},
-							'name', ${categories.name}
-						)
-					)
-				`.as('categories')
+				}
 			})
 			.from(posts)
 			.leftJoin(users, eq(posts.userId, users.id))
-			.leftJoin(postsToCategories, eq(posts.id, postsToCategories.postId))
-			.leftJoin(categories, eq(postsToCategories.categoryId, categories.id))
 			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
-			.groupBy(posts.id)
 			.orderBy(desc(posts.createdAt))
 			.limit(limit)
 			.offset(offset);
@@ -78,11 +67,24 @@ export const GET: RequestHandler = async ({ url }) => {
 			.from(posts)
 			.where(whereConditions.length > 0 ? and(...whereConditions) : undefined);
 
-		// カテゴリ情報のパース
-		const formattedPosts = allPosts.map((post) => ({
-			...post,
-			categories: post.categories ? post.categories.split(',').map((c) => JSON.parse(c)) : []
-		}));
+		// 各記事のカテゴリ情報を取得
+		const formattedPosts = await Promise.all(
+			allPosts.map(async (post) => {
+				const categoryResults = await db
+					.select({
+						id: categories.id,
+						name: categories.name
+					})
+					.from(categories)
+					.innerJoin(postsToCategories, eq(categories.id, postsToCategories.categoryId))
+					.where(eq(postsToCategories.postId, post.id));
+
+				return {
+					...post,
+					categories: categoryResults
+				};
+			})
+		);
 
 		return json({
 			posts: formattedPosts,

@@ -8,27 +8,17 @@ export const GET: RequestHandler = async ({ params }) => {
 	try {
 		const { slug } = params;
 
-		// 記事の取得（カテゴリ情報含む）
-		const results = await db
+		// 記事の基本情報を取得
+		const postResults = await db
 			.select({
 				id: posts.id,
 				slug: posts.slug,
 				title: posts.title,
 				content: posts.content,
 				publishedAt: posts.publishedAt,
-				updatedAt: posts.updatedAt,
-				categories: sql<string>`
-					GROUP_CONCAT(
-						json_object(
-							'id', ${categories.id},
-							'name', ${categories.name}
-						)
-					)
-				`.as('categories')
+				updatedAt: posts.updatedAt
 			})
 			.from(posts)
-			.leftJoin(postsToCategories, eq(posts.id, postsToCategories.postId))
-			.leftJoin(categories, eq(postsToCategories.categoryId, categories.id))
 			.where(
 				and(
 					eq(posts.slug, slug),
@@ -36,20 +26,30 @@ export const GET: RequestHandler = async ({ params }) => {
 					sql`${posts.publishedAt} <= datetime('now')`
 				)
 			)
-			.groupBy(posts.id)
 			.limit(1);
 
 		// 記事が見つからない場合
-		if (results.length === 0) {
+		if (postResults.length === 0) {
 			return json({ error: 'Post not found' }, { status: 404 });
 		}
 
-		const post = results[0];
+		const post = postResults[0];
 
-		// カテゴリ情報のパース
+		// カテゴリ情報を別途取得
+		const categoryResults = await db
+			.select({
+				id: categories.id,
+				name: categories.name,
+				slug: categories.slug
+			})
+			.from(categories)
+			.innerJoin(postsToCategories, eq(categories.id, postsToCategories.categoryId))
+			.where(eq(postsToCategories.postId, post.id));
+
+		// 結果をフォーマット
 		const formattedPost = {
 			...post,
-			categories: post.categories ? post.categories.split(',').map((c) => JSON.parse(c)) : []
+			categories: categoryResults
 		};
 
 		return json(formattedPost);
