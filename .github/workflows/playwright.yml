@@ -29,14 +29,14 @@ jobs:
         run: pnpm exec playwright install --with-deps
 
       - name: Setup database
-        run: pnpm run db:migrate
+        run: pnpm run db:push
         env:
-          DATABASE_URL: file:test.db
+          DATABASE_URL: ':memory:'
 
       - name: Run Playwright tests
         run: pnpm run test:e2e
         env:
-          DATABASE_URL: file:test.db
+          DATABASE_URL: ':memory:'
 
       - uses: actions/upload-artifact@v4
         if: always()

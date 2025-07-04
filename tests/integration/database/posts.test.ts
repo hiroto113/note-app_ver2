@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { db } from '$lib/server/db';
+import { testDb } from '../setup';
 import { posts, categories, postsToCategories, users } from '$lib/server/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
@@ -10,21 +10,21 @@ describe('Posts Database Integration', () => {
 
 	beforeEach(async () => {
 		// Clean up database
-		await db.delete(postsToCategories);
-		await db.delete(posts);
-		await db.delete(categories);
-		await db.delete(users);
+		await testDb.delete(postsToCategories);
+		await testDb.delete(posts);
+		await testDb.delete(categories);
+		await testDb.delete(users);
 
 		// Create test user
 		const hashedPassword = await bcrypt.hash('testpass', 10);
-		const [user] = await db
+		const [user] = await testDb
 			.insert(users)
 			.values({
 				id: crypto.randomUUID(),
 				username: 'testuser',
 				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: Math.floor(Date.now() / 1000),
+				updatedAt: Math.floor(Date.now() / 1000)
 			})
 			.returning();
 		testUserId = user.id;
@@ -32,10 +32,10 @@ describe('Posts Database Integration', () => {
 
 	afterEach(async () => {
 		// Clean up
-		await db.delete(postsToCategories);
-		await db.delete(posts);
-		await db.delete(categories);
-		await db.delete(users);
+		await testDb.delete(postsToCategories);
+		await testDb.delete(posts);
+		await testDb.delete(categories);
+		await testDb.delete(users);
 	});
 
 	describe('CRUD Operations', () => {
@@ -47,11 +47,11 @@ describe('Posts Database Integration', () => {
 				excerpt: 'Test excerpt',
 				status: 'draft' as const,
 				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: Math.floor(Date.now() / 1000),
+				updatedAt: Math.floor(Date.now() / 1000)
 			};
 
-			const [post] = await db.insert(posts).values(postData).returning();
+			const [post] = await testDb.insert(posts).values(postData).returning();
 
 			expect(post).toBeDefined();
 			expect(post.title).toBe(postData.title);
@@ -62,7 +62,7 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should read a post by id', async () => {
-			const [created] = await db
+			const [created] = await testDb
 				.insert(posts)
 				.values({
 					title: 'Test Post',
@@ -70,14 +70,14 @@ describe('Posts Database Integration', () => {
 					content: 'Test content',
 					excerpt: 'Test excerpt',
 					status: 'published',
-					publishedAt: new Date(),
+					publishedAt: Math.floor(Date.now() / 1000),
 					userId: testUserId,
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 
-			const [found] = await db.select().from(posts).where(eq(posts.id, created.id));
+			const [found] = await testDb.select().from(posts).where(eq(posts.id, created.id));
 
 			expect(found).toBeDefined();
 			expect(found.id).toBe(created.id);
@@ -85,7 +85,7 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should update a post', async () => {
-			const [created] = await db
+			const [created] = await testDb
 				.insert(posts)
 				.values({
 					title: 'Original Title',
@@ -94,26 +94,26 @@ describe('Posts Database Integration', () => {
 					excerpt: 'Original excerpt',
 					status: 'draft',
 					userId: testUserId,
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 
 			const newTitle = 'Updated Title';
 			const newContent = 'Updated content';
 
-			await db
+			await testDb
 				.update(posts)
 				.set({
 					title: newTitle,
 					content: newContent,
 					status: 'published',
-					publishedAt: new Date(),
+					publishedAt: Math.floor(Date.now() / 1000),
 					updatedAt: new Date()
 				})
 				.where(eq(posts.id, created.id));
 
-			const [updated] = await db.select().from(posts).where(eq(posts.id, created.id));
+			const [updated] = await testDb.select().from(posts).where(eq(posts.id, created.id));
 
 			expect(updated.title).toBe(newTitle);
 			expect(updated.content).toBe(newContent);
@@ -122,7 +122,7 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should delete a post', async () => {
-			const [created] = await db
+			const [created] = await testDb
 				.insert(posts)
 				.values({
 					title: 'To Delete',
@@ -131,14 +131,14 @@ describe('Posts Database Integration', () => {
 					excerpt: 'Delete excerpt',
 					status: 'draft',
 					userId: testUserId,
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 
-			await db.delete(posts).where(eq(posts.id, created.id));
+			await testDb.delete(posts).where(eq(posts.id, created.id));
 
-			const found = await db.select().from(posts).where(eq(posts.id, created.id));
+			const found = await testDb.select().from(posts).where(eq(posts.id, created.id));
 			expect(found).toHaveLength(0);
 		});
 	});
@@ -148,21 +148,21 @@ describe('Posts Database Integration', () => {
 
 		beforeEach(async () => {
 			// Create test category
-			const [category] = await db
+			const [category] = await testDb
 				.insert(categories)
 				.values({
 					name: 'Test Category',
 					slug: 'test-category',
 					description: 'Test description',
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 			categoryId = category.id;
 		});
 
 		it('should associate posts with categories', async () => {
-			const [post] = await db
+			const [post] = await testDb
 				.insert(posts)
 				.values({
 					title: 'Categorized Post',
@@ -170,21 +170,21 @@ describe('Posts Database Integration', () => {
 					content: 'Content',
 					excerpt: 'Excerpt',
 					status: 'published',
-					publishedAt: new Date(),
+					publishedAt: Math.floor(Date.now() / 1000),
 					userId: testUserId,
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 
 			// Associate post with category
-			await db.insert(postsToCategories).values({
+			await testDb.insert(postsToCategories).values({
 				postId: post.id,
 				categoryId: categoryId
 			});
 
 			// Verify association
-			const associations = await db
+			const associations = await testDb
 				.select()
 				.from(postsToCategories)
 				.where(eq(postsToCategories.postId, post.id));
@@ -194,7 +194,7 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should retrieve posts with their categories', async () => {
-			const [post] = await db
+			const [post] = await testDb
 				.insert(posts)
 				.values({
 					title: 'Post with Categories',
@@ -202,20 +202,20 @@ describe('Posts Database Integration', () => {
 					content: 'Content',
 					excerpt: 'Excerpt',
 					status: 'published',
-					publishedAt: new Date(),
+					publishedAt: Math.floor(Date.now() / 1000),
 					userId: testUserId,
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 
-			await db.insert(postsToCategories).values({
+			await testDb.insert(postsToCategories).values({
 				postId: post.id,
 				categoryId: categoryId
 			});
 
 			// Query posts with categories
-			const result = await db
+			const result = await testDb
 				.select({
 					post: posts,
 					category: categories
@@ -232,27 +232,27 @@ describe('Posts Database Integration', () => {
 
 		it('should handle multiple categories per post', async () => {
 			// Create additional categories
-			const [cat2] = await db
+			const [cat2] = await testDb
 				.insert(categories)
 				.values({
 					name: 'Category 2',
 					slug: 'category-2',
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 
-			const [cat3] = await db
+			const [cat3] = await testDb
 				.insert(categories)
 				.values({
 					name: 'Category 3',
 					slug: 'category-3',
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 
-			const [post] = await db
+			const [post] = await testDb
 				.insert(posts)
 				.values({
 					title: 'Multi-category Post',
@@ -260,21 +260,21 @@ describe('Posts Database Integration', () => {
 					content: 'Content',
 					excerpt: 'Excerpt',
 					status: 'published',
-					publishedAt: new Date(),
+					publishedAt: Math.floor(Date.now() / 1000),
 					userId: testUserId,
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 
 			// Associate with multiple categories
-			await db.insert(postsToCategories).values([
+			await testDb.insert(postsToCategories).values([
 				{ postId: post.id, categoryId: categoryId },
 				{ postId: post.id, categoryId: cat2.id },
 				{ postId: post.id, categoryId: cat3.id }
 			]);
 
-			const associations = await db
+			const associations = await testDb
 				.select()
 				.from(postsToCategories)
 				.where(eq(postsToCategories.postId, post.id));
@@ -290,7 +290,7 @@ describe('Posts Database Integration', () => {
 			const yesterday = new Date(now.getTime() - 86400000);
 			const tomorrow = new Date(now.getTime() + 86400000);
 
-			await db.insert(posts).values([
+			await testDb.insert(posts).values([
 				{
 					title: 'Published Yesterday',
 					slug: 'published-yesterday',
@@ -339,7 +339,7 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should filter published posts', async () => {
-			const publishedPosts = await db
+			const publishedPosts = await testDb
 				.select()
 				.from(posts)
 				.where(eq(posts.status, 'published'))
@@ -354,7 +354,7 @@ describe('Posts Database Integration', () => {
 
 			// This would need SQL functions to compare dates properly
 			// For now, we'll do it in application code
-			const allPosts = await db.select().from(posts);
+			const allPosts = await testDb.select().from(posts);
 			const currentlyPublished = allPosts.filter(
 				(p) => p.status === 'published' && p.publishedAt && p.publishedAt <= now
 			);
@@ -366,7 +366,7 @@ describe('Posts Database Integration', () => {
 			const limit = 2;
 			const offset = 1;
 
-			const paginatedPosts = await db
+			const paginatedPosts = await testDb
 				.select()
 				.from(posts)
 				.orderBy(desc(posts.createdAt))
@@ -377,7 +377,7 @@ describe('Posts Database Integration', () => {
 		});
 
 		it('should count total posts', async () => {
-			const allPosts = await db.select().from(posts);
+			const allPosts = await testDb.select().from(posts);
 			const publishedPosts = allPosts.filter((p) => p.status === 'published');
 
 			expect(allPosts).toHaveLength(4);
@@ -389,46 +389,46 @@ describe('Posts Database Integration', () => {
 		it('should enforce unique slugs', async () => {
 			const slug = 'unique-slug';
 
-			await db.insert(posts).values({
+			await testDb.insert(posts).values({
 				title: 'First Post',
 				slug,
 				content: 'Content',
 				excerpt: 'Excerpt',
 				status: 'published',
-				publishedAt: new Date(),
+				publishedAt: Math.floor(),
 				userId: testUserId,
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: Math.floor(Date.now() / 1000),
+				updatedAt: Math.floor(Date.now() / 1000)
 			});
 
 			// Attempt to insert duplicate slug should fail
 			await expect(
-				db.insert(posts).values({
+				testDb.insert(posts).values({
 					title: 'Second Post',
 					slug, // Same slug
 					content: 'Content',
 					excerpt: 'Excerpt',
 					status: 'published',
-					publishedAt: new Date(),
+					publishedAt: Math.floor(Date.now() / 1000),
 					userId: testUserId,
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 			).rejects.toThrow();
 		});
 
 		it('should cascade delete post-category relationships', async () => {
-			const [category] = await db
+			const [category] = await testDb
 				.insert(categories)
 				.values({
 					name: 'Test Category',
 					slug: 'test-category',
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 
-			const [post] = await db
+			const [post] = await testDb
 				.insert(posts)
 				.values({
 					title: 'Post to Delete',
@@ -436,23 +436,23 @@ describe('Posts Database Integration', () => {
 					content: 'Content',
 					excerpt: 'Excerpt',
 					status: 'published',
-					publishedAt: new Date(),
+					publishedAt: Math.floor(Date.now() / 1000),
 					userId: testUserId,
-					createdAt: new Date(),
-					updatedAt: new Date()
+					createdAt: Math.floor(Date.now() / 1000),
+					updatedAt: Math.floor(Date.now() / 1000)
 				})
 				.returning();
 
-			await db.insert(postsToCategories).values({
+			await testDb.insert(postsToCategories).values({
 				postId: post.id,
 				categoryId: category.id
 			});
 
 			// Delete post
-			await db.delete(posts).where(eq(posts.id, post.id));
+			await testDb.delete(posts).where(eq(posts.id, post.id));
 
 			// Check that relationship is also deleted
-			const relationships = await db
+			const relationships = await testDb
 				.select()
 				.from(postsToCategories)
 				.where(eq(postsToCategories.postId, post.id));

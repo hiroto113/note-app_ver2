@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { db } from '$lib/server/db';
+import { testDb } from '../setup';
 import { users, sessions } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
@@ -8,8 +8,8 @@ import { authMock, createAuthenticatedUser } from '$lib/test-utils';
 describe('Authentication Flow Integration', () => {
 	beforeEach(async () => {
 		// Clean up database
-		await db.delete(sessions);
-		await db.delete(users);
+		await testDb.delete(sessions);
+		await testDb.delete(users);
 
 		// Clear auth mock
 		authMock.clear();
@@ -17,8 +17,8 @@ describe('Authentication Flow Integration', () => {
 
 	afterEach(async () => {
 		// Clean up
-		await db.delete(sessions);
-		await db.delete(users);
+		await testDb.delete(sessions);
+		await testDb.delete(users);
 		authMock.clear();
 	});
 
@@ -28,7 +28,7 @@ describe('Authentication Flow Integration', () => {
 			const password = 'testpass123';
 			const hashedPassword = await bcrypt.hash(password, 10);
 
-			const [user] = await db
+			const [user] = await testDb
 				.insert(users)
 				.values({
 					id: crypto.randomUUID(),
@@ -50,16 +50,16 @@ describe('Authentication Flow Integration', () => {
 			const password = 'testpass123';
 			const hashedPassword = await bcrypt.hash(password, 10);
 
-			await db.insert(users).values({
+			await testDb.insert(users).values({
 				id: crypto.randomUUID(),
 				username,
 				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: Math.floor(Date.now() / 1000),
+				updatedAt: Math.floor(Date.now() / 1000)
 			});
 
 			// Test authentication logic
-			const [user] = await db.select().from(users).where(eq(users.username, username));
+			const [user] = await testDb.select().from(users).where(eq(users.username, username));
 			const isValid = await bcrypt.compare(password, user.hashedPassword);
 
 			expect(isValid).toBe(true);
@@ -71,22 +71,22 @@ describe('Authentication Flow Integration', () => {
 			const wrongPassword = 'wrongpass';
 			const hashedPassword = await bcrypt.hash(password, 10);
 
-			await db.insert(users).values({
+			await testDb.insert(users).values({
 				id: crypto.randomUUID(),
 				username,
 				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: Math.floor(Date.now() / 1000),
+				updatedAt: Math.floor(Date.now() / 1000)
 			});
 
-			const [user] = await db.select().from(users).where(eq(users.username, username));
+			const [user] = await testDb.select().from(users).where(eq(users.username, username));
 			const isValid = await bcrypt.compare(wrongPassword, user.hashedPassword);
 
 			expect(isValid).toBe(false);
 		});
 
 		it('should handle non-existent user', async () => {
-			const result = await db.select().from(users).where(eq(users.username, 'nonexistent'));
+			const result = await testDb.select().from(users).where(eq(users.username, 'nonexistent'));
 			expect(result).toHaveLength(0);
 		});
 	});
@@ -96,7 +96,7 @@ describe('Authentication Flow Integration', () => {
 
 		beforeEach(async () => {
 			const hashedPassword = await bcrypt.hash('testpass', 10);
-			const [user] = await db
+			const [user] = await testDb
 				.insert(users)
 				.values({
 					id: crypto.randomUUID(),
@@ -113,7 +113,7 @@ describe('Authentication Flow Integration', () => {
 			const sessionId = crypto.randomUUID();
 			const expiresAt = new Date(Date.now() + 86400000); // 24 hours
 
-			const [session] = await db
+			const [session] = await testDb
 				.insert(sessions)
 				.values({
 					id: sessionId,
@@ -132,14 +132,14 @@ describe('Authentication Flow Integration', () => {
 			const sessionId = crypto.randomUUID();
 			const expiresAt = new Date(Date.now() + 86400000); // Future
 
-			await db.insert(sessions).values({
+			await testDb.insert(sessions).values({
 				id: sessionId,
 				userId: testUserId,
 				expiresAt,
 				createdAt: new Date()
 			});
 
-			const [session] = await db.select().from(sessions).where(eq(sessions.id, sessionId));
+			const [session] = await testDb.select().from(sessions).where(eq(sessions.id, sessionId));
 			const now = new Date();
 
 			expect(session).toBeDefined();
@@ -150,14 +150,14 @@ describe('Authentication Flow Integration', () => {
 			const sessionId = crypto.randomUUID();
 			const expiresAt = new Date(Date.now() - 86400000); // Past
 
-			await db.insert(sessions).values({
+			await testDb.insert(sessions).values({
 				id: sessionId,
 				userId: testUserId,
 				expiresAt,
 				createdAt: new Date()
 			});
 
-			const [session] = await db.select().from(sessions).where(eq(sessions.id, sessionId));
+			const [session] = await testDb.select().from(sessions).where(eq(sessions.id, sessionId));
 			const now = new Date();
 
 			expect(session.expiresAt < now).toBe(true);
@@ -166,7 +166,7 @@ describe('Authentication Flow Integration', () => {
 		it('should delete session on logout', async () => {
 			const sessionId = crypto.randomUUID();
 
-			await db.insert(sessions).values({
+			await testDb.insert(sessions).values({
 				id: sessionId,
 				userId: testUserId,
 				expiresAt: new Date(Date.now() + 86400000),
@@ -174,16 +174,16 @@ describe('Authentication Flow Integration', () => {
 			});
 
 			// Simulate logout
-			await db.delete(sessions).where(eq(sessions.id, sessionId));
+			await testDb.delete(sessions).where(eq(sessions.id, sessionId));
 
-			const result = await db.select().from(sessions).where(eq(sessions.id, sessionId));
+			const result = await testDb.select().from(sessions).where(eq(sessions.id, sessionId));
 			expect(result).toHaveLength(0);
 		});
 
 		it('should cascade delete sessions when user is deleted', async () => {
 			const sessionId = crypto.randomUUID();
 
-			await db.insert(sessions).values({
+			await testDb.insert(sessions).values({
 				id: sessionId,
 				userId: testUserId,
 				expiresAt: new Date(Date.now() + 86400000),
@@ -191,10 +191,10 @@ describe('Authentication Flow Integration', () => {
 			});
 
 			// Delete user
-			await db.delete(users).where(eq(users.id, testUserId));
+			await testDb.delete(users).where(eq(users.id, testUserId));
 
 			// Session should be deleted too
-			const sessionResult = await db
+			const sessionResult = await testDb
 				.select()
 				.from(sessions)
 				.where(eq(sessions.id, sessionId));
@@ -284,17 +284,17 @@ describe('Authentication Flow Integration', () => {
 			const username = 'duplicate';
 			const hashedPassword = await bcrypt.hash('password', 10);
 
-			await db.insert(users).values({
+			await testDb.insert(users).values({
 				id: crypto.randomUUID(),
 				username,
 				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: Math.floor(Date.now() / 1000),
+				updatedAt: Math.floor(Date.now() / 1000)
 			});
 
 			// Attempt to create duplicate user should fail
 			await expect(
-				db.insert(users).values({
+				testDb.insert(users).values({
 					id: crypto.randomUUID(),
 					username, // Same username
 					hashedPassword,
@@ -320,7 +320,7 @@ describe('Authentication Flow Integration', () => {
 			const username = 'user@example.com';
 			const hashedPassword = await bcrypt.hash('password', 10);
 
-			const [user] = await db
+			const [user] = await testDb
 				.insert(users)
 				.values({
 					id: crypto.randomUUID(),
@@ -336,7 +336,7 @@ describe('Authentication Flow Integration', () => {
 
 		it('should handle session cleanup for deleted users', async () => {
 			const hashedPassword = await bcrypt.hash('password', 10);
-			const [user] = await db
+			const [user] = await testDb
 				.insert(users)
 				.values({
 					id: crypto.randomUUID(),
@@ -348,7 +348,7 @@ describe('Authentication Flow Integration', () => {
 				.returning();
 
 			const sessionId = crypto.randomUUID();
-			await db.insert(sessions).values({
+			await testDb.insert(sessions).values({
 				id: sessionId,
 				userId: user.id,
 				expiresAt: new Date(Date.now() + 86400000),
@@ -356,10 +356,10 @@ describe('Authentication Flow Integration', () => {
 			});
 
 			// Delete user (should cascade delete sessions)
-			await db.delete(users).where(eq(users.id, user.id));
+			await testDb.delete(users).where(eq(users.id, user.id));
 
 			// Verify session is gone
-			const sessionResult = await db
+			const sessionResult = await testDb
 				.select()
 				.from(sessions)
 				.where(eq(sessions.userId, user.id));
@@ -390,7 +390,7 @@ describe('Authentication Flow Integration', () => {
 
 		it('should handle concurrent sessions for same user', async () => {
 			const hashedPassword = await bcrypt.hash('password', 10);
-			const [user] = await db
+			const [user] = await testDb
 				.insert(users)
 				.values({
 					id: crypto.randomUUID(),
@@ -405,7 +405,7 @@ describe('Authentication Flow Integration', () => {
 			const session1Id = crypto.randomUUID();
 			const session2Id = crypto.randomUUID();
 
-			await db.insert(sessions).values([
+			await testDb.insert(sessions).values([
 				{
 					id: session1Id,
 					userId: user.id,
@@ -420,7 +420,7 @@ describe('Authentication Flow Integration', () => {
 				}
 			]);
 
-			const userSessions = await db
+			const userSessions = await testDb
 				.select()
 				.from(sessions)
 				.where(eq(sessions.userId, user.id));

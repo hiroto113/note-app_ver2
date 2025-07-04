@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { db } from '$lib/server/db';
+import { testDb } from '../setup';
 import { posts, categories, postsToCategories, users } from '$lib/server/db/schema';
 import bcrypt from 'bcryptjs';
 
@@ -28,55 +28,49 @@ describe('Public API Integration', () => {
 	let testUserId: string;
 
 	beforeEach(async () => {
-		// Clean up database
-		await db.delete(postsToCategories);
-		await db.delete(posts);
-		await db.delete(categories);
-		await db.delete(users);
-
 		// Create test user
 		const hashedPassword = await bcrypt.hash('testpass', 10);
-		const [user] = await db
+		const [user] = await testDb
 			.insert(users)
 			.values({
 				id: crypto.randomUUID(),
 				username: 'testuser',
 				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: Math.floor(Date.now() / 1000),
+				updatedAt: Math.floor(Date.now() / 1000)
 			})
 			.returning();
 		testUserId = user.id;
 
 		// Create test categories
-		const [techCategory] = await db
+		const [techCategory] = await testDb
 			.insert(categories)
 			.values({
 				name: 'Technology',
 				slug: 'technology',
 				description: 'Tech posts',
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: Math.floor(Date.now() / 1000),
+				updatedAt: Math.floor(Date.now() / 1000)
 			})
 			.returning();
 
-		const [webCategory] = await db
+		const [webCategory] = await testDb
 			.insert(categories)
 			.values({
 				name: 'Web Development',
 				slug: 'web-dev',
 				description: 'Web dev posts',
-				createdAt: new Date(),
-				updatedAt: new Date()
+				createdAt: Math.floor(Date.now() / 1000),
+				updatedAt: Math.floor(Date.now() / 1000)
 			})
 			.returning();
 
 		// Create test posts
-		const now = new Date();
-		const yesterday = new Date(now.getTime() - 86400000);
-		const tomorrow = new Date(now.getTime() + 86400000);
+		const now = Math.floor(Date.now() / 1000);
+		const yesterday = now - 86400;
+		const tomorrow = now + 86400;
 
-		const [post1] = await db
+		const [post1] = await testDb
 			.insert(posts)
 			.values({
 				title: 'Published Post 1',
@@ -91,7 +85,7 @@ describe('Public API Integration', () => {
 			})
 			.returning();
 
-		const [post2] = await db
+		const [post2] = await testDb
 			.insert(posts)
 			.values({
 				title: 'Published Post 2',
@@ -106,7 +100,7 @@ describe('Public API Integration', () => {
 			})
 			.returning();
 
-		const [draftPost] = await db
+		const [draftPost] = await testDb
 			.insert(posts)
 			.values({
 				title: 'Draft Post',
@@ -121,7 +115,7 @@ describe('Public API Integration', () => {
 			})
 			.returning();
 
-		await db
+		await testDb
 			.insert(posts)
 			.values({
 				title: 'Future Post',
@@ -137,7 +131,7 @@ describe('Public API Integration', () => {
 			.returning();
 
 		// Associate posts with categories
-		await db.insert(postsToCategories).values([
+		await testDb.insert(postsToCategories).values([
 			{ postId: post1.id, categoryId: techCategory.id },
 			{ postId: post2.id, categoryId: techCategory.id },
 			{ postId: post2.id, categoryId: webCategory.id },
@@ -147,10 +141,10 @@ describe('Public API Integration', () => {
 
 	afterEach(async () => {
 		// Clean up
-		await db.delete(postsToCategories);
-		await db.delete(posts);
-		await db.delete(categories);
-		await db.delete(users);
+		await testDb.delete(postsToCategories);
+		await testDb.delete(posts);
+		await testDb.delete(categories);
+		await testDb.delete(users);
 	});
 
 	describe('GET /api/posts', () => {
@@ -226,7 +220,7 @@ describe('Public API Integration', () => {
 
 		it('should handle empty results', async () => {
 			// Delete all posts
-			await db.delete(posts);
+			await testDb.delete(posts);
 
 			const request = new Request('http://localhost:5173/api/posts');
 			const response = await postsApi.GET({
@@ -359,8 +353,8 @@ describe('Public API Integration', () => {
 
 		it('should handle empty categories', async () => {
 			// Delete all relationships and categories
-			await db.delete(postsToCategories);
-			await db.delete(categories);
+			await testDb.delete(postsToCategories);
+			await testDb.delete(categories);
 
 			const request = new Request('http://localhost:5173/api/categories');
 			const response = await categoriesApi.GET({
@@ -405,7 +399,7 @@ describe('Public API Integration', () => {
 					updatedAt: new Date()
 				});
 			}
-			await db.insert(posts).values(manyPosts);
+			await testDb.insert(posts).values(manyPosts);
 
 			const request = new Request('http://localhost:5173/api/posts?limit=100');
 			const response = await postsApi.GET({

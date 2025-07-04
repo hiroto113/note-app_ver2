@@ -37,14 +37,14 @@ jobs:
         run: pnpm run lint
 
       - name: Setup database
-        run: pnpm run db:migrate
+        run: pnpm run db:push
         env:
-          DATABASE_URL: file:test.db
+          DATABASE_URL: ':memory:'
 
       - name: Run unit tests
         run: pnpm run test
         env:
-          DATABASE_URL: file:test.db
+          DATABASE_URL: ':memory:'
 
       - name: Build project
         run: pnpm run build

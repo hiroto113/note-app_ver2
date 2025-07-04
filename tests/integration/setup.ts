@@ -1,7 +1,11 @@
-import { beforeAll, afterAll } from 'vitest';
-import { execSync } from 'child_process';
-import { unlink } from 'fs/promises';
-import { existsSync } from 'fs';
+import { beforeAll, afterAll, beforeEach } from 'vitest';
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
+import * as schema from '../../src/lib/server/db/schema';
+
+// テスト用データベース接続
+let testDbClient: ReturnType<typeof createClient>;
+export let testDb: ReturnType<typeof drizzle>;
 
 /**
  * 統合テスト用のセットアップ
@@ -11,22 +15,68 @@ beforeAll(async () => {
 	// テスト開始前の初期化
 	console.log('Setting up integration tests...');
 
-	// 既存のテストデータベースを削除
-	if (existsSync('test.db')) {
-		try {
-			await unlink('test.db');
-			console.log('Existing test database removed');
-		} catch {
-			console.log('Could not remove existing test database');
-		}
-	}
+	// テスト専用のデータベース接続を作成（各テストで新しいメモリDBを使用）
+	testDbClient = createClient({
+		url: ':memory:'
+	});
+	testDb = drizzle(testDbClient, { schema });
 
-	// データベースマイグレーションを実行
+	// テーブルを作成
 	try {
-		execSync('pnpm run db:migrate', { stdio: 'inherit', env: { ...process.env, DATABASE_URL: 'file:test.db' } });
-		console.log('Database migration completed');
-	} catch {
-		console.log('Migration already applied or skipped');
+		// Drizzleスキーマを使用してテーブルを作成
+		await testDb.run(`CREATE TABLE IF NOT EXISTS users (
+			id TEXT PRIMARY KEY,
+			username TEXT NOT NULL UNIQUE,
+			hashed_password TEXT NOT NULL,
+			created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+			updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
+		)`);
+
+		await testDb.run(`CREATE TABLE IF NOT EXISTS categories (
+			id TEXT PRIMARY KEY,
+			name TEXT NOT NULL UNIQUE,
+			slug TEXT NOT NULL UNIQUE,
+			description TEXT,
+			created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+			updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
+		)`);
+
+		await testDb.run(`CREATE TABLE IF NOT EXISTS posts (
+			id TEXT PRIMARY KEY,
+			title TEXT NOT NULL,
+			slug TEXT NOT NULL UNIQUE,
+			content TEXT NOT NULL,
+			excerpt TEXT,
+			status TEXT NOT NULL DEFAULT 'draft',
+			author_id TEXT NOT NULL,
+			created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+			updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+			published_at INTEGER,
+			seo_title TEXT,
+			seo_description TEXT,
+			seo_keywords TEXT,
+			FOREIGN KEY (author_id) REFERENCES users(id)
+		)`);
+
+		await testDb.run(`CREATE TABLE IF NOT EXISTS posts_to_categories (
+			post_id TEXT NOT NULL,
+			category_id TEXT NOT NULL,
+			PRIMARY KEY (post_id, category_id),
+			FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+			FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+		)`);
+
+		await testDb.run(`CREATE TABLE IF NOT EXISTS sessions (
+			id TEXT PRIMARY KEY,
+			user_id TEXT NOT NULL,
+			expires_at INTEGER NOT NULL,
+			created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+		)`);
+
+		console.log('Test database schema created');
+	} catch (error) {
+		console.log('Database schema creation failed:', error);
 	}
 
 	console.log('Integration test environment ready');
@@ -35,14 +85,25 @@ beforeAll(async () => {
 afterAll(async () => {
 	// テスト終了後のクリーンアップ
 	console.log('Cleaning up integration tests...');
+	if (testDbClient) {
+		testDbClient.close();
+	}
+});
 
-	// テストデータベースを削除
-	if (existsSync('test.db')) {
+beforeEach(async () => {
+	// テスト前にテーブルをクリーンアップ
+	if (testDb) {
 		try {
-			await unlink('test.db');
-			console.log('Test database cleaned up');
-		} catch {
-			console.log('Could not clean up test database');
+			// Foreign key制約を無効化してからクリーンアップ
+			await testDb.run('PRAGMA foreign_keys = OFF');
+			await testDb.run('DELETE FROM posts_to_categories');
+			await testDb.run('DELETE FROM sessions');
+			await testDb.run('DELETE FROM posts');
+			await testDb.run('DELETE FROM categories');
+			await testDb.run('DELETE FROM users');
+			await testDb.run('PRAGMA foreign_keys = ON');
+		} catch (error) {
+			console.log('Database cleanup failed:', error);
 		}
 	}
 });
