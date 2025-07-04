@@ -30,8 +30,8 @@ export async function loginAsAdmin(page: Page) {
 	// ログイン成功を確認（管理画面にリダイレクトされることを期待）
 	await expect(page).toHaveURL(/\/admin/, { timeout: 15000 });
 	
-	// 管理画面のナビゲーションが表示されることを確認
-	await expect(page.locator('nav')).toBeVisible({ timeout: 5000 });
+	// 管理画面の特定の要素（ダッシュボードリンク）が表示されることを確認
+	await expect(page.locator('text=ダッシュボード')).toBeVisible({ timeout: 5000 });
 }
 
 /**

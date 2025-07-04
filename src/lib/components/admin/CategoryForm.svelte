@@ -55,7 +55,7 @@
 	}
 </script>
 
-<form on:submit|preventDefault={handleSubmit} class="space-y-6" role="form" aria-label="カテゴリ作成フォーム">
+<form on:submit|preventDefault={handleSubmit} class="space-y-6" aria-label="カテゴリ作成フォーム">
 	<div class="rounded-lg border border-gray-200 bg-white p-6 shadow">
 		<div class="space-y-6">
 			<!-- Category Name -->

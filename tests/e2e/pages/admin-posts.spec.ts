@@ -28,22 +28,16 @@ test.describe('管理画面 - 記事管理', () => {
 		await expect(page.locator('h1, h2')).toContainText(/記事|Posts/);
 
 		// 新規作成ボタンの確認
-		await expect(
-			page.locator(
-				'button:has-text("新規作成"), a:has-text("新規作成"), button:has-text("New"), a:has-text("New")'
-			)
-		).toBeVisible();
+		await expect(page.locator('[data-testid="create-post-button"]')).toBeVisible();
 
 		// 記事一覧テーブルまたはカードの確認
-		const postsContainer = page.locator('table, .posts-grid, .posts-list');
+		const postsContainer = page.locator('[data-testid="posts-list"], .posts-list');
 		await expect(postsContainer).toBeVisible();
 	});
 
 	test('新しい記事を作成できる', async ({ page }) => {
 		// 新規作成ボタンをクリック
-		await page.click(
-			'button:has-text("新規作成"), a:has-text("新規作成"), button:has-text("New"), a:has-text("New")'
-		);
+		await page.click('[data-testid="create-post-button"]');
 		await waitForPageLoad(page);
 
 		// 記事作成フォームページに移動

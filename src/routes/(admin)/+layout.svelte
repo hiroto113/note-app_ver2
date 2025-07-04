@@ -30,7 +30,7 @@
 </script>
 
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-	<nav class="border-b border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800" role="navigation" aria-label="メインナビゲーション">
+	<nav class="border-b border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800" aria-label="メインナビゲーション">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-16 justify-between">
 				<div class="flex">
@@ -108,7 +108,7 @@
 		</div>
 	</nav>
 
-	<main class="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8" role="main" aria-label="メインコンテンツ">
+	<main class="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8" aria-label="メインコンテンツ">
 		<slot />
 	</main>
 </div>
