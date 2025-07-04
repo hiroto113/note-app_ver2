@@ -323,7 +323,7 @@ describe('Public API Integration', () => {
 	describe('GET /api/posts', () => {
 		it('should return published posts only', async () => {
 			const response = await testPostsApi.GET({
-				url: new URL(request.url)
+				url: new URL('http://localhost:5173/api/posts')
 			});
 			const data = await response.json();
 
@@ -334,7 +334,7 @@ describe('Public API Integration', () => {
 
 		it('should return posts with categories', async () => {
 			const response = await testPostsApi.GET({
-				url: new URL(request.url)
+				url: new URL('http://localhost:5173/api/posts')
 			});
 			const data = await response.json();
 
@@ -348,7 +348,7 @@ describe('Public API Integration', () => {
 
 		it('should support pagination', async () => {
 			const response = await testPostsApi.GET({
-				url: new URL(request.url)
+				url: new URL('http://localhost:5173/api/posts?page=1&limit=1')
 			});
 			const data = await response.json();
 
@@ -363,7 +363,7 @@ describe('Public API Integration', () => {
 
 		it('should filter by category', async () => {
 			const response = await testPostsApi.GET({
-				url: new URL(request.url)
+				url: new URL('http://localhost:5173/api/posts?category=web-dev')
 			});
 			const data = await response.json();
 
@@ -373,7 +373,7 @@ describe('Public API Integration', () => {
 
 		it('should order posts by publishedAt desc', async () => {
 			const response = await testPostsApi.GET({
-				url: new URL(request.url)
+				url: new URL('http://localhost:5173/api/posts')
 			});
 			const data = await response.json();
 
@@ -386,7 +386,7 @@ describe('Public API Integration', () => {
 			await testDb.delete(posts);
 
 			const response = await testPostsApi.GET({
-				url: new URL(request.url)
+				url: new URL('http://localhost:5173/api/posts')
 			});
 			const data = await response.json();
 
@@ -503,7 +503,7 @@ describe('Public API Integration', () => {
 			// This would require mocking the database to throw an error
 			// For now, we'll test the structure is in place
 			const response = await testPostsApi.GET({
-				url: new URL(request.url)
+				url: new URL('http://localhost:5173/api/posts')
 			});
 
 			expect(response.headers.get('content-type')).toContain('application/json');
@@ -530,7 +530,7 @@ describe('Public API Integration', () => {
 			await testDb.insert(posts).values(manyPosts);
 
 			const response = await testPostsApi.GET({
-				url: new URL(request.url)
+				url: new URL('http://localhost:5173/api/posts')
 			});
 			const data = await response.json();
 
