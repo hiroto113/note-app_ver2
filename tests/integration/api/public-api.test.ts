@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 
 // Mock API handlers for testing
 import { json } from '@sveltejs/kit';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 // Test API handlers that use testDb instead of production db
 const testPostsApi = {
@@ -322,7 +322,6 @@ describe('Public API Integration', () => {
 
 	describe('GET /api/posts', () => {
 		it('should return published posts only', async () => {
-			const request = new Request('http://localhost:5173/api/posts');
 			const response = await testPostsApi.GET({
 				url: new URL(request.url)
 			});
@@ -334,7 +333,6 @@ describe('Public API Integration', () => {
 		});
 
 		it('should return posts with categories', async () => {
-			const request = new Request('http://localhost:5173/api/posts');
 			const response = await testPostsApi.GET({
 				url: new URL(request.url)
 			});
@@ -349,7 +347,6 @@ describe('Public API Integration', () => {
 		});
 
 		it('should support pagination', async () => {
-			const request = new Request('http://localhost:5173/api/posts?page=1&limit=1');
 			const response = await testPostsApi.GET({
 				url: new URL(request.url)
 			});
@@ -365,7 +362,6 @@ describe('Public API Integration', () => {
 		});
 
 		it('should filter by category', async () => {
-			const request = new Request('http://localhost:5173/api/posts?category=web-dev');
 			const response = await testPostsApi.GET({
 				url: new URL(request.url)
 			});
@@ -376,7 +372,6 @@ describe('Public API Integration', () => {
 		});
 
 		it('should order posts by publishedAt desc', async () => {
-			const request = new Request('http://localhost:5173/api/posts');
 			const response = await testPostsApi.GET({
 				url: new URL(request.url)
 			});
@@ -390,7 +385,6 @@ describe('Public API Integration', () => {
 			// Delete all posts
 			await testDb.delete(posts);
 
-			const request = new Request('http://localhost:5173/api/posts');
 			const response = await testPostsApi.GET({
 				url: new URL(request.url)
 			});
@@ -404,7 +398,6 @@ describe('Public API Integration', () => {
 
 	describe('GET /api/posts/[slug]', () => {
 		it('should return a single published post', async () => {
-			const request = new Request('http://localhost:5173/api/posts/published-post-1');
 			const params = { slug: 'published-post-1' };
 			const response = await testPostDetailApi.GET({
 				params
@@ -418,7 +411,6 @@ describe('Public API Integration', () => {
 		});
 
 		it('should return post with categories', async () => {
-			const request = new Request('http://localhost:5173/api/posts/published-post-2');
 			const params = { slug: 'published-post-2' };
 			const response = await testPostDetailApi.GET({
 				params
@@ -434,7 +426,6 @@ describe('Public API Integration', () => {
 		});
 
 		it('should not return draft posts', async () => {
-			const request = new Request('http://localhost:5173/api/posts/draft-post');
 			const params = { slug: 'draft-post' };
 			const response = await testPostDetailApi.GET({
 				params
@@ -444,7 +435,6 @@ describe('Public API Integration', () => {
 		});
 
 		it('should not return future posts', async () => {
-			const request = new Request('http://localhost:5173/api/posts/future-post');
 			const params = { slug: 'future-post' };
 			const response = await testPostDetailApi.GET({
 				params
@@ -454,7 +444,6 @@ describe('Public API Integration', () => {
 		});
 
 		it('should return 404 for non-existent post', async () => {
-			const request = new Request('http://localhost:5173/api/posts/non-existent');
 			const params = { slug: 'non-existent' };
 			const response = await testPostDetailApi.GET({
 				params
@@ -466,7 +455,6 @@ describe('Public API Integration', () => {
 
 	describe('GET /api/categories', () => {
 		it('should return all categories', async () => {
-			const request = new Request('http://localhost:5173/api/categories');
 			const response = await testCategoriesApi.GET();
 			const data = await response.json();
 
@@ -477,7 +465,6 @@ describe('Public API Integration', () => {
 		});
 
 		it('should include post count for each category', async () => {
-			const request = new Request('http://localhost:5173/api/categories');
 			const response = await testCategoriesApi.GET();
 			const data = await response.json();
 
@@ -491,7 +478,6 @@ describe('Public API Integration', () => {
 		});
 
 		it('should order categories by name', async () => {
-			const request = new Request('http://localhost:5173/api/categories');
 			const response = await testCategoriesApi.GET();
 			const data = await response.json();
 
@@ -504,7 +490,6 @@ describe('Public API Integration', () => {
 			await testDb.delete(postsToCategories);
 			await testDb.delete(categories);
 
-			const request = new Request('http://localhost:5173/api/categories');
 			const response = await testCategoriesApi.GET();
 			const data = await response.json();
 
@@ -517,7 +502,6 @@ describe('Public API Integration', () => {
 		it('should handle database errors gracefully', async () => {
 			// This would require mocking the database to throw an error
 			// For now, we'll test the structure is in place
-			const request = new Request('http://localhost:5173/api/posts');
 			const response = await testPostsApi.GET({
 				url: new URL(request.url)
 			});
@@ -545,7 +529,6 @@ describe('Public API Integration', () => {
 			}
 			await testDb.insert(posts).values(manyPosts);
 
-			const request = new Request('http://localhost:5173/api/posts?limit=100');
 			const response = await testPostsApi.GET({
 				url: new URL(request.url)
 			});

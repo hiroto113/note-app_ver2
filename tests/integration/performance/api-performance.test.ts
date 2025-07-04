@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { testDb } from '../setup';
 import { posts, categories, postsToCategories, users } from '$lib/server/db/schema';
 import { json } from '@sveltejs/kit';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
 // API パフォーマンステスト用のハンドラー
@@ -84,7 +84,7 @@ const performancePostsApi = {
 				}),
 				responseTime
 			};
-		} catch (error) {
+		} catch {
 			const endTime = performance.now();
 			return {
 				response: json({ error: 'Failed to fetch posts' }, { status: 500 }),
@@ -313,7 +313,7 @@ describe('API パフォーマンステスト', () => {
 			expect(totalTime).toBeLessThan(300);
 
 			// 全てのリクエストが成功
-			results.forEach((result, index) => {
+			results.forEach((result) => {
 				expect(result.responseTime).toBeLessThan(100);
 			});
 		});
