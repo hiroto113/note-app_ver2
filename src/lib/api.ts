@@ -37,9 +37,13 @@ export async function apiCall<T = unknown>(
 
 	// サーバーサイドでは絶対URLが必要
 	const isServer = typeof window === 'undefined';
+	// E2Eテスト時はPORT環境変数、開発時は5173、本番環境では現在のサーバー
+	const serverPort = isServer
+		? process.env.PORT || (process.env.NODE_ENV === 'development' ? '5173' : '4173')
+		: window.location.port || '5173';
 	const fullUrl =
 		isServer && !baseUrl && !endpoint.startsWith('http')
-			? `http://localhost:5173${endpoint}`
+			? `http://localhost:${serverPort}${endpoint}`
 			: `${baseUrl}${endpoint}`;
 
 	try {

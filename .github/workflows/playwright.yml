@@ -29,14 +29,15 @@ jobs:
         run: pnpm exec playwright install --with-deps
 
       - name: Setup database
-        run: pnpm run db:push
+        run: pnpm run db:push && pnpm run db:seed
         env:
-          DATABASE_URL: ':memory:'
+          DATABASE_URL: 'sqlite.db'
 
       - name: Run Playwright tests
         run: pnpm run test:e2e
         env:
-          DATABASE_URL: ':memory:'
+          DATABASE_URL: 'sqlite.db'
+          PORT: '4173'
 
       - uses: actions/upload-artifact@v4
         if: always()

@@ -11,8 +11,8 @@ setup('prepare database', async ({ page }) => {
 	console.log('Setting up test database...');
 
 	try {
-		// データベースのマイグレーションとシードデータの準備
-		await execAsync('pnpm run db:migrate');
+		// データベースのプッシュとシードデータの準備
+		await execAsync('pnpm run db:push');
 		await execAsync('pnpm run db:seed');
 		console.log('Database setup completed');
 	} catch {
