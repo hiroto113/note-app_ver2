@@ -89,7 +89,7 @@ test.describe('管理画面 - 記事管理', () => {
 
 		// 成功メッセージまたは記事一覧ページへのリダイレクトを確認
 		try {
-			await expectNotification(page, '作成', 'success');
+			await expectNotification(page, '作成');
 		} catch {
 			// リダイレクトの場合
 			await expect(page).toHaveURL(/\/admin\/posts/);
@@ -134,7 +134,7 @@ test.describe('管理画面 - 記事管理', () => {
 
 		// 成功メッセージまたは記事一覧ページへのリダイレクトを確認
 		try {
-			await expectNotification(page, '更新', 'success');
+			await expectNotification(page, '更新');
 		} catch {
 			await expect(page).toHaveURL(/\/admin\/posts/);
 		}
@@ -163,7 +163,7 @@ test.describe('管理画面 - 記事管理', () => {
 			await waitForPageLoad(page);
 
 			// ステータス変更の確認
-			await expectNotification(page, 'ステータス', 'success');
+			await expectNotification(page, 'ステータス');
 		}
 	});
 
@@ -184,7 +184,7 @@ test.describe('管理画面 - 記事管理', () => {
 			await waitForPageLoad(page);
 
 			// 削除成功メッセージの確認
-			await expectNotification(page, '削除', 'success');
+			await expectNotification(page, '削除');
 
 			// 記事数が1つ減ったことを確認
 			const newPostCount = await page.locator('tr, .post-item').count();
@@ -286,7 +286,7 @@ test.describe('管理画面 - 記事管理', () => {
 						await executeButton.click();
 						await waitForPageLoad(page);
 
-						await expectNotification(page, '一括', 'success');
+						await expectNotification(page, '一括');
 					}
 				}
 			}
@@ -351,7 +351,7 @@ test.describe('管理画面 - 記事管理', () => {
 			await waitForPageLoad(page);
 
 			// 複製成功メッセージの確認
-			await expectNotification(page, '複製', 'success');
+			await expectNotification(page, '複製');
 
 			// 記事数が増えたことを確認
 			const newCount = await page.locator('tr, .post-item').count();

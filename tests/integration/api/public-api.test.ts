@@ -9,11 +9,6 @@ import * as postsApi from '../../../src/routes/api/posts/+server';
 import * as categoriesApi from '../../../src/routes/api/categories/+server';
 import * as postDetailApi from '../../../src/routes/api/posts/[slug]/+server';
 
-type APIContext = {
-	request: Request;
-	url: URL;
-};
-
 type PostResponse = {
 	id: number;
 	slug: string;
@@ -164,7 +159,7 @@ describe('Public API Integration', () => {
 			const response = await postsApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postsApi.GET>[0]);
 			const data = await response.json();
 
 			expect(response.status).toBe(200);
@@ -177,7 +172,7 @@ describe('Public API Integration', () => {
 			const response = await postsApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postsApi.GET>[0]);
 			const data = await response.json();
 
 			expect(data.posts[0].categories).toBeDefined();
@@ -193,7 +188,7 @@ describe('Public API Integration', () => {
 			const response = await postsApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postsApi.GET>[0]);
 			const data = await response.json();
 
 			expect(data.posts).toHaveLength(1);
@@ -210,7 +205,7 @@ describe('Public API Integration', () => {
 			const response = await postsApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postsApi.GET>[0]);
 			const data = await response.json();
 
 			expect(data.posts).toHaveLength(1);
@@ -222,7 +217,7 @@ describe('Public API Integration', () => {
 			const response = await postsApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postsApi.GET>[0]);
 			const data = await response.json();
 
 			expect(data.posts[0].slug).toBe('published-post-2'); // More recent
@@ -237,7 +232,7 @@ describe('Public API Integration', () => {
 			const response = await postsApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postsApi.GET>[0]);
 			const data = await response.json();
 
 			expect(response.status).toBe(200);
@@ -254,7 +249,7 @@ describe('Public API Integration', () => {
 				request,
 				params,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postDetailApi.GET>[0]);
 			const data = await response.json();
 
 			expect(response.status).toBe(200);
@@ -270,7 +265,7 @@ describe('Public API Integration', () => {
 				request,
 				params,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postDetailApi.GET>[0]);
 			const data = await response.json();
 
 			expect(data.post.categories).toBeDefined();
@@ -288,7 +283,7 @@ describe('Public API Integration', () => {
 				request,
 				params,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postDetailApi.GET>[0]);
 
 			expect(response.status).toBe(404);
 		});
@@ -300,7 +295,7 @@ describe('Public API Integration', () => {
 				request,
 				params,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postDetailApi.GET>[0]);
 
 			expect(response.status).toBe(404);
 		});
@@ -312,7 +307,7 @@ describe('Public API Integration', () => {
 				request,
 				params,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postDetailApi.GET>[0]);
 
 			expect(response.status).toBe(404);
 		});
@@ -324,7 +319,7 @@ describe('Public API Integration', () => {
 			const response = await categoriesApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof categoriesApi.GET>[0]);
 			const data = await response.json();
 
 			expect(response.status).toBe(200);
@@ -338,7 +333,7 @@ describe('Public API Integration', () => {
 			const response = await categoriesApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof categoriesApi.GET>[0]);
 			const data = await response.json();
 
 			const techCategory = data.categories.find(
@@ -355,7 +350,7 @@ describe('Public API Integration', () => {
 			const response = await categoriesApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof categoriesApi.GET>[0]);
 			const data = await response.json();
 
 			expect(data.categories[0].name).toBe('Technology');
@@ -371,7 +366,7 @@ describe('Public API Integration', () => {
 			const response = await categoriesApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof categoriesApi.GET>[0]);
 			const data = await response.json();
 
 			expect(response.status).toBe(200);
@@ -387,7 +382,7 @@ describe('Public API Integration', () => {
 			const response = await postsApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postsApi.GET>[0]);
 
 			expect(response.headers.get('content-type')).toContain('application/json');
 		});
@@ -416,7 +411,7 @@ describe('Public API Integration', () => {
 			const response = await postsApi.GET({
 				request,
 				url: new URL(request.url)
-			} as APIContext);
+			} as unknown as Parameters<typeof postsApi.GET>[0]);
 			const data = await response.json();
 
 			expect(data.posts.length).toBeLessThanOrEqual(50); // Max limit should be enforced
