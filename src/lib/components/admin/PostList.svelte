@@ -37,7 +37,9 @@
 		<div class="flex items-center space-x-3">
 			<a
 				href="/admin/posts/new"
+				data-testid="create-post-button"
 				class="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:px-4"
+				aria-label="新しい記事を作成"
 			>
 				<span class="hidden sm:inline">新しい記事を作成</span>
 				<span class="sm:hidden">新規作成</span>
@@ -80,7 +82,7 @@
 
 	<!-- Posts list -->
 	{#if filteredPosts.length > 0}
-		<div class="grid gap-6">
+		<div class="grid gap-6 posts-list" data-testid="posts-list" role="list" aria-label="記事一覧">
 			{#each filteredPosts as post}
 				<PostCard {post} />
 			{/each}

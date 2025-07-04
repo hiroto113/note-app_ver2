@@ -47,6 +47,9 @@
 
 <div
 	class="rounded-lg border border-gray-200 bg-white shadow transition-shadow duration-200 hover:shadow-md"
+	data-testid="post-card-{post.id}"
+	role="listitem"
+	aria-label="記事: {post.title}"
 >
 	<div class="p-6">
 		<div class="flex items-start justify-between">
@@ -87,6 +90,8 @@
 		<div class="mt-4 flex items-center justify-end space-x-3">
 			<button
 				on:click={handleEdit}
+				data-testid="edit-post-{post.id}"
+				aria-label="記事『{post.title}』を編集"
 				class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 			>
 				編集
@@ -94,6 +99,8 @@
 
 			<button
 				on:click={handleDelete}
+				data-testid="delete-post-{post.id}"
+				aria-label="記事『{post.title}』を削除"
 				class="inline-flex items-center rounded-md border border-transparent bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 			>
 				削除
