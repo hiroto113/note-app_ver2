@@ -1,4 +1,5 @@
 import { beforeAll, afterAll } from 'vitest';
+import { execSync } from 'child_process';
 
 /**
  * 統合テスト用のセットアップ
@@ -7,6 +8,14 @@ import { beforeAll, afterAll } from 'vitest';
 beforeAll(async () => {
 	// テスト開始前の初期化
 	console.log('Setting up integration tests...');
+
+	// データベースマイグレーションを実行
+	try {
+		execSync('pnpm run db:migrate', { stdio: 'inherit' });
+		console.log('Database migration completed');
+	} catch (error) {
+		console.log('Migration already applied or skipped');
+	}
 
 	// データベース接続は各テストで個別に管理
 	console.log('Integration test environment ready');

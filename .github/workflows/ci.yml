@@ -36,6 +36,9 @@ jobs:
       - name: Run linter
         run: pnpm run lint
 
+      - name: Setup database
+        run: pnpm run db:migrate
+
       - name: Run unit tests
         run: pnpm run test
 
