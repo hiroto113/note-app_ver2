@@ -56,7 +56,8 @@
 				<div class="text-sm">
 					<a
 						href="/admin/posts"
-						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+						aria-label="記事管理ページに移動"
 					>
 						記事管理へ
 					</a>
@@ -98,7 +99,8 @@
 				<div class="text-sm">
 					<a
 						href="/admin/categories"
-						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+						aria-label="カテゴリ管理ページに移動"
 					>
 						カテゴリ管理へ
 					</a>
@@ -147,7 +149,9 @@
 					<a
 						href="/"
 						target="_blank"
-						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+						rel="noopener noreferrer"
+						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+						aria-label="新しいタブでサイトを表示"
 					>
 						サイトを表示
 					</a>
@@ -172,12 +176,14 @@
 						<a
 							href="/admin/posts/new"
 							class="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+							aria-label="新しい記事作成ページに移動"
 						>
 							新しい記事を作成
 						</a>
 						<a
 							href="/admin/categories/new"
 							class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+							aria-label="新しいカテゴリ作成ページに移動"
 						>
 							新しいカテゴリを作成
 						</a>

@@ -183,8 +183,13 @@ export function inlineCriticalCSS(): string {
 /**
  * 非クリティカルCSSを遅延読み込みする
  */
-export function loadNonCriticalCSS(href: string) {
+export function loadNonCriticalCSS(href: string = '/css/non-critical.css') {
 	if (typeof document === 'undefined') return;
+
+	// non-critical.cssが存在しない場合は何もしない
+	if (href === '/css/non-critical.css') {
+		return;
+	}
 
 	const link = document.createElement('link');
 	link.rel = 'preload';

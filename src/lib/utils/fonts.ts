@@ -3,28 +3,11 @@
  */
 
 /**
- * 重要なフォントをプリロードする
+ * 重要なフォントをプリロードする（Google Fonts使用時は不要）
  */
 export function preloadFonts() {
-	if (typeof document === 'undefined') return;
-
-	const fontPreloads = [
-		{
-			href: '/fonts/inter-var.woff2',
-			type: 'font/woff2',
-			crossorigin: 'anonymous'
-		}
-	];
-
-	fontPreloads.forEach(({ href, type, crossorigin }) => {
-		const link = document.createElement('link');
-		link.rel = 'preload';
-		link.as = 'font';
-		link.type = type;
-		link.href = href;
-		link.crossOrigin = crossorigin;
-		document.head.appendChild(link);
-	});
+	// Google Fontsを使用するため、この機能は無効化
+	return;
 }
 
 /**
@@ -54,24 +37,6 @@ export function observeFontLoading(callback?: () => void) {
 }
 
 /**
- * Critical フォントのインライン化用CSS
+ * Critical フォントのインライン化用CSS（Google Fonts使用時は不要）
  */
-export const criticalFontCSS = `
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/inter-regular-subset.woff2') format('woff2');
-  unicode-range: U+0020-007E, U+3000-303F, U+3040-309F, U+30A0-30FF, U+4E00-9FAF;
-}
-
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/inter-bold-subset.woff2') format('woff2');
-  unicode-range: U+0020-007E, U+3000-303F, U+3040-309F, U+30A0-30FF, U+4E00-9FAF;
-}
-`;
+export const criticalFontCSS = ``;

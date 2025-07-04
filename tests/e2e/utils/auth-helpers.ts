@@ -8,44 +8,59 @@ import { testUsers } from '../fixtures/test-data';
 export async function loginAsAdmin(page: Page) {
 	await page.goto('/login');
 
+	// ページ読み込み完了を待機
+	await page.waitForLoadState('networkidle');
+
 	// ログインフォームが表示されるまで待機
-	await expect(page.locator('form')).toBeVisible();
+	await expect(page.locator('form')).toBeVisible({ timeout: 10000 });
+
+	// ユーザー名フィールドの存在確認
+	const usernameField = page.locator('input[name="username"]');
+	await expect(usernameField).toBeVisible({ timeout: 5000 });
 
 	// 認証情報を入力
-	await page.fill('input[name="email"], input[name="username"]', testUsers.admin.username);
+	await usernameField.fill(testUsers.admin.username);
 	await page.fill('input[name="password"]', testUsers.admin.password);
 
 	// ログインボタンをクリック
-	await page.click('button[type="submit"]');
+	const submitButton = page.locator('button[type="submit"]');
+	await expect(submitButton).toBeVisible();
+	await submitButton.click();
 
 	// ログイン成功を確認（管理画面にリダイレクトされることを期待）
-	await expect(page).toHaveURL(/\/admin/);
+	await expect(page).toHaveURL(/\/admin/, { timeout: 15000 });
+	
+	// 管理画面のナビゲーションが表示されることを確認
+	await expect(page.locator('nav')).toBeVisible({ timeout: 5000 });
 }
 
 /**
  * ログアウトする
  */
 export async function logout(page: Page) {
+	// ページ読み込み完了を待機
+	await page.waitForLoadState('networkidle');
+
 	// ログアウトボタンまたはメニューを探す
 	const logoutButton = page.locator(
 		'button:has-text("ログアウト"), a:has-text("ログアウト"), button:has-text("Logout"), a:has-text("Logout")'
 	);
 
-	if (await logoutButton.isVisible()) {
+	if (await logoutButton.isVisible({ timeout: 5000 })) {
 		await logoutButton.click();
 	} else {
 		// ユーザーメニューを開く必要がある場合
 		const userMenu = page.locator(
 			'[data-testid="user-menu"], .user-menu, button:has-text("admin")'
 		);
-		if (await userMenu.isVisible()) {
+		if (await userMenu.isVisible({ timeout: 5000 })) {
 			await userMenu.click();
-			await page.click('button:has-text("ログアウト"), a:has-text("ログアウト")');
+			await page.locator('button:has-text("ログアウト"), a:has-text("ログアウト")').click();
 		}
 	}
 
 	// ホームページまたはログインページにリダイレクトされることを確認
-	await expect(page).toHaveURL(/\/(login)?$/);
+	await expect(page).toHaveURL(/\/(login)?$/, { timeout: 10000 });
 }
 
 /**
