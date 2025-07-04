@@ -54,8 +54,8 @@ describe('Authentication Flow Integration', () => {
 				id: crypto.randomUUID(),
 				username,
 				hashedPassword,
-				createdAt: Math.floor(Date.now() / 1000),
-				updatedAt: Math.floor(Date.now() / 1000)
+				createdAt: new Date(),
+				updatedAt: new Date()
 			});
 
 			// Test authentication logic
@@ -75,8 +75,8 @@ describe('Authentication Flow Integration', () => {
 				id: crypto.randomUUID(),
 				username,
 				hashedPassword,
-				createdAt: Math.floor(Date.now() / 1000),
-				updatedAt: Math.floor(Date.now() / 1000)
+				createdAt: new Date(),
+				updatedAt: new Date()
 			});
 
 			const [user] = await testDb.select().from(users).where(eq(users.username, username));
@@ -125,7 +125,10 @@ describe('Authentication Flow Integration', () => {
 
 			expect(session).toBeDefined();
 			expect(session.userId).toBe(testUserId);
-			expect(session.expiresAt).toEqual(expiresAt);
+			// タイムスタンプの精度の問題があるため、秒単位で比較
+			expect(Math.floor(new Date(session.expiresAt).getTime() / 1000)).toBe(
+				Math.floor(expiresAt.getTime() / 1000)
+			);
 		});
 
 		it('should validate active session', async () => {
@@ -288,8 +291,8 @@ describe('Authentication Flow Integration', () => {
 				id: crypto.randomUUID(),
 				username,
 				hashedPassword,
-				createdAt: Math.floor(Date.now() / 1000),
-				updatedAt: Math.floor(Date.now() / 1000)
+				createdAt: new Date(),
+				updatedAt: new Date()
 			});
 
 			// Attempt to create duplicate user should fail

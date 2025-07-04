@@ -23,8 +23,8 @@ describe('Posts Database Integration', () => {
 				id: crypto.randomUUID(),
 				username: 'testuser',
 				hashedPassword,
-				createdAt: Math.floor(Date.now() / 1000),
-				updatedAt: Math.floor(Date.now() / 1000)
+				createdAt: new Date(),
+				updatedAt: new Date()
 			})
 			.returning();
 		testUserId = user.id;
@@ -47,8 +47,8 @@ describe('Posts Database Integration', () => {
 				excerpt: 'Test excerpt',
 				status: 'draft' as const,
 				userId: testUserId,
-				createdAt: Math.floor(Date.now() / 1000),
-				updatedAt: Math.floor(Date.now() / 1000)
+				createdAt: new Date(),
+				updatedAt: new Date()
 			};
 
 			const [post] = await testDb.insert(posts).values(postData).returning();
@@ -70,10 +70,10 @@ describe('Posts Database Integration', () => {
 					content: 'Test content',
 					excerpt: 'Test excerpt',
 					status: 'published',
-					publishedAt: Math.floor(Date.now() / 1000),
+					publishedAt: new Date(),
 					userId: testUserId,
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 
@@ -94,8 +94,8 @@ describe('Posts Database Integration', () => {
 					excerpt: 'Original excerpt',
 					status: 'draft',
 					userId: testUserId,
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 
@@ -108,7 +108,7 @@ describe('Posts Database Integration', () => {
 					title: newTitle,
 					content: newContent,
 					status: 'published',
-					publishedAt: Math.floor(Date.now() / 1000),
+					publishedAt: new Date(),
 					updatedAt: new Date()
 				})
 				.where(eq(posts.id, created.id));
@@ -131,8 +131,8 @@ describe('Posts Database Integration', () => {
 					excerpt: 'Delete excerpt',
 					status: 'draft',
 					userId: testUserId,
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 
@@ -154,8 +154,8 @@ describe('Posts Database Integration', () => {
 					name: 'Test Category',
 					slug: 'test-category',
 					description: 'Test description',
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 			categoryId = category.id;
@@ -170,10 +170,10 @@ describe('Posts Database Integration', () => {
 					content: 'Content',
 					excerpt: 'Excerpt',
 					status: 'published',
-					publishedAt: Math.floor(Date.now() / 1000),
+					publishedAt: new Date(),
 					userId: testUserId,
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 
@@ -202,10 +202,10 @@ describe('Posts Database Integration', () => {
 					content: 'Content',
 					excerpt: 'Excerpt',
 					status: 'published',
-					publishedAt: Math.floor(Date.now() / 1000),
+					publishedAt: new Date(),
 					userId: testUserId,
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 
@@ -237,8 +237,8 @@ describe('Posts Database Integration', () => {
 				.values({
 					name: 'Category 2',
 					slug: 'category-2',
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 
@@ -247,8 +247,8 @@ describe('Posts Database Integration', () => {
 				.values({
 					name: 'Category 3',
 					slug: 'category-3',
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 
@@ -260,10 +260,10 @@ describe('Posts Database Integration', () => {
 					content: 'Content',
 					excerpt: 'Excerpt',
 					status: 'published',
-					publishedAt: Math.floor(Date.now() / 1000),
+					publishedAt: new Date(),
 					userId: testUserId,
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 
@@ -395,10 +395,10 @@ describe('Posts Database Integration', () => {
 				content: 'Content',
 				excerpt: 'Excerpt',
 				status: 'published',
-				publishedAt: Math.floor(),
+				publishedAt: new Date(),
 				userId: testUserId,
-				createdAt: Math.floor(Date.now() / 1000),
-				updatedAt: Math.floor(Date.now() / 1000)
+				createdAt: new Date(),
+				updatedAt: new Date()
 			});
 
 			// Attempt to insert duplicate slug should fail
@@ -409,10 +409,10 @@ describe('Posts Database Integration', () => {
 					content: 'Content',
 					excerpt: 'Excerpt',
 					status: 'published',
-					publishedAt: Math.floor(Date.now() / 1000),
+					publishedAt: new Date(),
 					userId: testUserId,
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 			).rejects.toThrow();
 		});
@@ -423,8 +423,8 @@ describe('Posts Database Integration', () => {
 				.values({
 					name: 'Test Category',
 					slug: 'test-category',
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 
@@ -436,10 +436,10 @@ describe('Posts Database Integration', () => {
 					content: 'Content',
 					excerpt: 'Excerpt',
 					status: 'published',
-					publishedAt: Math.floor(Date.now() / 1000),
+					publishedAt: new Date(),
 					userId: testUserId,
-					createdAt: Math.floor(Date.now() / 1000),
-					updatedAt: Math.floor(Date.now() / 1000)
+					createdAt: new Date(),
+					updatedAt: new Date()
 				})
 				.returning();
 

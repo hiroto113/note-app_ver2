@@ -23,8 +23,8 @@ describe('Categories Database Integration', () => {
 				id: crypto.randomUUID(),
 				username: 'testuser',
 				hashedPassword,
-				createdAt: Math.floor(Date.now() / 1000),
-				updatedAt: Math.floor(Date.now() / 1000)
+				createdAt: new Date(),
+				updatedAt: new Date()
 			})
 			.returning();
 		testUserId = user.id;
@@ -44,8 +44,8 @@ describe('Categories Database Integration', () => {
 				name: 'Test Category',
 				slug: 'test-category',
 				description: 'Test description',
-				createdAt: Math.floor(Date.now() / 1000),
-				updatedAt: Math.floor(Date.now() / 1000)
+				createdAt: new Date(),
+				updatedAt: new Date()
 			};
 
 			const [category] = await testDb.insert(categories).values(categoryData).returning();
@@ -378,8 +378,8 @@ describe('Categories Database Integration', () => {
 			await testDb.insert(categories).values({
 				name: 'First Category',
 				slug,
-				createdAt: Math.floor(Date.now() / 1000),
-				updatedAt: Math.floor(Date.now() / 1000)
+				createdAt: new Date(),
+				updatedAt: new Date()
 			});
 
 			// Attempt to insert duplicate slug should fail
@@ -399,8 +399,8 @@ describe('Categories Database Integration', () => {
 			await testDb.insert(categories).values({
 				name,
 				slug: 'unique-name-1',
-				createdAt: Math.floor(Date.now() / 1000),
-				updatedAt: Math.floor(Date.now() / 1000)
+				createdAt: new Date(),
+				updatedAt: new Date()
 			});
 
 			// Attempt to insert duplicate name should fail

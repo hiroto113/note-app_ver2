@@ -28,39 +28,39 @@ beforeAll(async () => {
 			id TEXT PRIMARY KEY,
 			username TEXT NOT NULL UNIQUE,
 			hashed_password TEXT NOT NULL,
-			created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
-			updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
+			created_at INTEGER NOT NULL,
+			updated_at INTEGER NOT NULL
 		)`);
 
 		await testDb.run(`CREATE TABLE IF NOT EXISTS categories (
-			id TEXT PRIMARY KEY,
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL UNIQUE,
 			slug TEXT NOT NULL UNIQUE,
 			description TEXT,
-			created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
-			updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
+			created_at INTEGER NOT NULL,
+			updated_at INTEGER NOT NULL
 		)`);
 
 		await testDb.run(`CREATE TABLE IF NOT EXISTS posts (
-			id TEXT PRIMARY KEY,
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			title TEXT NOT NULL,
 			slug TEXT NOT NULL UNIQUE,
 			content TEXT NOT NULL,
 			excerpt TEXT,
 			status TEXT NOT NULL DEFAULT 'draft',
-			author_id TEXT NOT NULL,
-			created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
-			updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
 			published_at INTEGER,
+			created_at INTEGER NOT NULL,
+			updated_at INTEGER NOT NULL,
+			user_id TEXT NOT NULL,
 			seo_title TEXT,
 			seo_description TEXT,
 			seo_keywords TEXT,
-			FOREIGN KEY (author_id) REFERENCES users(id)
+			FOREIGN KEY (user_id) REFERENCES users(id)
 		)`);
 
 		await testDb.run(`CREATE TABLE IF NOT EXISTS posts_to_categories (
-			post_id TEXT NOT NULL,
-			category_id TEXT NOT NULL,
+			post_id INTEGER NOT NULL,
+			category_id INTEGER NOT NULL,
 			PRIMARY KEY (post_id, category_id),
 			FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
 			FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
@@ -70,7 +70,7 @@ beforeAll(async () => {
 			id TEXT PRIMARY KEY,
 			user_id TEXT NOT NULL,
 			expires_at INTEGER NOT NULL,
-			created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
+			created_at INTEGER NOT NULL,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`);
 
