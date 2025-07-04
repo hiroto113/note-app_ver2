@@ -34,7 +34,7 @@ const testPostsApi = {
 
 			// JavaScriptで未来の投稿をフィルタリング
 			const now = new Date();
-			const validPosts = allPosts.filter(post => {
+			const validPosts = allPosts.filter((post) => {
 				if (!post.publishedAt) return true;
 				return new Date(post.publishedAt) <= now;
 			});
@@ -59,7 +59,10 @@ const testPostsApi = {
 							slug: categories.slug
 						})
 						.from(categories)
-						.innerJoin(postsToCategories, eq(categories.id, postsToCategories.categoryId))
+						.innerJoin(
+							postsToCategories,
+							eq(categories.id, postsToCategories.categoryId)
+						)
 						.where(eq(postsToCategories.postId, post.id));
 
 					return {
@@ -103,10 +106,7 @@ const testPostDetailApi = {
 			const { slug } = params;
 
 			// 記事を取得
-			const [post] = await testDb
-				.select()
-				.from(posts)
-				.where(eq(posts.slug, slug));
+			const [post] = await testDb.select().from(posts).where(eq(posts.slug, slug));
 
 			if (!post) {
 				return json({ error: 'Post not found' }, { status: 404 });

@@ -86,7 +86,10 @@ describe('Authentication Flow Integration', () => {
 		});
 
 		it('should handle non-existent user', async () => {
-			const result = await testDb.select().from(users).where(eq(users.username, 'nonexistent'));
+			const result = await testDb
+				.select()
+				.from(users)
+				.where(eq(users.username, 'nonexistent'));
 			expect(result).toHaveLength(0);
 		});
 	});
@@ -142,7 +145,10 @@ describe('Authentication Flow Integration', () => {
 				createdAt: new Date()
 			});
 
-			const [session] = await testDb.select().from(sessions).where(eq(sessions.id, sessionId));
+			const [session] = await testDb
+				.select()
+				.from(sessions)
+				.where(eq(sessions.id, sessionId));
 			const now = new Date();
 
 			expect(session).toBeDefined();
@@ -160,7 +166,10 @@ describe('Authentication Flow Integration', () => {
 				createdAt: new Date()
 			});
 
-			const [session] = await testDb.select().from(sessions).where(eq(sessions.id, sessionId));
+			const [session] = await testDb
+				.select()
+				.from(sessions)
+				.where(eq(sessions.id, sessionId));
 			const now = new Date();
 
 			expect(session.expiresAt < now).toBe(true);

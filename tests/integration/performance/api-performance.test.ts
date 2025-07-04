@@ -9,13 +9,13 @@ import bcrypt from 'bcryptjs';
 const performancePostsApi = {
 	GET: async ({ url }: { url: URL }) => {
 		const startTime = performance.now();
-		
+
 		try {
 			const page = parseInt(url.searchParams.get('page') || '1');
 			const limit = Math.min(parseInt(url.searchParams.get('limit') || '10'), 50);
-			
+
 			const offset = (page - 1) * limit;
-			
+
 			// 公開済み記事を取得
 			const allPosts = await testDb
 				.select({
@@ -31,7 +31,7 @@ const performancePostsApi = {
 
 			// フィルタリング
 			const now = new Date();
-			const validPosts = allPosts.filter(post => {
+			const validPosts = allPosts.filter((post) => {
 				if (!post.publishedAt) return true;
 				return new Date(post.publishedAt) <= now;
 			});
@@ -56,7 +56,10 @@ const performancePostsApi = {
 							slug: categories.slug
 						})
 						.from(categories)
-						.innerJoin(postsToCategories, eq(categories.id, postsToCategories.categoryId))
+						.innerJoin(
+							postsToCategories,
+							eq(categories.id, postsToCategories.categoryId)
+						)
 						.where(eq(postsToCategories.postId, post.id));
 
 					return {
@@ -137,12 +140,15 @@ describe('API パフォーマンステスト', () => {
 			postId: number;
 			categoryId: number;
 		}> = [];
-		
+
 		for (let i = 1; i <= 100; i++) {
 			const post = {
 				title: `Performance Test Post ${i}`,
 				slug: `performance-test-post-${i}`,
-				content: `# Performance Test Post ${i}\n\nThis is test content for performance testing. `.repeat(10),
+				content:
+					`# Performance Test Post ${i}\n\nThis is test content for performance testing. `.repeat(
+						10
+					),
 				excerpt: `This is test excerpt ${i}`,
 				status: 'published' as const,
 				publishedAt: new Date(Date.now() - i * 3600000), // 1時間ずつ過去
@@ -157,7 +163,7 @@ describe('API パフォーマンステスト', () => {
 		const insertedPosts = await testDb.insert(posts).values(posts_data).returning();
 
 		// カテゴリ関連付けデータを作成
-		insertedPosts.forEach(post => {
+		insertedPosts.forEach((post) => {
 			postsToCategories_data.push({
 				postId: post.id,
 				categoryId: techCategory.id
@@ -176,7 +182,7 @@ describe('API パフォーマンステスト', () => {
 			const result = await performancePostsApi.GET({ url });
 
 			expect(result.responseTime).toBeLessThan(100);
-			
+
 			const data = await result.response.json();
 			expect(data.posts).toHaveLength(10);
 			expect(data.pagination.total).toBe(100);
@@ -187,7 +193,7 @@ describe('API パフォーマンステスト', () => {
 			const result = await performancePostsApi.GET({ url });
 
 			expect(result.responseTime).toBeLessThan(200);
-			
+
 			const data = await result.response.json();
 			expect(data.posts).toHaveLength(50);
 		});
@@ -197,7 +203,7 @@ describe('API パフォーマンステスト', () => {
 			const result = await performancePostsApi.GET({ url });
 
 			expect(result.responseTime).toBeLessThan(150);
-			
+
 			const data = await result.response.json();
 			expect(data.posts).toHaveLength(10);
 			expect(data.pagination.page).toBe(5);
@@ -207,13 +213,13 @@ describe('API パフォーマンステスト', () => {
 	describe('データベースクエリパフォーマンス', () => {
 		it('記事取得クエリが50ms未満で完了', async () => {
 			const startTime = performance.now();
-			
+
 			const result = await testDb
 				.select()
 				.from(posts)
 				.where(eq(posts.status, 'published'))
 				.limit(50);
-			
+
 			const endTime = performance.now();
 			const queryTime = endTime - startTime;
 
@@ -223,7 +229,7 @@ describe('API パフォーマンステスト', () => {
 
 		it('カテゴリ付き記事取得が100ms未満で完了', async () => {
 			const startTime = performance.now();
-			
+
 			const result = await testDb
 				.select({
 					post: posts,
@@ -234,7 +240,7 @@ describe('API パフォーマンステスト', () => {
 				.innerJoin(categories, eq(categories.id, postsToCategories.categoryId))
 				.where(eq(posts.status, 'published'))
 				.limit(20);
-			
+
 			const endTime = performance.now();
 			const queryTime = endTime - startTime;
 
@@ -244,7 +250,7 @@ describe('API パフォーマンステスト', () => {
 
 		it('カテゴリ別記事数取得が30ms未満で完了', async () => {
 			const startTime = performance.now();
-			
+
 			const result = await testDb
 				.select({
 					categoryId: categories.id,
@@ -256,7 +262,7 @@ describe('API パフォーマンステスト', () => {
 				.leftJoin(posts, eq(posts.id, postsToCategories.postId))
 				.where(eq(posts.status, 'published'))
 				.groupBy(categories.id);
-			
+
 			const endTime = performance.now();
 			const queryTime = endTime - startTime;
 
@@ -268,15 +274,12 @@ describe('API パフォーマンステスト', () => {
 	describe('メモリ使用量テスト', () => {
 		it('大量データ処理時のメモリ使用量が適切', async () => {
 			const initialMemory = process.memoryUsage();
-			
+
 			// 大量データを取得・処理
-			const allPosts = await testDb
-				.select()
-				.from(posts)
-				.where(eq(posts.status, 'published'));
+			const allPosts = await testDb.select().from(posts).where(eq(posts.status, 'published'));
 
 			// データを処理
-			const processedPosts = allPosts.map(post => ({
+			const processedPosts = allPosts.map((post) => ({
 				...post,
 				processedTitle: post.title.toUpperCase(),
 				wordCount: post.content.split(' ').length
@@ -294,7 +297,7 @@ describe('API パフォーマンステスト', () => {
 	describe('同時接続処理性能', () => {
 		it('複数の同時リクエストを効率的に処理', async () => {
 			const startTime = performance.now();
-			
+
 			// 10個の同時リクエストをシミュレート
 			const promises = Array.from({ length: 10 }, (_, i) => {
 				const url = new URL(`http://localhost:5173/api/posts?page=${i + 1}&limit=5`);
@@ -302,13 +305,13 @@ describe('API パフォーマンステスト', () => {
 			});
 
 			const results = await Promise.all(promises);
-			
+
 			const endTime = performance.now();
 			const totalTime = endTime - startTime;
 
 			// 全ての同時リクエストが300ms未満で完了
 			expect(totalTime).toBeLessThan(300);
-			
+
 			// 全てのリクエストが成功
 			results.forEach((result, index) => {
 				expect(result.responseTime).toBeLessThan(100);

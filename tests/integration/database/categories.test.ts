@@ -68,7 +68,10 @@ describe('Categories Database Integration', () => {
 				})
 				.returning();
 
-			const [found] = await testDb.select().from(categories).where(eq(categories.id, created.id));
+			const [found] = await testDb
+				.select()
+				.from(categories)
+				.where(eq(categories.id, created.id));
 
 			expect(found).toBeDefined();
 			expect(found.id).toBe(created.id);
@@ -123,7 +126,10 @@ describe('Categories Database Integration', () => {
 
 			await testDb.delete(categories).where(eq(categories.id, created.id));
 
-			const found = await testDb.select().from(categories).where(eq(categories.id, created.id));
+			const found = await testDb
+				.select()
+				.from(categories)
+				.where(eq(categories.id, created.id));
 			expect(found).toHaveLength(0);
 		});
 	});
@@ -352,7 +358,10 @@ describe('Categories Database Integration', () => {
 
 		it('should find category by slug', async () => {
 			const slug = 'web-dev';
-			const [category] = await testDb.select().from(categories).where(eq(categories.slug, slug));
+			const [category] = await testDb
+				.select()
+				.from(categories)
+				.where(eq(categories.slug, slug));
 
 			expect(category).toBeDefined();
 			expect(category.slug).toBe(slug);
