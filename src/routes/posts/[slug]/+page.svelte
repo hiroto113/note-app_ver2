@@ -18,11 +18,11 @@
 	onMount(async () => {
 		// For now, render as plain HTML with basic markdown parsing
 		if (contentElement) {
-			// Simple markdown to HTML conversion
+			// Simple markdown to HTML conversion - skip H1 as it's already in the header
 			let html = data.post.content
-				.replace(/^# (.*$)/gim, '<h1>$1</h1>')
-				.replace(/^## (.*$)/gim, '<h2>$1</h2>')
-				.replace(/^### (.*$)/gim, '<h3>$1</h3>')
+				.replace(/^# (.*$)/gim, '<h2>$1</h2>') // Convert H1 to H2 to avoid duplicate
+				.replace(/^## (.*$)/gim, '<h3>$1</h3>') // Convert H2 to H3
+				.replace(/^### (.*$)/gim, '<h4>$1</h4>') // Convert H3 to H4
 				.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
 				.replace(/`([^`]*)`/g, '<code>$1</code>')
 				.replace(/\n/g, '<br>');
@@ -34,7 +34,7 @@
 
 <svelte:head>
 	<title>{data.post.title} - My Notes</title>
-	<meta name="description" content={data.post.description} />
+	<meta name="description" content={data.post.description || data.post.excerpt || data.post.title} />
 </svelte:head>
 
 <!-- OGP Tags -->
@@ -60,13 +60,15 @@
 				{formatDate(data.post.publishedAt)}
 			</time>
 
-			<div class="flex gap-2">
-				{#each data.post.categories as category}
-					<span class="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-800">
-						{category}
-					</span>
-				{/each}
-			</div>
+			{#if data.post.categories && data.post.categories.length > 0}
+				<div class="flex gap-2">
+					{#each data.post.categories as category}
+						<span class="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-800">
+							{category.name}
+						</span>
+					{/each}
+				</div>
+			{/if}
 		</div>
 
 		{#if data.post.description}

@@ -15,6 +15,7 @@ export const GET: RequestHandler = async ({ params }) => {
 				slug: posts.slug,
 				title: posts.title,
 				content: posts.content,
+				excerpt: posts.excerpt,
 				publishedAt: posts.publishedAt,
 				updatedAt: posts.updatedAt
 			})
@@ -49,10 +50,12 @@ export const GET: RequestHandler = async ({ params }) => {
 		// 結果をフォーマット
 		const formattedPost = {
 			...post,
-			categories: categoryResults
+			categories: categoryResults,
+			description: post.excerpt, // excerptをdescriptionとして使用
+			author: { id: '1', username: 'admin' } // 簡易的な作者情報
 		};
 
-		return json(formattedPost);
+		return json({ post: formattedPost });
 	} catch (error) {
 		console.error('Error fetching post:', error);
 		return json({ error: 'Failed to fetch post' }, { status: 500 });
