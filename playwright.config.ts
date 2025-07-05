@@ -8,7 +8,7 @@ export default defineConfig({
 	workers: process.env.CI ? 1 : undefined,
 	reporter: [['html'], ['json', { outputFile: 'test-results/e2e-results.json' }], ['github']],
 	use: {
-		baseURL: 'http://localhost:4174', // Use preview server for E2E tests
+		baseURL: 'http://localhost:4173', // Use preview server for E2E tests
 		trace: 'on-first-retry',
 		screenshot: 'only-on-failure',
 		video: 'retain-on-failure',

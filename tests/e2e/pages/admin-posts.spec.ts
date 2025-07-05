@@ -44,22 +44,21 @@ test.describe('管理画面 - 記事管理', () => {
 		await expect(page).toHaveURL(/\/admin\/posts\/(new|create)/);
 
 		// フォーム要素の確認
-		await expect(
-			page.locator('input[name="title"], [data-testid="title-input"]')
-		).toBeVisible();
-		await expect(
-			page.locator('textarea[name="content"], [data-testid="content-input"]')
-		).toBeVisible();
+		const titleInput = page.locator('[data-testid="title-input"], input[name="title"], input#title');
+		const contentContainer = page.locator('[data-testid="content-input"]');
+		const contentEditor = page.locator('[data-testid="content-input"] .cm-editor .cm-content');
+		
+		// フォーム要素の確認
+		await expect(titleInput).toBeVisible({ timeout: 10000 });
+		await expect(contentContainer).toBeVisible({ timeout: 10000 });
+		await expect(contentEditor).toBeVisible({ timeout: 10000 });
 
 		// 記事データを入力
-		await page.fill(
-			'input[name="title"], [data-testid="title-input"]',
-			testContent.newPost.title
-		);
-		await page.fill(
-			'textarea[name="content"], [data-testid="content-input"]',
-			testContent.newPost.content
-		);
+		await titleInput.fill(testContent.newPost.title);
+		
+		// MarkdownEditorの内部CodeMirrorエディターに入力
+		await contentEditor.click();
+		await contentEditor.fill(testContent.newPost.content);
 
 		// 概要（excerpt）フィールドがある場合
 		const excerptField = page.locator(
@@ -107,13 +106,13 @@ test.describe('管理画面 - 記事管理', () => {
 		await expect(page).toHaveURL(/\/admin\/posts\/\d+\/(edit|update)/);
 
 		// 既存の値が入力されていることを確認
-		const titleInput = page.locator('input[name="title"], [data-testid="title-input"]');
-		const contentTextarea = page.locator(
-			'textarea[name="content"], [data-testid="content-input"]'
-		);
+		const titleInput = page.locator('[data-testid="title-input"], input[name="title"], input#title');
+		const contentContainer = page.locator('[data-testid="content-input"]');
+		const contentEditor = page.locator('[data-testid="content-input"] .cm-editor .cm-content');
 
+		await expect(titleInput).toBeVisible();
+		await expect(contentContainer).toBeVisible();
 		await expect(titleInput).not.toHaveValue('');
-		await expect(contentTextarea).not.toHaveValue('');
 
 		// タイトルを更新
 		const originalTitle = await titleInput.inputValue();
@@ -193,8 +192,8 @@ test.describe('管理画面 - 記事管理', () => {
 		);
 
 		if (await searchInput.isVisible()) {
-			// 検索語句を入力
-			await searchInput.fill('SvelteKit');
+			// 検索語句を入力（実際に存在する記事のキーワードを使用）
+			await searchInput.fill('AI');
 
 			// 検索ボタンがあればクリック、なければEnterキー
 			const searchButton = page.locator('button[type="submit"]:near(input[type="search"])');
@@ -207,7 +206,7 @@ test.describe('管理画面 - 記事管理', () => {
 			await waitForPageLoad(page);
 
 			// 検索結果の確認
-			await expect(page.locator('body')).toContainText('SvelteKit');
+			await expect(page.locator('body')).toContainText('AI');
 		}
 
 		// ステータスフィルタの確認

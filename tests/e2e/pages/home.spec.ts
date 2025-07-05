@@ -129,7 +129,7 @@ test.describe('ホームページ', () => {
 		}
 
 		// フッターの確認（存在する場合）
-		const footer = page.locator('footer');
+		const footer = page.locator('footer').first();
 		if (await footer.isVisible()) {
 			await expect(footer).toBeVisible();
 		}

@@ -3,13 +3,8 @@ import { waitForPageLoad, setViewportSize, viewports } from '../utils/page-helpe
 
 test.describe('記事詳細ページ', () => {
 	test.beforeEach(async ({ page }) => {
-		// ホームページから最初の記事に移動
-		await page.goto('/');
-		await waitForPageLoad(page);
-
-		// 最初の記事をクリックして詳細ページに移動
-		const firstArticle = page.locator('article, .post-card').first();
-		await firstArticle.click();
+		// 直接記事詳細ページにアクセス
+		await page.goto('/posts/understanding-ai-ml');
 		await waitForPageLoad(page);
 
 		// 記事詳細ページにいることを確認
