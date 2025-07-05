@@ -145,6 +145,8 @@
 			class:border-red-300={error}
 			class:bg-gray-50={disabled}
 			class:cursor-not-allowed={disabled}
+			aria-required={required ? 'true' : 'false'}
+			role="textbox"
 		></div>
 	</div>
 

@@ -34,6 +34,7 @@
 		{disabled}
 		bind:value
 		data-testid="{id}-input"
+		aria-required={required ? 'true' : 'false'}
 		class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm"
 		class:border-red-300={error}
 		class:focus:border-red-500={error}

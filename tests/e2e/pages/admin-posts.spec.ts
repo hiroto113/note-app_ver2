@@ -161,8 +161,8 @@ test.describe('管理画面 - 記事管理', () => {
 	});
 
 	test('記事を削除できる', async ({ page }) => {
-		// 削除対象の記事数を確認
-		const initialPostCount = await page.locator('tr, .post-item').count();
+		// 削除対象の記事数を確認（ヘッダー行を除く）
+		const initialPostRows = await page.locator('tbody tr').count();
 
 		// 最初の記事の削除ボタンをクリック
 		const deleteButton = page
@@ -180,8 +180,8 @@ test.describe('管理画面 - 記事管理', () => {
 			await expectNotification(page, '削除');
 
 			// 記事数が1つ減ったことを確認
-			const newPostCount = await page.locator('tr, .post-item').count();
-			expect(newPostCount).toBe(initialPostCount - 1);
+			const newPostRows = await page.locator('tbody tr').count();
+			expect(newPostRows).toBe(Math.max(0, initialPostRows - 1));
 		}
 	});
 
