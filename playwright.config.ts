@@ -52,6 +52,11 @@ export default defineConfig({
 		command: 'pnpm run build && pnpm run preview',
 		url: 'http://localhost:4173',
 		reuseExistingServer: !process.env.CI,
-		timeout: 120 * 1000 // 2 minutes
+		timeout: 120 * 1000, // 2 minutes
+		env: {
+			DATABASE_URL: process.env.DATABASE_URL || 'file:./local.db',
+			AUTH_SECRET: process.env.AUTH_SECRET || 'test-secret-key-for-e2e-testing',
+			PORT: process.env.PORT || '4173'
+		}
 	}
 });
