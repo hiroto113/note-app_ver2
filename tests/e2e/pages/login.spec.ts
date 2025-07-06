@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { testUsers } from '../fixtures/test-data';
 import { waitForPageLoad } from '../utils/page-helpers';
 import { expectLoginPage } from '../utils/auth-helpers';
+import { ERROR_KEYWORDS } from '../../../src/lib/constants/messages';
 
 test.describe('ログイン機能', () => {
 	test.beforeEach(async ({ page }) => {
@@ -51,7 +52,7 @@ test.describe('ログイン機能', () => {
 		await expect(page).toHaveURL(/\/login/);
 
 		// エラーメッセージが表示されることを確認
-		await expect(page.locator('body')).toContainText(/エラー|error|invalid|incorrect/i);
+		await expect(page.locator('body')).toContainText(ERROR_KEYWORDS.LOGIN_FAILURE);
 	});
 
 	test('空の認証情報でログインできない', async ({ page }) => {
