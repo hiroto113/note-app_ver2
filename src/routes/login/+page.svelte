@@ -58,6 +58,9 @@
 						name="username"
 						type="text"
 						required
+						aria-required="true"
+						aria-invalid={error ? 'true' : 'false'}
+						aria-describedby={error ? 'login-error' : undefined}
 						bind:value={username}
 						disabled={loading}
 						class="relative mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:opacity-50 sm:text-sm"
@@ -74,6 +77,9 @@
 						name="password"
 						type="password"
 						required
+						aria-required="true"
+						aria-invalid={error ? 'true' : 'false'}
+						aria-describedby={error ? 'login-error' : undefined}
 						bind:value={password}
 						disabled={loading}
 						class="relative mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:opacity-50 sm:text-sm"
@@ -83,8 +89,8 @@
 			</div>
 
 			{#if error}
-				<div class="rounded-md border border-red-200 bg-red-50 p-3">
-					<p class="text-sm text-red-600">{error}</p>
+				<div class="rounded-md border border-red-200 bg-red-50 p-3" role="alert">
+					<p id="login-error" class="text-sm text-red-600">{error}</p>
 				</div>
 			{/if}
 
