@@ -14,6 +14,28 @@ export default defineConfig({
 		hookTimeout: 10000, // 10 seconds for setup/teardown
 		env: {
 			DATABASE_URL: ':memory:'
+		},
+		coverage: {
+			provider: 'v8',
+			reporter: ['text', 'json', 'html'],
+			include: ['src/**/*.{ts,js,svelte}'],
+			exclude: [
+				'src/**/*.test.{ts,js}',
+				'src/**/*.spec.{ts,js}',
+				'src/app.html',
+				'src/app.d.ts',
+				'src/hooks.server.ts',
+				'src/routes/**/*.server.ts',
+				'src/lib/server/seed.ts'
+			],
+			thresholds: {
+				global: {
+					branches: 80,
+					functions: 80,
+					lines: 80,
+					statements: 80
+				}
+			}
 		}
 	}
 });
