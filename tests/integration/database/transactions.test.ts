@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../setup';
 import { posts, categories, postsToCategories, users } from '$lib/server/db/schema';
@@ -189,7 +190,7 @@ describe('Database Transactions', () => {
 
 		it('should handle nested data creation in transactions', async () => {
 			let postId: number = 0;
-			let categoryIds: number[] = [];
+			const categoryIds: number[] = [];
 
 			await testDb.transaction(async (tx) => {
 				// Create multiple categories

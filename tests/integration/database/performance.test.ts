@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../setup';
 import { posts, categories, postsToCategories, users } from '$lib/server/db/schema';
@@ -6,7 +7,7 @@ import bcrypt from 'bcryptjs';
 
 describe('Database Performance', () => {
 	let testUserId: string;
-	let categoryIds: number[] = [];
+	const categoryIds: number[] = [];
 
 	beforeEach(async () => {
 		// Clean up database
