@@ -11,7 +11,7 @@ import {
 Object.defineProperty(window, 'PerformanceObserver', {
 	writable: true,
 	configurable: true,
-	value: vi.fn().mockImplementation((callback) => ({
+	value: vi.fn().mockImplementation(() => ({
 		observe: vi.fn(),
 		disconnect: vi.fn()
 	}))
@@ -57,7 +57,7 @@ describe('performance utilities', () => {
 
 		it('should handle missing PerformanceObserver gracefully', async () => {
 			const originalPO = window.PerformanceObserver;
-			// @ts-ignore
+			// @ts-expect-error - Testing environment without PerformanceObserver API
 			delete window.PerformanceObserver;
 
 			const metrics = await measureCoreWebVitals();

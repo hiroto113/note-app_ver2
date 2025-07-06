@@ -52,7 +52,7 @@ describe('fonts utilities', () => {
 
 			// Remove fonts API
 			const originalFonts = document.fonts;
-			// @ts-ignore
+			// @ts-expect-error - Testing environment without fonts API / Testing SSR environment
 			delete document.fonts;
 
 			observeFontLoading(callback);
@@ -85,7 +85,7 @@ describe('fonts utilities', () => {
 
 		it('should handle server-side rendering (no document)', () => {
 			const originalDocument = global.document;
-			// @ts-ignore
+			// @ts-expect-error - Testing environment without fonts API / Testing SSR environment
 			global.document = undefined;
 
 			const callback = vi.fn();

@@ -29,7 +29,7 @@ describe('critical-css utilities', () => {
 				onload: null as (() => void) | null,
 				appendChild: vi.fn()
 			};
-			return element as any;
+			return element as HTMLLinkElement;
 		});
 
 		Object.defineProperty(document, 'head', {
@@ -103,7 +103,7 @@ describe('critical-css utilities', () => {
 
 		it('should set up onload handler to change rel to stylesheet', () => {
 			const customHref = '/custom/styles.css';
-			let linkElement: any;
+			let linkElement: HTMLLinkElement;
 
 			document.createElement = vi.fn().mockImplementation(() => {
 				linkElement = {
@@ -131,7 +131,7 @@ describe('critical-css utilities', () => {
 
 		it('should handle server-side rendering (no document)', () => {
 			const originalDocument = global.document;
-			// @ts-ignore
+			// @ts-expect-error - Testing SSR environment without document
 			global.document = undefined;
 
 			expect(() => loadNonCriticalCSS('/test.css')).not.toThrow();
@@ -143,7 +143,7 @@ describe('critical-css utilities', () => {
 	describe('optimizeCSSLoading', () => {
 		it('should handle server-side rendering (no document)', () => {
 			const originalDocument = global.document;
-			// @ts-ignore
+			// @ts-expect-error - Testing SSR environment without document
 			global.document = undefined;
 
 			expect(() => optimizeCSSLoading()).not.toThrow();
