@@ -31,7 +31,8 @@
 			"Bash(npx playwright test:*)",
 			"Bash(grep:*)",
 			"Bash(sed:*)",
-			"Bash(gh run watch:*)"
+			"Bash(gh run watch:*)",
+			"Bash(gh issue list:*)"
 		],
 		"deny": []
 	}

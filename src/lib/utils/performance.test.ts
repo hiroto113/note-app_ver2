@@ -11,7 +11,7 @@ import {
 Object.defineProperty(window, 'PerformanceObserver', {
 	writable: true,
 	configurable: true,
-	value: vi.fn().mockImplementation((callback) => ({
+	value: vi.fn().mockImplementation(() => ({
 		observe: vi.fn(),
 		disconnect: vi.fn()
 	}))
@@ -48,21 +48,21 @@ describe('performance utilities', () => {
 	describe('measureCoreWebVitals', () => {
 		it('should return a promise with performance metrics', async () => {
 			const metricsPromise = measureCoreWebVitals();
-			
+
 			expect(metricsPromise).toBeInstanceOf(Promise);
-			
+
 			const metrics = await metricsPromise;
 			expect(typeof metrics).toBe('object');
 		});
 
 		it('should handle missing PerformanceObserver gracefully', async () => {
 			const originalPO = window.PerformanceObserver;
-			// @ts-ignore
+			// @ts-expect-error - Testing environment without PerformanceObserver API
 			delete window.PerformanceObserver;
-			
+
 			const metrics = await measureCoreWebVitals();
 			expect(typeof metrics).toBe('object');
-			
+
 			window.PerformanceObserver = originalPO;
 		});
 	});
@@ -76,9 +76,9 @@ describe('performance utilities', () => {
 				cls: 0.05,
 				ttfb: 400
 			};
-			
+
 			logPerformanceMetrics(metrics);
-			
+
 			expect(console.group).toHaveBeenCalledWith('🚀 Performance Metrics');
 			expect(console.log).toHaveBeenCalledTimes(5);
 			expect(console.groupEnd).toHaveBeenCalled();
@@ -86,9 +86,9 @@ describe('performance utilities', () => {
 
 		it('should handle empty metrics object', () => {
 			const metrics: PerformanceMetrics = {};
-			
+
 			expect(() => logPerformanceMetrics(metrics)).not.toThrow();
-			
+
 			expect(console.group).toHaveBeenCalledWith('🚀 Performance Metrics');
 			expect(console.groupEnd).toHaveBeenCalled();
 		});
@@ -98,9 +98,9 @@ describe('performance utilities', () => {
 				fcp: 1500,
 				cls: 0.1
 			};
-			
+
 			logPerformanceMetrics(metrics);
-			
+
 			expect(console.log).toHaveBeenCalledTimes(2);
 		});
 	});

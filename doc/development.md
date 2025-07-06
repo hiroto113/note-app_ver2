@@ -442,6 +442,7 @@ ANALYTICS_ID="G-XXXXXXXXXX"
 AI開発において、各Issueは以下の厳格な基準で管理されます：
 
 #### 基本原則
+
 - **一度に一つのIssue** - 複数Issue並行作業は禁止
 - **完了基準の明確化** - 各Issueの対処範囲を明確に定義
 - **検証の独立性** - 他Issue範囲のエラーは無視して進行
@@ -450,6 +451,7 @@ AI開発において、各Issueは以下の厳格な基準で管理されます�
 ### 9.2 詳細ワークフロー
 
 #### Step 1: Issue実装開始
+
 ```bash
 # Feature branchの作成
 git checkout main && git pull origin main
@@ -460,6 +462,7 @@ TodoWrite: status="in_progress"
 ```
 
 #### Step 2: 実装・テスト
+
 ```bash
 # 開発・修正の実行
 # - 対象範囲のみの修正（スコープ厳守）
@@ -472,6 +475,7 @@ pnpm run build    # ビルド確認（必要に応じて）
 ```
 
 #### Step 3: PR作成・CI確認
+
 ```bash
 # コミット・プッシュ
 git add -A && git commit -m "feat: issue implementation (#番号)"
@@ -484,13 +488,15 @@ gh pr create --title "feat: 概要 (#番号)" --body "詳細説明"
 #### Step 4: 完了基準の確認
 
 **Issue対処範囲完了の判定基準：**
+
 - ✅ **CI (test 20.x)**: SUCCESS
-- ✅ **Lighthouse CI**: SUCCESS  
+- ✅ **Lighthouse CI**: SUCCESS
 - 🟡 **Playwright Tests**: 他Issue範囲のエラーは無視してOK
 
 **重要：** Playwright Testsで他Issueが原因のエラーが出ても、対象Issueの範囲が完了していれば次に進む。
 
 #### Step 5: PR マージ・Issue クローズ
+
 ```bash
 # PRマージ（GitHub Actions成功確認後）
 gh pr merge {PR番号} --squash --subject "完了メッセージ" --body "詳細"
@@ -526,11 +532,13 @@ git push origin --delete feature/issue-{番号}-{概要}  # リモートブラ�
 ### 9.3 エラーハンドリング
 
 #### CI失敗時の対応
+
 - **ESLint/Prettier エラー**: 即座に修正してプッシュ
 - **TypeScript エラー**: 型定義修正後にプッシュ
 - **Build エラー**: 原因解析・修正後にプッシュ
 
 #### Playwright失敗の判定
+
 - **対象Issue範囲のテスト**: 必ず修正
 - **他Issue範囲のテスト**: エラー無視・次Issue進行OK
 - **判定基準**: テスト名・エラー内容でIssue範囲を特定
@@ -538,17 +546,20 @@ git push origin --delete feature/issue-{番号}-{概要}  # リモートブラ�
 ### 9.4 品質チェックポイント
 
 #### コード品質
+
 - [ ] TypeScript型エラーなし
 - [ ] ESLint警告なし
 - [ ] Prettier フォーマット済み
 - [ ] 既存機能の非破壊確認
 
 #### テスト品質
+
 - [ ] 対象機能のテスト通過
 - [ ] 既存テストの非破壊確認
 - [ ] Edge caseの考慮
 
 #### ドキュメント
+
 - [ ] CLAUDE.md更新（必要に応じて）
 - [ ] コメント追加（複雑な処理）
 - [ ] README更新（新機能時）

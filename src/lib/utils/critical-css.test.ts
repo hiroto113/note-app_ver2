@@ -13,7 +13,7 @@ describe('critical-css utilities', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		
+
 		// Store originals
 		originalCreateElement = document.createElement;
 		originalHead = document.head;
@@ -28,8 +28,8 @@ describe('critical-css utilities', () => {
 				href: '',
 				onload: null as (() => void) | null,
 				appendChild: vi.fn()
-			};
-			return element as any;
+			} as Partial<HTMLLinkElement>;
+			return element as HTMLLinkElement;
 		});
 
 		Object.defineProperty(document, 'head', {
@@ -94,17 +94,17 @@ describe('critical-css utilities', () => {
 
 		it('should create preload link for custom href', () => {
 			const customHref = '/custom/styles.css';
-			
+
 			loadNonCriticalCSS(customHref);
-			
+
 			expect(document.createElement).toHaveBeenCalledWith('link');
 			expect(document.head.appendChild).toHaveBeenCalled();
 		});
 
 		it('should set up onload handler to change rel to stylesheet', () => {
 			const customHref = '/custom/styles.css';
-			let linkElement: any;
-			
+			let linkElement: Partial<HTMLLinkElement>;
+
 			document.createElement = vi.fn().mockImplementation(() => {
 				linkElement = {
 					rel: '',
@@ -112,26 +112,27 @@ describe('critical-css utilities', () => {
 					href: '',
 					onload: null as (() => void) | null
 				};
-				return linkElement;
+				return linkElement as HTMLLinkElement;
 			});
 
 			loadNonCriticalCSS(customHref);
 
-			expect(linkElement.rel).toBe('preload');
-			expect(linkElement.as).toBe('style');
-			expect(linkElement.href).toBe(customHref);
-			expect(typeof linkElement.onload).toBe('function');
+			expect(linkElement!.rel).toBe('preload');
+			expect(linkElement!.as).toBe('style');
+			expect(linkElement!.href).toBe(customHref);
+			expect(typeof linkElement!.onload).toBe('function');
 
 			// Test onload handler
-			if (linkElement.onload) {
-				linkElement.onload.call(linkElement);
-				expect(linkElement.rel).toBe('stylesheet');
+			if (linkElement!.onload) {
+				// @ts-expect-error - Testing DOM event handler in test environment
+				linkElement!.onload.call(linkElement!);
+				expect(linkElement!.rel).toBe('stylesheet');
 			}
 		});
 
 		it('should handle server-side rendering (no document)', () => {
 			const originalDocument = global.document;
-			// @ts-ignore
+			// @ts-expect-error - Testing SSR environment without document
 			global.document = undefined;
 
 			expect(() => loadNonCriticalCSS('/test.css')).not.toThrow();
@@ -143,7 +144,7 @@ describe('critical-css utilities', () => {
 	describe('optimizeCSSLoading', () => {
 		it('should handle server-side rendering (no document)', () => {
 			const originalDocument = global.document;
-			// @ts-ignore
+			// @ts-expect-error - Testing SSR environment without document
 			global.document = undefined;
 
 			expect(() => optimizeCSSLoading()).not.toThrow();
@@ -152,7 +153,7 @@ describe('critical-css utilities', () => {
 		});
 
 		it('should convert non-critical stylesheets to preload', () => {
-			const mockStyleSheets = [
+			const mockStyleSheets: Partial<HTMLLinkElement>[] = [
 				{
 					href: 'https://example.com/styles.css',
 					rel: 'stylesheet',
@@ -172,7 +173,7 @@ describe('critical-css utilities', () => {
 			optimizeCSSLoading();
 
 			expect(document.querySelectorAll).toHaveBeenCalledWith('link[rel="stylesheet"]');
-			
+
 			// First stylesheet (non-critical) should be converted
 			expect(mockStyleSheets[0].rel).toBe('preload');
 			expect(mockStyleSheets[0].as).toBe('style');
@@ -183,13 +184,14 @@ describe('critical-css utilities', () => {
 
 			// Test onload handler for first stylesheet
 			if (mockStyleSheets[0].onload) {
+				// @ts-expect-error - Testing DOM event handler in test environment
 				mockStyleSheets[0].onload.call(mockStyleSheets[0]);
 				expect(mockStyleSheets[0].rel).toBe('stylesheet');
 			}
 		});
 
 		it('should not modify critical CSS links', () => {
-			const mockCriticalSheet = {
+			const mockCriticalSheet: Partial<HTMLLinkElement> = {
 				href: 'https://example.com/critical.css',
 				rel: 'stylesheet',
 				as: '',

@@ -257,8 +257,9 @@ This is a blog/note-taking application built with SvelteKit, featuring a full ad
 **Complete workflow documented in:** `doc/development.md` - Issue Management Section
 
 ### Quick Reference: Issue Completion Flow
+
 1. **Implementation** → Feature branch + PR creation
-2. **Verification** → CI success + functional validation  
+2. **Verification** → CI success + functional validation
 3. **Completion** → PR merge + Issue close + Branch cleanup
 4. **Cleanup** → Local/remote branch deletion with safety checks
 

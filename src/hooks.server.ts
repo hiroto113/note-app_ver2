@@ -3,6 +3,20 @@ import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { json } from '@sveltejs/kit';
 
+// Database initialization
+const dbInitHandle: Handle = async ({ event, resolve }) => {
+	try {
+		// Initialize database connection early
+		await import('$lib/server/db');
+		// Connection is established in the import, no need for explicit query
+	} catch (error) {
+		console.error('Database module import error:', error);
+		// Continue execution even if DB connection fails
+		// This allows static pages to work
+	}
+	return resolve(event);
+};
+
 // 管理用API認証チェック
 const adminApiAuth: Handle = async ({ event, resolve }) => {
 	// 管理用APIパスの場合のみ認証チェック
@@ -85,4 +99,10 @@ const monitoringHandle: Handle = async ({ event, resolve }) => {
 	return response;
 };
 
-export const handle: Handle = sequence(authHandle, adminApiAuth, securityHandle, monitoringHandle);
+export const handle: Handle = sequence(
+	dbInitHandle,
+	authHandle,
+	adminApiAuth,
+	securityHandle,
+	monitoringHandle
+);

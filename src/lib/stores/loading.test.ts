@@ -15,8 +15,8 @@ describe('loading store', () => {
 
 		it('should be reactive to changes', () => {
 			const values: boolean[] = [];
-			
-			const unsubscribe = loading.subscribe(value => {
+
+			const unsubscribe = loading.subscribe((value) => {
 				values.push(value);
 			});
 
@@ -24,7 +24,7 @@ describe('loading store', () => {
 			setLoading(false);
 
 			expect(values).toEqual([false, true, false]);
-			
+
 			unsubscribe();
 		});
 	});
@@ -49,12 +49,12 @@ describe('loading store', () => {
 			});
 
 			const loadingPromise = withLoading(promise);
-			
+
 			// Should be loading immediately
 			expect(get(loading)).toBe(true);
 
 			const result = await loadingPromise;
-			
+
 			// Should not be loading after completion
 			expect(get(loading)).toBe(false);
 			expect(result).toBe('test');
@@ -78,16 +78,16 @@ describe('loading store', () => {
 
 		it('should handle already resolved promise', async () => {
 			const promise = Promise.resolve('immediate');
-			
+
 			const result = await withLoading(promise);
-			
+
 			expect(result).toBe('immediate');
 			expect(get(loading)).toBe(false);
 		});
 
 		it('should handle already rejected promise', async () => {
 			const promise = Promise.reject(new Error('immediate error'));
-			
+
 			try {
 				await withLoading(promise);
 			} catch (error) {
@@ -102,7 +102,7 @@ describe('loading store', () => {
 			const promise1 = new Promise<string>((resolve) => {
 				setTimeout(() => resolve('first'), 50);
 			});
-			
+
 			const promise2 = new Promise<string>((resolve) => {
 				setTimeout(() => resolve('second'), 100);
 			});
