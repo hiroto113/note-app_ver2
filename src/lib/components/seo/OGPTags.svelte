@@ -38,6 +38,10 @@
 </script>
 
 <svelte:head>
+	<!-- Basic meta tags -->
+	<title>{optimizedTitle}</title>
+	<meta name="description" content={optimizedDescription} />
+	
 	<!-- Basic OGP Tags -->
 	<meta property="og:title" content={optimizedTitle} />
 	<meta property="og:description" content={optimizedDescription} />

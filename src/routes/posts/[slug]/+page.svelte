@@ -32,11 +32,6 @@
 	});
 </script>
 
-<svelte:head>
-	<title>{data.post.title} - My Notes</title>
-	<meta name="description" content={data.post.description || data.post.excerpt || data.post.title} />
-</svelte:head>
-
 <!-- OGP Tags -->
 <OGPTags
 	title={data.post.title}

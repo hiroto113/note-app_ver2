@@ -35,10 +35,6 @@
 	type="website"
 />
 
-<svelte:head>
-	<title>お問い合わせ - My Notes</title>
-</svelte:head>
-
 <div class="mx-auto max-w-4xl">
 	<header class="mb-12 text-center">
 		<h1 class="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">お問い合わせ</h1>

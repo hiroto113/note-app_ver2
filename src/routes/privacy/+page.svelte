@@ -8,10 +8,6 @@
 	type="website"
 />
 
-<svelte:head>
-	<title>プライバシーポリシー - My Notes</title>
-</svelte:head>
-
 <article class="prose prose-lg dark:prose-invert mx-auto max-w-4xl">
 	<header class="mb-12 text-center">
 		<h1 class="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">

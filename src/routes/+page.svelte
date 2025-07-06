@@ -34,11 +34,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>My Notes</title>
-	<meta name="description" content="個人的な学習記録とメモ" />
-</svelte:head>
-
 <!-- OGP Tags -->
 <OGPTags
 	title="My Notes"
