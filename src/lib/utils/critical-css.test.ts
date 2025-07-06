@@ -124,7 +124,8 @@ describe('critical-css utilities', () => {
 
 			// Test onload handler
 			if (linkElement!.onload) {
-				(linkElement!.onload as any).call(linkElement!);
+				// @ts-expect-error - Testing DOM event handler in test environment
+				linkElement!.onload.call(linkElement!);
 				expect(linkElement!.rel).toBe('stylesheet');
 			}
 		});
@@ -183,7 +184,8 @@ describe('critical-css utilities', () => {
 
 			// Test onload handler for first stylesheet
 			if (mockStyleSheets[0].onload) {
-				(mockStyleSheets[0].onload as any).call(mockStyleSheets[0]);
+				// @ts-expect-error - Testing DOM event handler in test environment
+				mockStyleSheets[0].onload.call(mockStyleSheets[0]);
 				expect(mockStyleSheets[0].rel).toBe('stylesheet');
 			}
 		});
