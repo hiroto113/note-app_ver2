@@ -252,6 +252,18 @@ This is a blog/note-taking application built with SvelteKit, featuring a full ad
 - Only one task `in_progress` at a time
 - Mark completed only when fully done
 
+## Issue Management Workflow (CRITICAL)
+
+**Complete workflow documented in:** `doc/development.md` - Issue Management Section
+
+### Quick Reference: Issue Completion Flow
+1. **Implementation** → Feature branch + PR creation
+2. **Verification** → CI success + functional validation  
+3. **Completion** → PR merge + Issue close + Branch cleanup
+4. **Cleanup** → Local/remote branch deletion with safety checks
+
+**Detailed procedures:** See `doc/development.md` for step-by-step instructions
+
 ## API Endpoints (To Be Implemented)
 
 - `GET /api/posts` - List all posts
