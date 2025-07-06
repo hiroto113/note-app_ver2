@@ -48,7 +48,14 @@ describe('Database Migrations', () => {
 			const columns = await testDb.all(sql`PRAGMA table_info(categories)`);
 
 			const columnNames = columns.map((c: any) => c.name);
-			const requiredColumns = ['id', 'name', 'slug', 'description', 'created_at', 'updated_at'];
+			const requiredColumns = [
+				'id',
+				'name',
+				'slug',
+				'description',
+				'created_at',
+				'updated_at'
+			];
 
 			requiredColumns.forEach((col) => {
 				expect(columnNames).toContain(col);
@@ -59,7 +66,13 @@ describe('Database Migrations', () => {
 			const columns = await testDb.all(sql`PRAGMA table_info(users)`);
 
 			const columnNames = columns.map((c: any) => c.name);
-			const requiredColumns = ['id', 'username', 'hashed_password', 'created_at', 'updated_at'];
+			const requiredColumns = [
+				'id',
+				'username',
+				'hashed_password',
+				'created_at',
+				'updated_at'
+			];
 
 			requiredColumns.forEach((col) => {
 				expect(columnNames).toContain(col);
@@ -176,7 +189,9 @@ describe('Database Migrations', () => {
 			expect((sessionUserFk as any).from).toBe('user_id');
 			expect((sessionUserFk as any).to).toBe('id');
 			// Foreign key delete action depends on schema implementation
-			expect(['CASCADE', 'NO ACTION', 'RESTRICT']).toContain((sessionUserFk as any).on_delete);
+			expect(['CASCADE', 'NO ACTION', 'RESTRICT']).toContain(
+				(sessionUserFk as any).on_delete
+			);
 
 			// Check posts_to_categories foreign keys
 			const junctionFk = await testDb.all(sql`PRAGMA foreign_key_list(posts_to_categories)`);

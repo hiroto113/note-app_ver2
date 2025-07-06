@@ -66,10 +66,13 @@ describe('Database Performance', () => {
 					postsData.push({
 						title: `Performance Test Post ${index}`,
 						slug: `perf-test-post-${index}`,
-						content: `This is the content for performance test post ${index}. `.repeat(10),
+						content: `This is the content for performance test post ${index}. `.repeat(
+							10
+						),
 						excerpt: `Excerpt for post ${index}`,
 						status: index % 3 === 0 ? ('draft' as const) : ('published' as const),
-						publishedAt: index % 3 === 0 ? null : new Date(Date.now() - index * 3600000),
+						publishedAt:
+							index % 3 === 0 ? null : new Date(Date.now() - index * 3600000),
 						userId: testUserId,
 						createdAt: new Date(Date.now() - index * 3600000),
 						updatedAt: new Date()
@@ -154,9 +157,7 @@ describe('Database Performance', () => {
 			const results = await testDb
 				.select()
 				.from(posts)
-				.where(
-					and(eq(posts.status, 'published'), gte(posts.publishedAt, oneWeekAgo))
-				)
+				.where(and(eq(posts.status, 'published'), gte(posts.publishedAt, oneWeekAgo)))
 				.orderBy(desc(posts.publishedAt))
 				.limit(100);
 
@@ -172,7 +173,7 @@ describe('Database Performance', () => {
 		it('should efficiently batch multiple post queries', async () => {
 			// Simulate multiple individual queries vs batch query
 			const postSlugs = ['perf-test-post-1', 'perf-test-post-2', 'perf-test-post-3'];
-			
+
 			// Batch approach - single query
 			const startTime = performance.now();
 
@@ -290,9 +291,10 @@ describe('Database Performance', () => {
 
 			// Query using non-indexed column (content LIKE)
 			const nonIndexedStartTime = performance.now();
-			const nonIndexedResult = await testDb.select().from(posts).where(
-				sql`${posts.content} LIKE '%Performance Test Post%'`
-			);
+			const nonIndexedResult = await testDb
+				.select()
+				.from(posts)
+				.where(sql`${posts.content} LIKE '%Performance Test Post%'`);
 			const nonIndexedDuration = performance.now() - nonIndexedStartTime;
 
 			// Both queries should execute, indexed should be faster or equal

@@ -88,7 +88,7 @@ describe('Users and Sessions Database Integration', () => {
 			expect(updated.username).toBe(newUsername);
 			expect(updated.hashedPassword).toBe(newHashedPassword);
 			// Updated timestamp should be equal or greater than created timestamp
-		expect(updated.updatedAt.getTime()).toBeGreaterThanOrEqual(updated.createdAt.getTime());
+			expect(updated.updatedAt.getTime()).toBeGreaterThanOrEqual(updated.createdAt.getTime());
 		});
 
 		it('should delete a user', async () => {
