@@ -49,23 +49,31 @@ jobs:
           PUBLIC_APP_NAME: 'Note App'
           PUBLIC_APP_URL: 'http://localhost:4173'
 
-      - name: Start application
+      - name: Start application and run Lighthouse CI
         run: |
-          pnpm run preview &
-          sleep 15
-          curl --retry 10 --retry-delay 3 --retry-connrefused http://localhost:4173/ || echo "App may have 500 error but continuing..."
-        timeout-minutes: 3
+          # Start server in background
+          DATABASE_URL="file:local.db" pnpm run preview &
+          SERVER_PID=$!
+          
+          # Wait for server to be ready
+          echo "Waiting for server to start..."
+          for i in {1..30}; do
+            if curl -sf http://localhost:4173/ > /dev/null 2>&1; then
+              echo "Server is ready"
+              break
+            fi
+            echo "Attempt $i: Server not ready, waiting..."
+            sleep 2
+          done
+          
+          # Run Lighthouse CI
+          pnpm dlx @lhci/cli@latest collect --url=http://localhost:4173/
+          
+          # Stop server
+          kill $SERVER_PID || true
+        timeout-minutes: 5
         env:
           NODE_ENV: production
-          DATABASE_URL: 'file:local.db'
-          PUBLIC_APP_NAME: 'Note App'
-          PUBLIC_APP_URL: 'http://localhost:4173'
-
-      - name: Run Lighthouse CI
-        run: pnpm dlx @lhci/cli@latest autorun
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-          LHCI_TOKEN: ${{ secrets.LHCI_TOKEN }}
           DATABASE_URL: 'file:local.db'
           PUBLIC_APP_NAME: 'Note App'
           PUBLIC_APP_URL: 'http://localhost:4173'

@@ -4,12 +4,6 @@ export default {
 		collect: {
 			// テスト対象のURL
 			url: ['http://localhost:4173/'],
-			// サーバーを起動してテストする
-			startServerCommand: 'DATABASE_URL="file:local.db" pnpm run preview',
-			// サーバーが準備完了を判定するパターン
-			startServerReadyPattern: 'Local:',
-			// タイムアウト設定
-			startServerReadyTimeout: 30000,
 			// 各URLでの実行回数
 			numberOfRuns: 2,
 			// 設定項目
