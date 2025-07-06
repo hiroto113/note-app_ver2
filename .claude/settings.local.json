@@ -32,7 +32,8 @@
 			"Bash(grep:*)",
 			"Bash(sed:*)",
 			"Bash(gh run watch:*)",
-			"Bash(gh issue list:*)"
+			"Bash(gh issue list:*)",
+			"Bash(pnpm test:*)"
 		],
 		"deny": []
 	}
