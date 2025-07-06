@@ -54,7 +54,7 @@ jobs:
           # Start server in background
           DATABASE_URL="file:local.db" pnpm run preview &
           SERVER_PID=$!
-          
+
           # Wait for server to be ready
           echo "Waiting for server to start..."
           for i in {1..30}; do
@@ -65,10 +65,10 @@ jobs:
             echo "Attempt $i: Server not ready, waiting..."
             sleep 2
           done
-          
+
           # Run Lighthouse CI
           pnpm dlx @lhci/cli@latest collect --url=http://localhost:4173/
-          
+
           # Stop server
           kill $SERVER_PID || true
         timeout-minutes: 5
