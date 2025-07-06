@@ -34,15 +34,20 @@ jobs:
 
       - name: Setup database
         run: |
+          touch local.db
           pnpm run db:migrate
           pnpm run db:seed
         env:
           NODE_ENV: production
+          DATABASE_URL: "file:local.db"
 
       - name: Build application
         run: pnpm run build
         env:
           NODE_ENV: production
+          DATABASE_URL: "file:local.db"
+          PUBLIC_APP_NAME: "Note App"
+          PUBLIC_APP_URL: "http://localhost:4173"
 
       - name: Start application
         run: |
@@ -52,16 +57,18 @@ jobs:
         timeout-minutes: 3
         env:
           NODE_ENV: production
+          DATABASE_URL: "file:local.db"
+          PUBLIC_APP_NAME: "Note App"
+          PUBLIC_APP_URL: "http://localhost:4173"
 
-      - name: Run Lighthouse CI (temporarily disabled - Phase 6.5)
-        run: |
-          echo "Lighthouse CI temporarily disabled due to 500 error issue"
-          echo "Will be resolved in Phase 6.5 integration testing"
-          echo "All Phase 7 features have been successfully implemented"
-        # TODO: Re-enable after resolving 500 error in Phase 6.5
-        # env:
-        #   LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-        #   LHCI_TOKEN: ${{ secrets.LHCI_TOKEN }}
+      - name: Run Lighthouse CI
+        run: pnpm dlx @lhci/cli@latest autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          LHCI_TOKEN: ${{ secrets.LHCI_TOKEN }}
+          DATABASE_URL: "file:local.db"
+          PUBLIC_APP_NAME: "Note App"
+          PUBLIC_APP_URL: "http://localhost:4173"
 
       - name: Upload Lighthouse reports
         uses: actions/upload-artifact@v4

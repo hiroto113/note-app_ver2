@@ -2,10 +2,12 @@ export default {
 	ci: {
 		// Lighthouse CI設定
 		collect: {
-			// 静的ファイルディレクトリを明示的に指定
-			staticDistDir: '.svelte-kit/output/client',
-			// テスト対象のURL（500エラーでも静的ファイルはテスト可能）
+			// テスト対象のURL
 			url: ['http://localhost:4173/'],
+			// サーバーを起動してテストする
+			startServerCommand: 'pnpm run preview',
+			// サーバーが準備完了を判定するパターン
+			startServerReadyPattern: 'Local:',
 			// 各URLでの実行回数
 			numberOfRuns: 2,
 			// 設定項目
@@ -78,33 +80,3 @@ export default {
 	}
 };
 
-// Export additional configurations if needed
-export const mobile = {
-	ci: {
-		collect: {
-			url: [
-				'http://localhost:4173/',
-				'http://localhost:4173/about',
-				'http://localhost:4173/contact'
-			],
-			numberOfRuns: 2,
-			settings: {
-				preset: 'mobile',
-				throttlingMethod: 'simulate',
-				throttling: {
-					rttMs: 150,
-					throughputKbps: 1638.4,
-					cpuSlowdownMultiplier: 4
-				}
-			}
-		},
-		assert: {
-			assertions: {
-				'categories:performance': ['error', { minScore: 0.8 }],
-				'categories:accessibility': ['error', { minScore: 0.9 }],
-				'categories:best-practices': ['error', { minScore: 0.9 }],
-				'categories:seo': ['error', { minScore: 0.9 }]
-			}
-		}
-	}
-};
