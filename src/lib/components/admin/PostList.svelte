@@ -82,7 +82,12 @@
 
 	<!-- Posts list -->
 	{#if filteredPosts.length > 0}
-		<div class="grid gap-6 posts-list" data-testid="posts-list" role="list" aria-label="記事一覧">
+		<div
+			class="posts-list grid gap-6"
+			data-testid="posts-list"
+			role="list"
+			aria-label="記事一覧"
+		>
 			{#each filteredPosts as post}
 				<PostCard {post} />
 			{/each}

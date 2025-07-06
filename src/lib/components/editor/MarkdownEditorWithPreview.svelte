@@ -102,7 +102,11 @@
 		</div>
 	{/if}
 
-	<div class="overflow-hidden rounded-md border border-gray-300" class:border-red-300={error} data-testid={testId}>
+	<div
+		class="overflow-hidden rounded-md border border-gray-300"
+		class:border-red-300={error}
+		data-testid={testId}
+	>
 		{#if viewMode === 'editor'}
 			<MarkdownEditor
 				bind:this={editorRef}

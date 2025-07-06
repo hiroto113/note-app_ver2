@@ -30,14 +30,17 @@
 </script>
 
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-	<nav class="border-b border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800" aria-label="メインナビゲーション">
+	<nav
+		class="border-b border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
+		aria-label="メインナビゲーション"
+	>
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-16 justify-between">
 				<div class="flex">
 					<div class="flex flex-shrink-0 items-center">
 						<a
 							href="/admin"
-							class="text-lg font-bold text-gray-900 dark:text-gray-100 md:text-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+							class="rounded text-lg font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:text-gray-100 md:text-xl"
 							aria-label="管理画面ホームに移動"
 						>
 							管理画面
@@ -46,8 +49,8 @@
 					<div class="hidden sm:ml-6 sm:flex sm:space-x-4 md:space-x-8">
 						<a
 							href="/admin"
-							class="inline-flex items-center px-1 pt-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded {$page.url
-								.pathname === '/admin'
+							class="inline-flex items-center rounded px-1 pt-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 {$page
+								.url.pathname === '/admin'
 								? 'border-b-2 border-blue-500 text-gray-900 dark:text-gray-100'
 								: 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}"
 							aria-current={$page.url.pathname === '/admin' ? 'page' : undefined}
@@ -57,24 +60,28 @@
 						</a>
 						<a
 							href="/admin/posts"
-							class="inline-flex items-center px-1 pt-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded {$page.url.pathname.startsWith(
+							class="inline-flex items-center rounded px-1 pt-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 {$page.url.pathname.startsWith(
 								'/admin/posts'
 							)
 								? 'border-b-2 border-blue-500 text-gray-900 dark:text-gray-100'
 								: 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}"
-							aria-current={$page.url.pathname.startsWith('/admin/posts') ? 'page' : undefined}
+							aria-current={$page.url.pathname.startsWith('/admin/posts')
+								? 'page'
+								: undefined}
 							aria-label="記事管理ページ"
 						>
 							記事管理
 						</a>
 						<a
 							href="/admin/categories"
-							class="inline-flex items-center px-1 pt-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded {$page.url.pathname.startsWith(
+							class="inline-flex items-center rounded px-1 pt-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 {$page.url.pathname.startsWith(
 								'/admin/categories'
 							)
 								? 'border-b-2 border-blue-500 text-gray-900 dark:text-gray-100'
 								: 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}"
-							aria-current={$page.url.pathname.startsWith('/admin/categories') ? 'page' : undefined}
+							aria-current={$page.url.pathname.startsWith('/admin/categories')
+								? 'page'
+								: undefined}
 							aria-label="カテゴリ管理ページ"
 						>
 							カテゴリ管理
@@ -95,7 +102,7 @@
 					</button>
 					<a
 						href="/"
-						class="text-xs text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded dark:text-gray-400 dark:hover:text-gray-200 sm:text-sm"
+						class="rounded text-xs text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-200 sm:text-sm"
 						target="_blank"
 						rel="noopener noreferrer"
 						aria-label="新しいタブでサイトを表示"

@@ -21,7 +21,7 @@ test.describe('キーボードナビゲーションテスト', () => {
 
 		// キーボードナビゲーションの基本的な動作をテスト
 		let currentFocusedElement = null;
-		
+
 		// 最初のTab押下
 		await page.keyboard.press('Tab');
 		currentFocusedElement = await page.evaluate(() => document.activeElement?.tagName);
@@ -32,7 +32,7 @@ test.describe('キーボードナビゲーションテスト', () => {
 			const previousElement = currentFocusedElement;
 			await page.keyboard.press('Tab');
 			currentFocusedElement = await page.evaluate(() => document.activeElement?.tagName);
-			
+
 			// フォーカスが移動したことを確認（同じ要素に留まっていない）
 			if (i > 0) {
 				// フォーカスが適切に移動していることを確認
@@ -111,14 +111,14 @@ test.describe('キーボードナビゲーションテスト', () => {
 		if (focusableCount > 0) {
 			// 最初の要素にフォーカスを設定
 			await focusableElements.first().focus();
-			
+
 			// 各要素にフォーカスが移動することを確認
 			for (let i = 0; i < Math.min(6, focusableCount); i++) {
 				const currentElement = focusableElements.nth(i);
-				
+
 				// 要素が表示されていることを確認
 				await expect(currentElement).toBeVisible();
-				
+
 				// フォーカスの確認（エラー時はスキップ）
 				try {
 					await expect(currentElement).toBeFocused({ timeout: 1500 });
@@ -157,17 +157,21 @@ test.describe('キーボードナビゲーションテスト', () => {
 				await page.keyboard.press('Tab');
 				await page.waitForTimeout(200); // 待機時間を増加
 				const nextElement = formElements.nth(i + 1);
-				
+
 				// 要素が表示されていることを確認
 				await expect(nextElement).toBeVisible();
-				
+
 				// フォーカス確認（エラー時は警告のみ）
 				try {
 					await expect(nextElement).toBeFocused({ timeout: 1500 });
 				} catch (error) {
-					console.log(`Form element ${i + 1} focus verification failed, but continuing test`);
+					console.log(
+						`Form element ${i + 1} focus verification failed, but continuing test`
+					);
 					// より柔軟なフォーカス確認を試行
-					const isFocused = await nextElement.evaluate(el => document.activeElement === el);
+					const isFocused = await nextElement.evaluate(
+						(el) => document.activeElement === el
+					);
 					if (!isFocused) {
 						// 要素を明示的にフォーカス
 						await nextElement.focus();

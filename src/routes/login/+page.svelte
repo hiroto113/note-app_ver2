@@ -47,7 +47,11 @@
 			</p>
 		</div>
 
-		<form class="mt-8 space-y-6" on:submit|preventDefault={handleSubmit} aria-label="管理者ログインフォーム">
+		<form
+			class="mt-8 space-y-6"
+			on:submit|preventDefault={handleSubmit}
+			aria-label="管理者ログインフォーム"
+		>
 			<div class="space-y-4">
 				<div>
 					<label for="username" class="block text-sm font-medium text-gray-700">
