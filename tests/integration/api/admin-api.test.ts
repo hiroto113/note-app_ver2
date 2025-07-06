@@ -76,7 +76,10 @@ const testAdminPostsApi = {
 							name: categories.name
 						})
 						.from(categories)
-						.innerJoin(postsToCategories, eq(categories.id, postsToCategories.categoryId))
+						.innerJoin(
+							postsToCategories,
+							eq(categories.id, postsToCategories.categoryId)
+						)
 						.where(eq(postsToCategories.postId, post.id));
 
 					return {
@@ -101,7 +104,7 @@ const testAdminPostsApi = {
 		}
 	},
 
-	POST: async ({ request, locals }: { request: Request; locals: any }) => {
+	POST: async ({ request, locals }: { request: Request; locals: { testUserId: string } }) => {
 		try {
 			// Mock session for testing
 			const session = { user: { id: locals.testUserId } };
@@ -332,7 +335,9 @@ describe('Admin API Integration', () => {
 			const publishedPost = data.posts.find(
 				(p: AdminPostResponse) => p.slug === 'published-admin-post'
 			);
-			const draftPost = data.posts.find((p: AdminPostResponse) => p.slug === 'draft-admin-post');
+			const draftPost = data.posts.find(
+				(p: AdminPostResponse) => p.slug === 'draft-admin-post'
+			);
 
 			expect(publishedPost.categories).toHaveLength(1);
 			expect(publishedPost.categories[0].name).toBe('Technology');

@@ -13,71 +13,58 @@ const testAuthApi = {
 			const { username, password } = await request.json();
 
 			if (!username || !password) {
-				return json(
-					{ error: 'Username and password are required' },
-					{ status: 400 }
-				);
+				return json({ error: 'Username and password are required' }, { status: 400 });
 			}
 
 			// Find user
-			const [user] = await testDb
-				.select()
-				.from(users)
-				.where(eq(users.username, username));
+			const [user] = await testDb.select().from(users).where(eq(users.username, username));
 
 			if (!user) {
-				return json(
-					{ error: 'Invalid username or password' },
-					{ status: 401 }
-				);
+				return json({ error: 'Invalid username or password' }, { status: 401 });
 			}
 
 			// Verify password
 			const isValidPassword = await bcrypt.compare(password, user.hashedPassword);
 			if (!isValidPassword) {
-				return json(
-					{ error: 'Invalid username or password' },
-					{ status: 401 }
-				);
+				return json({ error: 'Invalid username or password' }, { status: 401 });
 			}
 
 			// Return success with user data (excluding password)
-			return json({
-				user: {
-					id: user.id,
-					username: user.username,
-					createdAt: user.createdAt
+			return json(
+				{
+					user: {
+						id: user.id,
+						username: user.username,
+						createdAt: user.createdAt
+					},
+					sessionId: 'mock-session-id',
+					message: 'Login successful'
 				},
-				sessionId: 'mock-session-id',
-				message: 'Login successful'
-			}, { status: 200 });
-
+				{ status: 200 }
+			);
 		} catch (error) {
 			console.error('Login error:', error);
-			return json(
-				{ error: 'Internal server error' },
-				{ status: 500 }
-			);
+			return json({ error: 'Internal server error' }, { status: 500 });
 		}
 	},
 
 	// Mock logout endpoint
 	logout: async () => {
 		try {
-			return json({
-				message: 'Logout successful'
-			}, { status: 200 });
+			return json(
+				{
+					message: 'Logout successful'
+				},
+				{ status: 200 }
+			);
 		} catch (error) {
 			console.error('Logout error:', error);
-			return json(
-				{ error: 'Internal server error' },
-				{ status: 500 }
-			);
+			return json({ error: 'Internal server error' }, { status: 500 });
 		}
 	},
 
 	// Mock session check endpoint
-	session: async ({ locals }: { locals: any }) => {
+	session: async ({ locals }: { locals: { testUserId?: string } }) => {
 		try {
 			// Mock session data
 			if (locals.testUserId) {
@@ -91,54 +78,52 @@ const testAuthApi = {
 					.where(eq(users.id, locals.testUserId));
 
 				if (user) {
-					return json({
-						user,
-						sessionId: 'mock-session-id',
-						authenticated: true
-					}, { status: 200 });
+					return json(
+						{
+							user,
+							sessionId: 'mock-session-id',
+							authenticated: true
+						},
+						{ status: 200 }
+					);
 				}
 			}
 
-			return json({
-				authenticated: false,
-				user: null,
-				sessionId: null
-			}, { status: 200 });
-
+			return json(
+				{
+					authenticated: false,
+					user: null,
+					sessionId: null
+				},
+				{ status: 200 }
+			);
 		} catch (error) {
 			console.error('Session check error:', error);
-			return json(
-				{ error: 'Internal server error' },
-				{ status: 500 }
-			);
+			return json({ error: 'Internal server error' }, { status: 500 });
 		}
 	}
 };
 
 // Mock protected endpoint for testing authorization
 const testProtectedApi = {
-	adminPosts: async ({ locals }: { locals: any }) => {
+	adminPosts: async ({ locals }: { locals: { testUserId?: string } }) => {
 		try {
 			// Check authentication
 			if (!locals.testUserId) {
-				return json(
-					{ error: 'Authentication required' },
-					{ status: 401 }
-				);
+				return json({ error: 'Authentication required' }, { status: 401 });
 			}
 
 			// Return mock admin data
-			return json({
-				message: 'Access granted to admin area',
-				userId: locals.testUserId
-			}, { status: 200 });
-
+			return json(
+				{
+					message: 'Access granted to admin area',
+					userId: locals.testUserId
+				},
+				{ status: 200 }
+			);
 		} catch (error) {
 			console.error('Protected endpoint error:', error);
-			return json(
-				{ error: 'Internal server error' },
-				{ status: 500 }
-			);
+			return json({ error: 'Internal server error' }, { status: 500 });
 		}
 	}
 };
@@ -201,7 +186,7 @@ describe('Authentication API Integration', () => {
 			expect(data.user!.username).toBe(testUsername);
 			expect(data.sessionId).toBeDefined();
 			expect(data.message).toBe('Login successful');
-			
+
 			// Password should not be included
 			expect(data.user).not.toHaveProperty('hashedPassword');
 			expect(data.user).not.toHaveProperty('password');
@@ -381,7 +366,7 @@ describe('Authentication API Integration', () => {
 
 			expect(response.status).toBe(200);
 			expect(data.user).toBeDefined();
-			
+
 			// Ensure no password-related fields are exposed
 			const userKeys = Object.keys(data.user!);
 			expect(userKeys).not.toContain('password');
@@ -435,14 +420,10 @@ describe('Authentication API Integration', () => {
 			};
 
 			// Simulate multiple concurrent login attempts
-			const responses = await Promise.all([
-				loginRequest(),
-				loginRequest(),
-				loginRequest()
-			]);
+			const responses = await Promise.all([loginRequest(), loginRequest(), loginRequest()]);
 
 			// All should succeed
-			responses.forEach(response => {
+			responses.forEach((response) => {
 				expect(response.status).toBe(200);
 			});
 		});

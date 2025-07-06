@@ -3,7 +3,6 @@ import { testDb } from '../setup';
 import { posts, categories, users } from '$lib/server/db/schema';
 import bcrypt from 'bcryptjs';
 import { json } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
 
 // Mock API endpoints for error testing
 const testErrorHandlingApi = {
@@ -28,55 +27,60 @@ const testErrorHandlingApi = {
 				// Normal operation
 				const postsData = await testDb.select().from(posts);
 				return json({ posts: postsData }, { status: 200 });
-
 			} catch (error) {
 				console.error('API Error:', error);
-				
+
 				if (error instanceof TypeError) {
 					return json(
-						{ 
+						{
 							error: 'Invalid request parameters',
 							details: error.message,
 							code: 'VALIDATION_ERROR'
-						}, 
+						},
 						{ status: 400 }
 					);
 				}
 
 				if (error instanceof Error && error.message.includes('Database')) {
 					return json(
-						{ 
+						{
 							error: 'Database unavailable',
 							code: 'DATABASE_ERROR',
 							retry: true
-						}, 
+						},
 						{ status: 503 }
 					);
 				}
 
 				if (error instanceof Error && error.message.includes('timeout')) {
 					return json(
-						{ 
+						{
 							error: 'Request timeout',
 							code: 'TIMEOUT_ERROR',
 							retry: true
-						}, 
+						},
 						{ status: 504 }
 					);
 				}
 
 				// Generic server error
 				return json(
-					{ 
+					{
 						error: 'Internal server error',
 						code: 'INTERNAL_ERROR'
-					}, 
+					},
 					{ status: 500 }
 				);
 			}
 		},
 
-		POST: async ({ request, shouldThrowError }: { request: Request; shouldThrowError?: string }) => {
+		POST: async ({
+			request,
+			shouldThrowError
+		}: {
+			request: Request;
+			shouldThrowError?: string;
+		}) => {
 			try {
 				if (shouldThrowError === 'json_parse') {
 					// Force JSON parse error
@@ -90,9 +94,7 @@ const testErrorHandlingApi = {
 						return json(
 							{
 								error: 'Validation failed',
-								errors: [
-									{ field: 'title', message: 'Title is required' }
-								],
+								errors: [{ field: 'title', message: 'Title is required' }],
 								code: 'VALIDATION_ERROR'
 							},
 							{ status: 400 }
@@ -114,31 +116,36 @@ const testErrorHandlingApi = {
 				// Normal operation
 				const data = await request.json();
 				return json({ id: 1, ...data }, { status: 201 });
-
 			} catch (error) {
 				console.error('POST Error:', error);
 
 				if (error instanceof SyntaxError) {
 					return json(
-						{ 
+						{
 							error: 'Invalid JSON format',
 							code: 'JSON_PARSE_ERROR'
-						}, 
+						},
 						{ status: 400 }
 					);
 				}
 
 				return json(
-					{ 
+					{
 						error: 'Internal server error',
 						code: 'INTERNAL_ERROR'
-					}, 
+					},
 					{ status: 500 }
 				);
 			}
 		},
 
-		DELETE: async ({ params, shouldThrowError }: { params: { id: string }; shouldThrowError?: string }) => {
+		DELETE: async ({
+			params,
+			shouldThrowError
+		}: {
+			params: { id: string };
+			shouldThrowError?: string;
+		}) => {
 			try {
 				if (shouldThrowError === 'not_found') {
 					return json(
@@ -176,14 +183,13 @@ const testErrorHandlingApi = {
 
 				// Normal operation
 				return json({ message: 'Resource deleted' }, { status: 200 });
-
 			} catch (error) {
 				console.error('DELETE Error:', error);
 				return json(
-					{ 
+					{
 						error: 'Internal server error',
 						code: 'INTERNAL_ERROR'
-					}, 
+					},
 					{ status: 500 }
 				);
 			}
@@ -192,7 +198,13 @@ const testErrorHandlingApi = {
 
 	// Authentication error scenarios
 	auth: {
-		login: async ({ request, shouldThrowError }: { request: Request; shouldThrowError?: string }) => {
+		login: async ({
+			request,
+			shouldThrowError
+		}: {
+			request: Request;
+			shouldThrowError?: string;
+		}) => {
 			try {
 				if (shouldThrowError === 'rate_limit') {
 					return json(
@@ -217,7 +229,7 @@ const testErrorHandlingApi = {
 				}
 
 				const data = await request.json();
-				
+
 				if (!data.username || !data.password) {
 					return json(
 						{
@@ -241,18 +253,20 @@ const testErrorHandlingApi = {
 				}
 
 				// Normal operation
-				return json({ 
-					user: { id: '123', username: data.username },
-					token: 'mock-token'
-				}, { status: 200 });
-
+				return json(
+					{
+						user: { id: '123', username: data.username },
+						token: 'mock-token'
+					},
+					{ status: 200 }
+				);
 			} catch (error) {
 				console.error('Auth Error:', error);
 				return json(
-					{ 
+					{
 						error: 'Authentication service unavailable',
 						code: 'AUTH_SERVICE_ERROR'
-					}, 
+					},
 					{ status: 503 }
 				);
 			}
@@ -277,12 +291,10 @@ type ErrorResponse = {
 };
 
 describe('API Error Handling Integration', () => {
-	let testUserId: string;
-
 	beforeEach(async () => {
-		// Create test user
+		// Create test user for setup
 		const hashedPassword = await bcrypt.hash('testpass', 10);
-		const [user] = await testDb
+		await testDb
 			.insert(users)
 			.values({
 				id: crypto.randomUUID(),
@@ -292,7 +304,6 @@ describe('API Error Handling Integration', () => {
 				updatedAt: new Date()
 			})
 			.returning();
-		testUserId = user.id;
 	});
 
 	afterEach(async () => {
