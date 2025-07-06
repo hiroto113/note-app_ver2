@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { signIn } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
+	import { LOGIN_MESSAGES } from '$lib/constants/messages';
 
 	let username = '';
 	let password = '';
@@ -19,14 +20,14 @@
 			});
 
 			if (result?.error) {
-				error = 'ログインに失敗しました。ユーザー名またはパスワードが正しくありません。';
+				error = LOGIN_MESSAGES.INVALID_CREDENTIALS;
 			} else {
 				// Redirect to admin or original page
 				const callbackUrl = $page.url.searchParams.get('callbackUrl') || '/admin';
 				window.location.href = callbackUrl;
 			}
 		} catch (err) {
-			error = 'ログイン処理中にエラーが発生しました。';
+			error = LOGIN_MESSAGES.LOGIN_ERROR;
 			console.error('Login error:', err);
 		} finally {
 			loading = false;
@@ -105,7 +106,7 @@
 					class="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 				>
 					{#if loading}
-						ログイン中...
+						{LOGIN_MESSAGES.LOADING}
 					{:else}
 						ログイン
 					{/if}
