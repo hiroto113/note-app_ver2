@@ -28,7 +28,7 @@ describe('critical-css utilities', () => {
 				href: '',
 				onload: null as (() => void) | null,
 				appendChild: vi.fn()
-			};
+			} as Partial<HTMLLinkElement>;
 			return element as HTMLLinkElement;
 		});
 
@@ -103,7 +103,7 @@ describe('critical-css utilities', () => {
 
 		it('should set up onload handler to change rel to stylesheet', () => {
 			const customHref = '/custom/styles.css';
-			let linkElement: HTMLLinkElement;
+			let linkElement: Partial<HTMLLinkElement>;
 
 			document.createElement = vi.fn().mockImplementation(() => {
 				linkElement = {
@@ -112,20 +112,20 @@ describe('critical-css utilities', () => {
 					href: '',
 					onload: null as (() => void) | null
 				};
-				return linkElement;
+				return linkElement as HTMLLinkElement;
 			});
 
 			loadNonCriticalCSS(customHref);
 
-			expect(linkElement.rel).toBe('preload');
-			expect(linkElement.as).toBe('style');
-			expect(linkElement.href).toBe(customHref);
-			expect(typeof linkElement.onload).toBe('function');
+			expect(linkElement!.rel).toBe('preload');
+			expect(linkElement!.as).toBe('style');
+			expect(linkElement!.href).toBe(customHref);
+			expect(typeof linkElement!.onload).toBe('function');
 
 			// Test onload handler
-			if (linkElement.onload) {
-				linkElement.onload.call(linkElement);
-				expect(linkElement.rel).toBe('stylesheet');
+			if (linkElement!.onload) {
+				(linkElement!.onload as any).call(linkElement!);
+				expect(linkElement!.rel).toBe('stylesheet');
 			}
 		});
 
@@ -152,7 +152,7 @@ describe('critical-css utilities', () => {
 		});
 
 		it('should convert non-critical stylesheets to preload', () => {
-			const mockStyleSheets = [
+			const mockStyleSheets: Partial<HTMLLinkElement>[] = [
 				{
 					href: 'https://example.com/styles.css',
 					rel: 'stylesheet',
@@ -183,13 +183,13 @@ describe('critical-css utilities', () => {
 
 			// Test onload handler for first stylesheet
 			if (mockStyleSheets[0].onload) {
-				mockStyleSheets[0].onload.call(mockStyleSheets[0]);
+				(mockStyleSheets[0].onload as any).call(mockStyleSheets[0]);
 				expect(mockStyleSheets[0].rel).toBe('stylesheet');
 			}
 		});
 
 		it('should not modify critical CSS links', () => {
-			const mockCriticalSheet = {
+			const mockCriticalSheet: Partial<HTMLLinkElement> = {
 				href: 'https://example.com/critical.css',
 				rel: 'stylesheet',
 				as: '',
