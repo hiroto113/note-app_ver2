@@ -396,7 +396,7 @@ describe('Authentication Security Tests', () => {
 
 	describe('Data Exposure Prevention', () => {
 		it('should not expose sensitive data in responses', async () => {
-			await authMock.createUser({
+			const user = await authMock.createUser({
 				username: 'testuser',
 				password: 'sensitivepassword'
 			});

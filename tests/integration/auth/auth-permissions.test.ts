@@ -224,7 +224,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 		});
 
 		it('should validate request method permissions', async () => {
-			await createAuthenticatedUser();
+			const { user } = await createAuthenticatedUser();
 
 			// Mock method-based permissions
 			const methodPermissions = {
@@ -362,7 +362,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 	describe('Time-Based Authorization', () => {
 		it('should implement temporary permissions', async () => {
-			await createAuthenticatedUser();
+			const { user } = await createAuthenticatedUser();
 
 			// Mock temporary permissions
 			const tempPermissions = new Map<string, { permission: string; expiresAt: Date }[]>();
