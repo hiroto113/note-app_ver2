@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../setup';
 import { users, sessions } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import {
 	authMock,
@@ -29,11 +26,10 @@ describe('Authentication Security Tests', () => {
 
 	describe('CSRF Protection', () => {
 		it('should validate CSRF tokens for state-changing operations', async () => {
-			const { user, session } = await createAuthenticatedUser();
+			const { session } = await createAuthenticatedUser();
 
 			// Mock CSRF token validation
 			const validCSRFToken = 'valid-csrf-token-12345';
-			const invalidCSRFToken = 'invalid-csrf-token';
 
 			// Request with valid CSRF token should succeed
 			const validRequest = createMockRequest({
@@ -86,7 +82,7 @@ describe('Authentication Security Tests', () => {
 			const attackerSessionId = 'attacker-controlled-session';
 
 			// User authentication should create a new session, not reuse existing one
-			const { user, session } = await createAuthenticatedUser();
+			const { session } = await createAuthenticatedUser();
 
 			expect(session.id).not.toBe(attackerSessionId);
 			expect(session.id).toMatch(
@@ -123,7 +119,7 @@ describe('Authentication Security Tests', () => {
 		});
 
 		it('should clear sensitive data on logout', async () => {
-			const { user, session } = await createAuthenticatedUser();
+			const { session } = await createAuthenticatedUser();
 
 			// Verify session exists
 			let validation = authMock.validateSession(session.id);
@@ -153,7 +149,7 @@ describe('Authentication Security Tests', () => {
 		});
 
 		it('should handle timing attack resistance', async () => {
-			const user = await authMock.createUser({
+			await authMock.createUser({
 				username: 'testuser',
 				password: 'correctpassword'
 			});
@@ -205,7 +201,7 @@ describe('Authentication Security Tests', () => {
 
 	describe('Rate Limiting and Brute Force Protection', () => {
 		it('should implement login attempt rate limiting', async () => {
-			const user = await authMock.createUser({
+			await authMock.createUser({
 				username: 'testuser',
 				password: 'correctpassword'
 			});
@@ -248,14 +244,13 @@ describe('Authentication Security Tests', () => {
 		});
 
 		it('should implement account lockout after failed attempts', async () => {
-			const user = await authMock.createUser({
+			await authMock.createUser({
 				username: 'testuser',
 				password: 'correctpassword'
 			});
 
 			// Mock account lockout
 			const accountLockouts = new Map<string, { lockedUntil: number }>();
-			const maxFailedAttempts = 3;
 			const lockoutDuration = 30 * 60 * 1000; // 30 minutes
 
 			const isAccountLocked = (username: string): boolean => {
@@ -373,7 +368,7 @@ describe('Authentication Security Tests', () => {
 		});
 
 		it('should prevent privilege escalation through session manipulation', async () => {
-			const { user: regularUser, session } = await createAuthenticatedUser('regular');
+			const { user: regularUser } = await createAuthenticatedUser('regular');
 
 			// Mock role-based access control
 			const userRoles = new Map<string, string[]>();
@@ -401,7 +396,7 @@ describe('Authentication Security Tests', () => {
 
 	describe('Data Exposure Prevention', () => {
 		it('should not expose sensitive data in responses', async () => {
-			const user = await authMock.createUser({
+			await authMock.createUser({
 				username: 'testuser',
 				password: 'sensitivepassword'
 			});

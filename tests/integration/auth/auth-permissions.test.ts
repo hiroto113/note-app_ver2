@@ -1,16 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../setup';
 import { users, sessions } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
-import bcrypt from 'bcryptjs';
-import {
-	authMock,
-	createAuthenticatedUser,
-	createMockRequest,
-	createAuthHeaders
-} from '$lib/test-utils';
+import { authMock, createAuthenticatedUser } from '$lib/test-utils';
 
 describe('Authentication Permissions and Authorization Tests', () => {
 	beforeEach(async () => {
@@ -220,18 +211,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 				return roles.includes('admin');
 			};
 
-			// Test admin endpoint access
-			const adminRequest = createMockRequest({
-				url: 'http://localhost:5173/api/admin/users',
-				method: 'GET',
-				headers: createAuthHeaders(adminSession.id)
-			});
-
-			const regularRequest = createMockRequest({
-				url: 'http://localhost:5173/api/admin/users',
-				method: 'GET',
-				headers: createAuthHeaders(regularSession.id)
-			});
+			// Test admin endpoint access would be here in real implementation
 
 			// Mock authorization check
 			const adminValidation = authMock.validateSession(adminSession.id);
@@ -244,7 +224,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 		});
 
 		it('should validate request method permissions', async () => {
-			const { user, session } = await createAuthenticatedUser();
+			await createAuthenticatedUser();
 
 			// Mock method-based permissions
 			const methodPermissions = {
@@ -316,7 +296,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 		});
 
 		it('should handle session scope limitations', async () => {
-			const { user, session } = await createAuthenticatedUser();
+			const { session } = await createAuthenticatedUser();
 
 			// Mock session scopes
 			const sessionScopes = new Map<string, string[]>();
@@ -382,7 +362,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 	describe('Time-Based Authorization', () => {
 		it('should implement temporary permissions', async () => {
-			const { user } = await createAuthenticatedUser();
+			await createAuthenticatedUser();
 
 			// Mock temporary permissions
 			const tempPermissions = new Map<string, { permission: string; expiresAt: Date }[]>();
@@ -510,7 +490,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 	describe('Authorization Edge Cases', () => {
 		it('should handle conflicting permissions gracefully', async () => {
-			const { user } = await createAuthenticatedUser();
+			await createAuthenticatedUser();
 
 			// Mock conflicting permissions (deny overrides allow)
 			const allowPermissions = new Set(['read:posts', 'write:posts']);
@@ -526,7 +506,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 		});
 
 		it('should handle permission escalation attempts', async () => {
-			const { user } = await createAuthenticatedUser();
+			await createAuthenticatedUser();
 
 			// Mock permission escalation detection
 			const basePermissions = new Set(['read:posts']);

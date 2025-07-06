@@ -1,6 +1,7 @@
 import { beforeAll, afterAll, beforeEach } from 'vitest';
 import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
+import { migrate } from 'drizzle-orm/libsql/migrator';
 import * as schema from '../../src/lib/server/db/schema';
 
 // テスト用データベース接続
@@ -8,7 +9,8 @@ let testDbClient: ReturnType<typeof createClient>;
 export let testDb: ReturnType<typeof drizzle>;
 
 /**
- * 統合テスト用のセットアップ
+ * 統合テスト用のセットアップ - 2025年ベストプラクティス対応
+ * Drizzle migrateファンクションを使用してスキーマを確実に作成
  */
 
 beforeAll(async () => {
@@ -21,9 +23,25 @@ beforeAll(async () => {
 	});
 	testDb = drizzle(testDbClient, { schema });
 
-	// テーブルを作成
+	// マイグレーションを実行してスキーマを作成
 	try {
-		// Drizzleスキーマを使用してテーブルを作成
+		console.log('Running migrations...');
+		await migrate(testDb, { migrationsFolder: './drizzle' });
+		console.log('Test database schema created via migrations');
+	} catch (error) {
+		console.log('Migration failed, falling back to manual schema creation:', error);
+		// フォールバック: 手動でテーブルを作成
+		await createTablesManually();
+	}
+
+	console.log('Integration test environment ready');
+});
+
+/**
+ * フォールバック用の手動テーブル作成
+ */
+async function createTablesManually() {
+	try {
 		await testDb.run(`CREATE TABLE IF NOT EXISTS users (
 			id TEXT PRIMARY KEY,
 			username TEXT NOT NULL UNIQUE,
@@ -52,10 +70,7 @@ beforeAll(async () => {
 			created_at INTEGER NOT NULL,
 			updated_at INTEGER NOT NULL,
 			user_id TEXT NOT NULL,
-			seo_title TEXT,
-			seo_description TEXT,
-			seo_keywords TEXT,
-			FOREIGN KEY (user_id) REFERENCES users(id)
+			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`);
 
 		await testDb.run(`CREATE TABLE IF NOT EXISTS posts_to_categories (
@@ -74,13 +89,24 @@ beforeAll(async () => {
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`);
 
-		console.log('Test database schema created');
-	} catch (error) {
-		console.log('Database schema creation failed:', error);
-	}
+		await testDb.run(`CREATE TABLE IF NOT EXISTS media (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			filename TEXT NOT NULL UNIQUE,
+			original_name TEXT NOT NULL,
+			mime_type TEXT NOT NULL,
+			size INTEGER NOT NULL,
+			url TEXT NOT NULL,
+			uploaded_by TEXT NOT NULL,
+			uploaded_at INTEGER NOT NULL,
+			FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE CASCADE
+		)`);
 
-	console.log('Integration test environment ready');
-});
+		console.log('Manual table creation completed');
+	} catch (error) {
+		console.error('Manual table creation failed:', error);
+		throw error;
+	}
+}
 
 afterAll(async () => {
 	// テスト終了後のクリーンアップ
@@ -96,11 +122,25 @@ beforeEach(async () => {
 		try {
 			// Foreign key制約を無効化してからクリーンアップ
 			await testDb.run('PRAGMA foreign_keys = OFF');
-			await testDb.run('DELETE FROM posts_to_categories');
-			await testDb.run('DELETE FROM sessions');
-			await testDb.run('DELETE FROM posts');
-			await testDb.run('DELETE FROM categories');
-			await testDb.run('DELETE FROM users');
+
+			// テーブルの存在確認とクリーンアップ
+			const tables = [
+				'posts_to_categories',
+				'media',
+				'sessions',
+				'posts',
+				'categories',
+				'users'
+			];
+			for (const table of tables) {
+				try {
+					await testDb.run(`DELETE FROM ${table}`);
+				} catch {
+					// テーブルが存在しない場合はスキップ
+					console.log(`Table ${table} not found, skipping cleanup`);
+				}
+			}
+
 			await testDb.run('PRAGMA foreign_keys = ON');
 		} catch (error) {
 			console.log('Database cleanup failed:', error);
