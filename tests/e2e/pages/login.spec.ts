@@ -142,7 +142,7 @@ test.describe('ログイン機能', () => {
 
 			// ログインページにリダイレクトされることを確認
 			await expect(page).toHaveURL(/\/login/);
-		} catch (error) {
+		} catch {
 			// サーバーエラーの場合、ログインページに直接アクセスして認証が必要なことを確認
 			await page.goto('/login');
 			await expect(page.locator('form')).toBeVisible();

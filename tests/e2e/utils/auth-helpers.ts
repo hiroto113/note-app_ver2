@@ -29,12 +29,12 @@ export async function loginAsAdmin(page: Page) {
 
 	// ログイン成功を確認（管理画面にリダイレクトされることを期待）
 	await expect(page).toHaveURL(/\/admin/, { timeout: 15000 });
-	
+
 	// 管理画面の特定の要素確認（モバイルビューでは要素が隠れている可能性があるため複数パターンを試す）
 	const dashboardLink = page.locator('text=ダッシュボード');
 	const adminHeading = page.locator('h1, h2, h3');
 	const adminMainContent = page.locator('main').first();
-	
+
 	try {
 		await expect(dashboardLink).toBeVisible({ timeout: 3000 });
 	} catch {

@@ -6,7 +6,7 @@ test.describe('WCAG 2.1 AA準拠アクセシビリティテスト', () => {
 	test('ホームページのアクセシビリティ検証', async ({ page }) => {
 		await page.goto('/');
 		await waitForPageLoad(page);
-		
+
 		// axe-coreによる自動チェックは一時的に無効化
 		// await injectAxe(page);
 		// // await checkA11y(page, undefined, {
@@ -50,7 +50,7 @@ test.describe('WCAG 2.1 AA準拠アクセシビリティテスト', () => {
 		// 記事の構造的アクセシビリティチェック
 		// 1. 記事タイトルの存在確認
 		await expect(page.locator('h1')).toBeVisible();
-		
+
 		// 2. 記事ランドマークの存在
 		await expect(page.locator('article')).toBeVisible();
 

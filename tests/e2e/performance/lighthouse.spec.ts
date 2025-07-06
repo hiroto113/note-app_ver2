@@ -3,19 +3,19 @@ import { test, expect } from '@playwright/test';
 test.describe('Lighthouse パフォーマンステスト', () => {
 	test('ホームページの基本パフォーマンス確認', async ({ page }) => {
 		const startTime = Date.now();
-		
+
 		await page.goto('/');
 		await page.waitForLoadState('networkidle');
-		
+
 		const loadTime = Date.now() - startTime;
-		
+
 		// 基本的なパフォーマンス指標
 		expect(loadTime).toBeLessThan(5000); // 5秒以内での読み込み
-		
+
 		// ページの基本要素が表示されていることを確認
 		await expect(page.locator('nav')).toBeVisible();
 		await expect(page.locator('main')).toBeVisible();
-		
+
 		// CSSが適用されていることの確認（Tailwind CSSが読み込まれている）
 		const hasStyles = await page.evaluate(() => {
 			const styles = window.getComputedStyle(document.body);
@@ -33,7 +33,7 @@ test.describe('Lighthouse パフォーマンステスト', () => {
 		// 記事詳細ページが正常に表示されていることを確認
 		await expect(page.locator('article, main')).toBeVisible();
 		await expect(page.locator('h1')).toBeVisible();
-		
+
 		// レスポンシブデザインの確認
 		const viewport = page.viewportSize();
 		expect(viewport?.width).toBeGreaterThan(0);
@@ -48,7 +48,7 @@ test.describe('Lighthouse パフォーマンステスト', () => {
 		// モバイルでもナビゲーションが機能することを確認
 		await expect(page.locator('nav')).toBeVisible();
 		await expect(page.locator('main')).toBeVisible();
-		
+
 		// デスクトップビューポートでテスト
 		await page.setViewportSize({ width: 1920, height: 1080 });
 		await page.reload();

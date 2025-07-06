@@ -56,7 +56,7 @@
 				<div class="text-sm">
 					<a
 						href="/admin/posts"
-						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+						class="rounded font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:text-blue-400 dark:hover:text-blue-300"
 						aria-label="記事管理ページに移動"
 					>
 						記事管理へ
@@ -99,7 +99,7 @@
 				<div class="text-sm">
 					<a
 						href="/admin/categories"
-						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+						class="rounded font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:text-blue-400 dark:hover:text-blue-300"
 						aria-label="カテゴリ管理ページに移動"
 					>
 						カテゴリ管理へ
@@ -150,7 +150,7 @@
 						href="/"
 						target="_blank"
 						rel="noopener noreferrer"
-						class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+						class="rounded font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:text-blue-400 dark:hover:text-blue-300"
 						aria-label="新しいタブでサイトを表示"
 					>
 						サイトを表示

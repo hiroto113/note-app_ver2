@@ -44,10 +44,12 @@ test.describe('管理画面 - 記事管理', () => {
 		await expect(page).toHaveURL(/\/admin\/posts\/(new|create)/);
 
 		// フォーム要素の確認
-		const titleInput = page.locator('[data-testid="title-input"], input[name="title"], input#title');
+		const titleInput = page.locator(
+			'[data-testid="title-input"], input[name="title"], input#title'
+		);
 		const contentContainer = page.locator('[data-testid="content-input"]');
 		const contentEditor = page.locator('[data-testid="content-input"] .cm-editor .cm-content');
-		
+
 		// フォーム要素の確認
 		await expect(titleInput).toBeVisible({ timeout: 10000 });
 		await expect(contentContainer).toBeVisible({ timeout: 10000 });
@@ -55,7 +57,7 @@ test.describe('管理画面 - 記事管理', () => {
 
 		// 記事データを入力
 		await titleInput.fill(testContent.newPost.title);
-		
+
 		// MarkdownEditorの内部CodeMirrorエディターに入力
 		await contentEditor.click();
 		await contentEditor.fill(testContent.newPost.content);
@@ -106,9 +108,11 @@ test.describe('管理画面 - 記事管理', () => {
 		await expect(page).toHaveURL(/\/admin\/posts\/\d+\/(edit|update)/);
 
 		// 既存の値が入力されていることを確認
-		const titleInput = page.locator('[data-testid="title-input"], input[name="title"], input#title');
+		const titleInput = page.locator(
+			'[data-testid="title-input"], input[name="title"], input#title'
+		);
 		const contentContainer = page.locator('[data-testid="content-input"]');
-		const contentEditor = page.locator('[data-testid="content-input"] .cm-editor .cm-content');
+		// const contentEditor = page.locator('[data-testid="content-input"] .cm-editor .cm-content');
 
 		await expect(titleInput).toBeVisible();
 		await expect(contentContainer).toBeVisible();
