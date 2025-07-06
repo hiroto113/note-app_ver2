@@ -65,7 +65,7 @@ describe('Authentication Routes Integration Tests', () => {
 			const mockResponse = {
 				status: 302,
 				headers: {
-					'location': '/admin',
+					location: '/admin',
 					'set-cookie': `session=${session.id}; Path=/; HttpOnly; SameSite=Lax`
 				}
 			};
@@ -111,7 +111,7 @@ describe('Authentication Routes Integration Tests', () => {
 			const mockResponse = {
 				status: 400,
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ 
+				body: JSON.stringify({
 					error: 'Username and password are required',
 					details: {
 						username: 'Username is required',
@@ -143,7 +143,7 @@ describe('Authentication Routes Integration Tests', () => {
 
 			const mockResponse = {
 				status: 302,
-				headers: { 'location': '/admin' }
+				headers: { location: '/admin' }
 			};
 
 			expect(mockResponse.status).toBe(302);
@@ -178,7 +178,7 @@ describe('Authentication Routes Integration Tests', () => {
 			const mockResponse = {
 				status: 302,
 				headers: {
-					'location': '/login',
+					location: '/login',
 					'set-cookie': 'session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0'
 				}
 			};
@@ -197,7 +197,7 @@ describe('Authentication Routes Integration Tests', () => {
 			// Mock logout response for unauthenticated user
 			const mockResponse = {
 				status: 302,
-				headers: { 'location': '/login' }
+				headers: { location: '/login' }
 			};
 
 			expect(mockResponse.status).toBe(302);
@@ -220,7 +220,7 @@ describe('Authentication Routes Integration Tests', () => {
 			// Mock response
 			const mockResponse = {
 				status: 302,
-				headers: { 'location': '/login' }
+				headers: { location: '/login' }
 			};
 
 			expect(mockResponse.status).toBe(302);
@@ -240,7 +240,7 @@ describe('Authentication Routes Integration Tests', () => {
 			// Mock method not allowed response
 			const mockResponse = {
 				status: 405,
-				headers: { 'Allow': 'POST' },
+				headers: { Allow: 'POST' },
 				body: JSON.stringify({ error: 'Method not allowed' })
 			};
 
@@ -259,7 +259,7 @@ describe('Authentication Routes Integration Tests', () => {
 			// Mock unauthorized response
 			const mockResponse = {
 				status: 302,
-				headers: { 'location': '/login?redirect=/admin' }
+				headers: { location: '/login?redirect=/admin' }
 			};
 
 			expect(mockResponse.status).toBe(302);
@@ -294,7 +294,7 @@ describe('Authentication Routes Integration Tests', () => {
 
 		it('should handle expired sessions on protected routes', async () => {
 			const { user } = await createAuthenticatedUser();
-			
+
 			// Create expired session
 			const expiredSession = {
 				id: crypto.randomUUID(),
@@ -318,8 +318,8 @@ describe('Authentication Routes Integration Tests', () => {
 			// Mock redirect to login
 			const mockResponse = {
 				status: 302,
-				headers: { 
-					'location': '/login?redirect=/admin',
+				headers: {
+					location: '/login?redirect=/admin',
 					'set-cookie': 'session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0'
 				}
 			};
@@ -350,7 +350,7 @@ describe('Authentication Routes Integration Tests', () => {
 			// Mock cookie parsing
 			const parseCookies = (cookieHeader: string): Record<string, string> => {
 				const cookies: Record<string, string> = {};
-				cookieHeader.split(';').forEach(cookie => {
+				cookieHeader.split(';').forEach((cookie) => {
 					const [name, value] = cookie.trim().split('=');
 					if (name && value) {
 						cookies[name] = value;
@@ -373,7 +373,7 @@ describe('Authentication Routes Integration Tests', () => {
 				'session=invalid-uuid-format'
 			];
 
-			testCases.forEach(cookieHeader => {
+			testCases.forEach((cookieHeader) => {
 				const request = createMockRequest({
 					url: 'http://localhost:5173/admin',
 					method: 'GET',
@@ -383,7 +383,7 @@ describe('Authentication Routes Integration Tests', () => {
 				// Should redirect to login for invalid cookies
 				const mockResponse = {
 					status: 302,
-					headers: { 'location': '/login' }
+					headers: { location: '/login' }
 				};
 
 				expect(mockResponse.status).toBe(302);
@@ -492,12 +492,13 @@ describe('Authentication Routes Integration Tests', () => {
 				{ username: 'user', password: 123 } // Wrong type
 			];
 
-			testCases.forEach(testCase => {
+			testCases.forEach((testCase) => {
 				// Mock validation
-				const isValid = typeof testCase.username === 'string' && 
-								testCase.username.length > 0 &&
-								typeof testCase.password === 'string' &&
-								testCase.password.length > 0;
+				const isValid =
+					typeof testCase.username === 'string' &&
+					testCase.username.length > 0 &&
+					typeof testCase.password === 'string' &&
+					testCase.password.length > 0;
 
 				expect(isValid).toBe(false);
 			});

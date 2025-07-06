@@ -5,7 +5,12 @@ import { testDb } from '../setup';
 import { users, sessions } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
-import { authMock, createAuthenticatedUser, createMockRequest, createAuthHeaders } from '$lib/test-utils';
+import {
+	authMock,
+	createAuthenticatedUser,
+	createMockRequest,
+	createAuthHeaders
+} from '$lib/test-utils';
 
 describe('Authentication Permissions and Authorization Tests', () => {
 	beforeEach(async () => {
@@ -60,10 +65,10 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 			// Mock permission system
 			const permissions = {
-				'admin': ['create', 'read', 'update', 'delete', 'manage'],
-				'editor': ['create', 'read', 'update'],
-				'author': ['create', 'read'],
-				'viewer': ['read']
+				admin: ['create', 'read', 'update', 'delete', 'manage'],
+				editor: ['create', 'read', 'update'],
+				author: ['create', 'read'],
+				viewer: ['read']
 			};
 
 			const userRoles = new Map<string, string>();
@@ -72,7 +77,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 			const hasPermission = (userId: string, permission: string): boolean => {
 				const role = userRoles.get(userId);
 				if (!role) return false;
-				
+
 				const rolePermissions = permissions[role as keyof typeof permissions];
 				return rolePermissions ? rolePermissions.includes(permission) : false;
 			};
@@ -96,14 +101,14 @@ describe('Authentication Permissions and Authorization Tests', () => {
 			userRoles.set(user.id, ['author', 'viewer']);
 
 			const permissions = {
-				'author': ['posts:create', 'posts:edit:own'],
-				'viewer': ['posts:read', 'comments:read'],
-				'moderator': ['comments:delete', 'users:moderate']
+				author: ['posts:create', 'posts:edit:own'],
+				viewer: ['posts:read', 'comments:read'],
+				moderator: ['comments:delete', 'users:moderate']
 			};
 
 			const hasPermission = (userId: string, permission: string): boolean => {
 				const roles = userRoles.get(userId) || [];
-				return roles.some(role => {
+				return roles.some((role) => {
 					const rolePerms = permissions[role as keyof typeof permissions];
 					return rolePerms ? rolePerms.includes(permission) : false;
 				});
@@ -165,10 +170,10 @@ describe('Authentication Permissions and Authorization Tests', () => {
 			const canEditPost = (userId: string, postId: number): boolean => {
 				const roles = userRoles.get(userId) || [];
 				const ownerId = postOwnership.get(postId);
-				
+
 				// Admin can edit any post
 				if (roles.includes('admin')) return true;
-				
+
 				// Owner can edit their own post
 				return ownerId === userId;
 			};
@@ -200,8 +205,10 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 	describe('API Endpoint Authorization', () => {
 		it('should protect admin API endpoints', async () => {
-			const { user: regularUser, session: regularSession } = await createAuthenticatedUser('regular');
-			const { user: adminUser, session: adminSession } = await createAuthenticatedUser('admin');
+			const { user: regularUser, session: regularSession } =
+				await createAuthenticatedUser('regular');
+			const { user: adminUser, session: adminSession } =
+				await createAuthenticatedUser('admin');
 
 			// Mock user roles
 			const userRoles = new Map<string, string[]>();
@@ -241,10 +248,10 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 			// Mock method-based permissions
 			const methodPermissions = {
-				'GET': ['read'],
-				'POST': ['create'],
-				'PUT': ['update'],
-				'DELETE': ['delete']
+				GET: ['read'],
+				POST: ['create'],
+				PUT: ['update'],
+				DELETE: ['delete']
 			};
 
 			const userPermissions = new Map<string, string[]>();
@@ -252,8 +259,9 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 			const hasMethodPermission = (userId: string, method: string): boolean => {
 				const userPerms = userPermissions.get(userId) || [];
-				const requiredPerms = methodPermissions[method as keyof typeof methodPermissions] || [];
-				return requiredPerms.every(perm => userPerms.includes(perm));
+				const requiredPerms =
+					methodPermissions[method as keyof typeof methodPermissions] || [];
+				return requiredPerms.every((perm) => userPerms.includes(perm));
 			};
 
 			expect(hasMethodPermission(user.id, 'GET')).toBe(true);
@@ -268,9 +276,9 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 			// Mock rate limits by role
 			const rateLimits = {
-				'regular': { requests: 100, window: 3600 }, // 100 requests per hour
-				'premium': { requests: 1000, window: 3600 }, // 1000 requests per hour
-				'admin': { requests: -1, window: 3600 } // Unlimited
+				regular: { requests: 100, window: 3600 }, // 100 requests per hour
+				premium: { requests: 1000, window: 3600 }, // 1000 requests per hour
+				admin: { requests: -1, window: 3600 } // Unlimited
 			};
 
 			const userRoles = new Map<string, string>();
@@ -329,9 +337,16 @@ describe('Authentication Permissions and Authorization Tests', () => {
 			const { user: user2, session: session2 } = await createAuthenticatedUser('user2');
 
 			// Mock resource locks
-			const resourceLocks = new Map<number, { userId: string; sessionId: string; lockedAt: Date }>();
+			const resourceLocks = new Map<
+				number,
+				{ userId: string; sessionId: string; lockedAt: Date }
+			>();
 
-			const lockResource = (resourceId: number, userId: string, sessionId: string): boolean => {
+			const lockResource = (
+				resourceId: number,
+				userId: string,
+				sessionId: string
+			): boolean => {
 				const existingLock = resourceLocks.get(resourceId);
 				if (existingLock && existingLock.sessionId !== sessionId) {
 					// Resource is locked by another session
@@ -371,8 +386,12 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 			// Mock temporary permissions
 			const tempPermissions = new Map<string, { permission: string; expiresAt: Date }[]>();
-			
-			const grantTempPermission = (userId: string, permission: string, durationMs: number): void => {
+
+			const grantTempPermission = (
+				userId: string,
+				permission: string,
+				durationMs: number
+			): void => {
 				const existing = tempPermissions.get(userId) || [];
 				existing.push({
 					permission,
@@ -384,7 +403,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 			const hasTempPermission = (userId: string, permission: string): boolean => {
 				const perms = tempPermissions.get(userId) || [];
 				const now = new Date();
-				return perms.some(p => p.permission === permission && p.expiresAt > now);
+				return perms.some((p) => p.permission === permission && p.expiresAt > now);
 			};
 
 			// Grant 1-second temporary permission
@@ -394,7 +413,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 			expect(hasTempPermission(user.id, 'admin:delete')).toBe(true);
 
 			// Wait for expiration
-			await new Promise(resolve => setTimeout(resolve, 1100));
+			await new Promise((resolve) => setTimeout(resolve, 1100));
 
 			// Should no longer have permission
 			expect(hasTempPermission(user.id, 'admin:delete')).toBe(false);
@@ -426,9 +445,17 @@ describe('Authentication Permissions and Authorization Tests', () => {
 			const { user: employee } = await createAuthenticatedUser('employee');
 
 			// Mock permission delegation
-			const delegatedPermissions = new Map<string, { from: string; permissions: string[]; expiresAt: Date }[]>();
+			const delegatedPermissions = new Map<
+				string,
+				{ from: string; permissions: string[]; expiresAt: Date }[]
+			>();
 
-			const delegatePermissions = (fromUserId: string, toUserId: string, permissions: string[], durationMs: number): void => {
+			const delegatePermissions = (
+				fromUserId: string,
+				toUserId: string,
+				permissions: string[],
+				durationMs: number
+			): void => {
 				const existing = delegatedPermissions.get(toUserId) || [];
 				existing.push({
 					from: fromUserId,
@@ -441,8 +468,8 @@ describe('Authentication Permissions and Authorization Tests', () => {
 			const hasDelegatedPermission = (userId: string, permission: string): boolean => {
 				const delegated = delegatedPermissions.get(userId) || [];
 				const now = new Date();
-				return delegated.some(d => 
-					d.permissions.includes(permission) && d.expiresAt > now
+				return delegated.some(
+					(d) => d.permissions.includes(permission) && d.expiresAt > now
 				);
 			};
 
@@ -468,7 +495,7 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 			const hasGroupPermission = (userId: string, permission: string): boolean => {
 				const groups = userGroups.get(userId) || [];
-				return groups.some(group => {
+				return groups.some((group) => {
 					const perms = groupPermissions.get(group) || [];
 					return perms.includes(permission);
 				});
@@ -505,8 +532,11 @@ describe('Authentication Permissions and Authorization Tests', () => {
 			const basePermissions = new Set(['read:posts']);
 			const requestedPermissions = ['admin:users', 'delete:all'];
 
-			const detectEscalation = (userPermissions: Set<string>, requested: string[]): boolean => {
-				return requested.some(perm => !userPermissions.has(perm));
+			const detectEscalation = (
+				userPermissions: Set<string>,
+				requested: string[]
+			): boolean => {
+				return requested.some((perm) => !userPermissions.has(perm));
 			};
 
 			const hasEscalation = detectEscalation(basePermissions, requestedPermissions);
@@ -532,18 +562,18 @@ describe('Authentication Permissions and Authorization Tests', () => {
 
 			const isValidPermissionFormat = (permission: string): boolean => {
 				if (!permission || typeof permission !== 'string') return false;
-				
+
 				const parts = permission.split(':');
 				if (parts.length < 2) return false;
-				
-				return parts.every(part => part.length > 0 && /^[a-z][a-z0-9_]*$/.test(part));
+
+				return parts.every((part) => part.length > 0 && /^[a-z][a-z0-9_]*$/.test(part));
 			};
 
-			validPermissions.forEach(perm => {
+			validPermissions.forEach((perm) => {
 				expect(isValidPermissionFormat(perm)).toBe(true);
 			});
 
-			invalidPermissions.forEach(perm => {
+			invalidPermissions.forEach((perm) => {
 				expect(isValidPermissionFormat(perm)).toBe(false);
 			});
 		});

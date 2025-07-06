@@ -5,7 +5,12 @@ import { testDb } from '../setup';
 import { users, sessions } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
-import { authMock, createAuthenticatedUser, createMockRequest, createAuthHeaders } from '$lib/test-utils';
+import {
+	authMock,
+	createAuthenticatedUser,
+	createMockRequest,
+	createAuthHeaders
+} from '$lib/test-utils';
 
 /**
  * Comprehensive Authentication Flow Integration Tests
@@ -52,7 +57,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 			// Note: authMock operates separately from testDb, so we simulate authentication
 			const [dbUser] = await testDb.select().from(users).where(eq(users.username, username));
 			const isPasswordValid = await bcrypt.compare(password, dbUser.hashedPassword);
-			
+
 			expect(dbUser).toBeDefined();
 			expect(isPasswordValid).toBe(true);
 			expect(dbUser.id).toBe(registeredUser.id);
@@ -125,7 +130,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 				{ password: 'LONGPASSWORDWITHOUTLOWERCASE1!', valid: false }, // No lowercase
 				{ password: 'LongPasswordWithoutNumbers!', valid: false }, // No numbers
 				{ password: 'LongPasswordWithoutSpecialChars1', valid: false }, // No special chars
-				{ password: 'ValidPassword123!', valid: true }, // Valid
+				{ password: 'ValidPassword123!', valid: true } // Valid
 			];
 
 			const validatePassword = (password: string): boolean => {
@@ -154,7 +159,9 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 			const { user, session } = await createAuthenticatedUser();
 
 			// Validate session format
-			expect(session.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+			expect(session.id).toMatch(
+				/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+			);
 
 			// Validate session expiration
 			expect(session.expiresAt).toBeInstanceOf(Date);
@@ -183,7 +190,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 				username: xssUsername,
 				password: 'SecurePass123!'
 			});
-			
+
 			// Username should be stored as-is but escaped on output
 			expect(user.username).toBe(xssUsername);
 
@@ -204,7 +211,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 			const avgTime = times.reduce((a, b) => a + b) / times.length;
 			const maxVariance = Math.max(avgTime * 0.8, 1); // More lenient variance or minimum 1ms
 
-			times.forEach(time => {
+			times.forEach((time) => {
 				expect(Math.abs(time - avgTime)).toBeLessThan(maxVariance);
 			});
 		});
@@ -242,7 +249,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 
 			const hasPermission = (userId: string, permission: string): boolean => {
 				const roles = userRoles.get(userId) || [];
-				return roles.some(role => {
+				return roles.some((role) => {
 					const perms = rolePermissions[role as keyof typeof rolePermissions] || [];
 					return perms.includes(permission);
 				});
@@ -267,8 +274,10 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 		});
 
 		it('should validate API endpoint authorization', async () => {
-			const { user: regularUser, session: regularSession } = await createAuthenticatedUser('regular');
-			const { user: adminUser, session: adminSession } = await createAuthenticatedUser('admin');
+			const { user: regularUser, session: regularSession } =
+				await createAuthenticatedUser('regular');
+			const { user: adminUser, session: adminSession } =
+				await createAuthenticatedUser('admin');
 
 			// Mock user roles
 			const userRoles = new Map<string, string[]>();
@@ -279,7 +288,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 				{ path: '/api/posts', method: 'GET', requiresRole: 'user' },
 				{ path: '/api/posts', method: 'POST', requiresRole: 'user' },
 				{ path: '/api/admin/users', method: 'GET', requiresRole: 'admin' },
-				{ path: '/api/admin/settings', method: 'PUT', requiresRole: 'admin' },
+				{ path: '/api/admin/settings', method: 'PUT', requiresRole: 'admin' }
 			];
 
 			const hasRoleForEndpoint = (userId: string, requiredRole: string): boolean => {
@@ -287,7 +296,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 				return roles.includes(requiredRole) || roles.includes('admin'); // Admin override
 			};
 
-			endpoints.forEach(endpoint => {
+			endpoints.forEach((endpoint) => {
 				const regularAccess = hasRoleForEndpoint(regularUser.id, endpoint.requiresRole);
 				const adminAccess = hasRoleForEndpoint(adminUser.id, endpoint.requiresRole);
 
@@ -317,7 +326,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 			];
 
 			// All sessions should be valid
-			sessions.forEach(session => {
+			sessions.forEach((session) => {
 				const validation = authMock.validateSession(session.id);
 				expect(validation).not.toBeNull();
 				expect(validation!.user.id).toBe(user.id);
@@ -334,7 +343,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 			authMock.deleteSession(sessions[0].id);
 			authMock.deleteSession(sessions[2].id);
 
-			sessions.forEach(session => {
+			sessions.forEach((session) => {
 				expect(authMock.validateSession(session.id)).toBeNull();
 			});
 		});
@@ -347,12 +356,12 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 
 			// Create short-lived session (100ms)
 			const shortSession = authMock.createSession(user.id, 100);
-			
+
 			// Session should be valid immediately
 			expect(authMock.validateSession(shortSession.id)).not.toBeNull();
 
 			// Wait for expiration
-			await new Promise(resolve => setTimeout(resolve, 150));
+			await new Promise((resolve) => setTimeout(resolve, 150));
 
 			// Session should now be expired and invalid
 			expect(authMock.validateSession(shortSession.id)).toBeNull();
@@ -374,7 +383,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 
 			// Create sessions in real database
 			const sessionIds = [crypto.randomUUID(), crypto.randomUUID()];
-			
+
 			await testDb.insert(sessions).values([
 				{
 					id: sessionIds[0],
@@ -414,7 +423,11 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 			const errorScenarios = [
 				{ username: '', password: 'valid', expectedError: 'Invalid credentials' },
 				{ username: 'valid', password: '', expectedError: 'Invalid credentials' },
-				{ username: 'nonexistent', password: 'password', expectedError: 'Invalid credentials' },
+				{
+					username: 'nonexistent',
+					password: 'password',
+					expectedError: 'Invalid credentials'
+				},
 				{ username: 'existing', password: 'wrong', expectedError: 'Invalid credentials' }
 			];
 
@@ -438,7 +451,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 				'not-a-uuid-at-all'
 			];
 
-			invalidSessions.forEach(sessionId => {
+			invalidSessions.forEach((sessionId) => {
 				const validation = authMock.validateSession(sessionId);
 				expect(validation).toBeNull();
 			});
@@ -457,7 +470,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 			expect(users).toHaveLength(10);
 
 			// Authenticate all users concurrently
-			const authPromises = users.map(user =>
+			const authPromises = users.map((user) =>
 				authMock.authenticate(user.username, `LoadTest${users.indexOf(user)}123!`)
 			);
 
@@ -468,11 +481,13 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 			});
 
 			// Create sessions for all users concurrently
-			const sessionPromises = users.map(user => authMock.createSession(user.id));
+			const sessionPromises = users.map((user) => authMock.createSession(user.id));
 			const sessions = sessionPromises; // These are synchronous
 
 			// Validate all sessions concurrently
-			const validationResults = sessions.map(session => authMock.validateSession(session.id));
+			const validationResults = sessions.map((session) =>
+				authMock.validateSession(session.id)
+			);
 			validationResults.forEach((validation, index) => {
 				expect(validation).not.toBeNull();
 				expect(validation!.user.id).toBe(users[index].id);
@@ -488,7 +503,12 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 			});
 
 			// Mock audit log
-			const auditLog: Array<{ event: string; userId?: string; timestamp: Date; success: boolean }> = [];
+			const auditLog: Array<{
+				event: string;
+				userId?: string;
+				timestamp: Date;
+				success: boolean;
+			}> = [];
 
 			const logAuthEvent = (event: string, userId?: string, success: boolean = true) => {
 				auditLog.push({
@@ -517,7 +537,7 @@ describe('Comprehensive Authentication Flow Integration Tests', () => {
 			expect(auditLog[0].event).toBe('LOGIN_ATTEMPT');
 			expect(auditLog[1].event).toBe('SESSION_CREATED');
 			expect(auditLog[2].event).toBe('LOGOUT');
-			auditLog.forEach(entry => {
+			auditLog.forEach((entry) => {
 				expect(entry.userId).toBe(user.id);
 				expect(entry.success).toBe(true);
 				expect(entry.timestamp).toBeInstanceOf(Date);
