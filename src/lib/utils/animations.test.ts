@@ -17,12 +17,12 @@ describe('animations', () => {
 	beforeEach(() => {
 		mockElement = document.createElement('div');
 		vi.clearAllMocks();
-		
+
 		// Mock window.matchMedia
 		Object.defineProperty(window, 'matchMedia', {
 			writable: true,
 			configurable: true,
-			value: vi.fn().mockImplementation(query => ({
+			value: vi.fn().mockImplementation((query) => ({
 				matches: false,
 				media: query,
 				onchange: null,
@@ -60,7 +60,7 @@ describe('animations', () => {
 			Object.defineProperty(window, 'matchMedia', {
 				writable: true,
 				configurable: true,
-				value: vi.fn().mockImplementation(query => ({
+				value: vi.fn().mockImplementation((query) => ({
 					matches: query === '(prefers-reduced-motion: reduce)',
 					media: query,
 					onchange: null,
@@ -86,7 +86,7 @@ describe('animations', () => {
 			Object.defineProperty(window, 'matchMedia', {
 				writable: true,
 				configurable: true,
-				value: vi.fn().mockImplementation(query => ({
+				value: vi.fn().mockImplementation((query) => ({
 					matches: query === '(prefers-reduced-motion: reduce)',
 					media: query,
 					onchange: null,
@@ -105,7 +105,7 @@ describe('animations', () => {
 	describe('fadeInUp', () => {
 		it('should create fade in up transition with default options', () => {
 			const transition = fadeInUp(mockElement);
-			
+
 			expect(transition).toEqual({
 				duration: 300,
 				delay: 0,
@@ -116,7 +116,7 @@ describe('animations', () => {
 
 		it('should create fade in up transition with custom options', () => {
 			const transition = fadeInUp(mockElement, { duration: 500, delay: 100, distance: 50 });
-			
+
 			expect(transition.duration).toBe(500);
 			expect(transition.delay).toBe(100);
 		});
@@ -125,7 +125,7 @@ describe('animations', () => {
 			Object.defineProperty(window, 'matchMedia', {
 				writable: true,
 				configurable: true,
-				value: vi.fn().mockImplementation(query => ({
+				value: vi.fn().mockImplementation((query) => ({
 					matches: query === '(prefers-reduced-motion: reduce)',
 					media: query,
 					onchange: null,
@@ -138,7 +138,7 @@ describe('animations', () => {
 			});
 
 			const transition = fadeInUp(mockElement);
-			
+
 			expect(transition).toEqual({
 				duration: 0,
 				delay: 0,
@@ -150,7 +150,7 @@ describe('animations', () => {
 	describe('fadeInDown', () => {
 		it('should create fade in down transition', () => {
 			const transition = fadeInDown(mockElement);
-			
+
 			expect(transition.duration).toBe(300);
 			expect(transition.css).toBeDefined();
 		});
@@ -159,7 +159,7 @@ describe('animations', () => {
 	describe('scaleIn', () => {
 		it('should create scale in transition', () => {
 			const transition = scaleIn(mockElement);
-			
+
 			expect(transition.duration).toBe(200);
 			expect(transition.css).toBeDefined();
 		});
@@ -168,7 +168,7 @@ describe('animations', () => {
 	describe('slideInLeft', () => {
 		it('should create slide in left transition', () => {
 			const transition = slideInLeft(mockElement);
-			
+
 			expect(transition.duration).toBe(300);
 			expect(transition.css).toBeDefined();
 		});
@@ -177,7 +177,7 @@ describe('animations', () => {
 	describe('slideInRight', () => {
 		it('should create slide in right transition', () => {
 			const transition = slideInRight(mockElement);
-			
+
 			expect(transition.duration).toBe(300);
 			expect(transition.css).toBeDefined();
 		});

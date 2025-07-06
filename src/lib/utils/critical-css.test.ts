@@ -13,7 +13,7 @@ describe('critical-css utilities', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		
+
 		// Store originals
 		originalCreateElement = document.createElement;
 		originalHead = document.head;
@@ -94,9 +94,9 @@ describe('critical-css utilities', () => {
 
 		it('should create preload link for custom href', () => {
 			const customHref = '/custom/styles.css';
-			
+
 			loadNonCriticalCSS(customHref);
-			
+
 			expect(document.createElement).toHaveBeenCalledWith('link');
 			expect(document.head.appendChild).toHaveBeenCalled();
 		});
@@ -104,7 +104,7 @@ describe('critical-css utilities', () => {
 		it('should set up onload handler to change rel to stylesheet', () => {
 			const customHref = '/custom/styles.css';
 			let linkElement: any;
-			
+
 			document.createElement = vi.fn().mockImplementation(() => {
 				linkElement = {
 					rel: '',
@@ -172,7 +172,7 @@ describe('critical-css utilities', () => {
 			optimizeCSSLoading();
 
 			expect(document.querySelectorAll).toHaveBeenCalledWith('link[rel="stylesheet"]');
-			
+
 			// First stylesheet (non-critical) should be converted
 			expect(mockStyleSheets[0].rel).toBe('preload');
 			expect(mockStyleSheets[0].as).toBe('style');

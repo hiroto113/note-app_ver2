@@ -24,8 +24,8 @@ describe('toast store', () => {
 
 		it('should be reactive to changes', () => {
 			const values: ToastMessage[][] = [];
-			
-			const unsubscribe = toasts.subscribe(value => {
+
+			const unsubscribe = toasts.subscribe((value) => {
 				values.push([...value]);
 			});
 
@@ -36,7 +36,7 @@ describe('toast store', () => {
 			expect(values[0]).toEqual([]);
 			expect(values[1]).toHaveLength(1);
 			expect(values[2]).toEqual([]);
-			
+
 			unsubscribe();
 		});
 	});
@@ -45,7 +45,7 @@ describe('toast store', () => {
 		it('should add toast with default type and duration', () => {
 			const id = addToast('Test message');
 			const toastList = get(toasts);
-			
+
 			expect(toastList).toHaveLength(1);
 			expect(toastList[0]).toEqual({
 				id,
@@ -59,7 +59,7 @@ describe('toast store', () => {
 		it('should add toast with custom type and duration', () => {
 			const id = addToast('Error message', 'error', 3000);
 			const toastList = get(toasts);
-			
+
 			expect(toastList).toHaveLength(1);
 			expect(toastList[0]).toEqual({
 				id,
@@ -73,11 +73,11 @@ describe('toast store', () => {
 			const id1 = addToast('First message');
 			const id2 = addToast('Second message');
 			const id3 = addToast('Third message');
-			
+
 			expect(id1).not.toBe(id2);
 			expect(id2).not.toBe(id3);
 			expect(id1).not.toBe(id3);
-			
+
 			const toastList = get(toasts);
 			expect(toastList).toHaveLength(3);
 		});
@@ -86,7 +86,7 @@ describe('toast store', () => {
 			addToast('First');
 			addToast('Second');
 			addToast('Third');
-			
+
 			const toastList = get(toasts);
 			expect(toastList[0].message).toBe('First');
 			expect(toastList[1].message).toBe('Second');
@@ -98,11 +98,11 @@ describe('toast store', () => {
 		it('should remove toast by id', () => {
 			const id1 = addToast('First message');
 			const id2 = addToast('Second message');
-			
+
 			expect(get(toasts)).toHaveLength(2);
-			
+
 			removeToast(id1);
-			
+
 			const toastList = get(toasts);
 			expect(toastList).toHaveLength(1);
 			expect(toastList[0].id).toBe(id2);
@@ -111,19 +111,19 @@ describe('toast store', () => {
 
 		it('should handle non-existent toast id gracefully', () => {
 			addToast('Test message');
-			
+
 			expect(get(toasts)).toHaveLength(1);
-			
+
 			removeToast('non-existent-id');
-			
+
 			expect(get(toasts)).toHaveLength(1);
 		});
 
 		it('should handle empty toast list', () => {
 			expect(get(toasts)).toHaveLength(0);
-			
+
 			expect(() => removeToast('any-id')).not.toThrow();
-			
+
 			expect(get(toasts)).toHaveLength(0);
 		});
 	});
@@ -133,19 +133,19 @@ describe('toast store', () => {
 			addToast('First');
 			addToast('Second');
 			addToast('Third');
-			
+
 			expect(get(toasts)).toHaveLength(3);
-			
+
 			clearToasts();
-			
+
 			expect(get(toasts)).toEqual([]);
 		});
 
 		it('should handle empty toast list', () => {
 			expect(get(toasts)).toHaveLength(0);
-			
+
 			expect(() => clearToasts()).not.toThrow();
-			
+
 			expect(get(toasts)).toHaveLength(0);
 		});
 	});
@@ -155,7 +155,7 @@ describe('toast store', () => {
 			it('should add success toast with default duration', () => {
 				const id = showSuccess('Success message');
 				const toastList = get(toasts);
-				
+
 				expect(toastList).toHaveLength(1);
 				expect(toastList[0]).toEqual({
 					id,
@@ -168,7 +168,7 @@ describe('toast store', () => {
 			it('should add success toast with custom duration', () => {
 				const id = showSuccess('Success message', 3000);
 				const toastList = get(toasts);
-				
+
 				expect(toastList[0]).toEqual({
 					id,
 					message: 'Success message',
@@ -182,7 +182,7 @@ describe('toast store', () => {
 			it('should add error toast with default duration', () => {
 				const id = showError('Error message');
 				const toastList = get(toasts);
-				
+
 				expect(toastList).toHaveLength(1);
 				expect(toastList[0]).toEqual({
 					id,
@@ -195,7 +195,7 @@ describe('toast store', () => {
 			it('should add error toast with custom duration', () => {
 				const id = showError('Error message', 8000);
 				const toastList = get(toasts);
-				
+
 				expect(toastList[0]).toEqual({
 					id,
 					message: 'Error message',
@@ -209,7 +209,7 @@ describe('toast store', () => {
 			it('should add info toast with default duration', () => {
 				const id = showInfo('Info message');
 				const toastList = get(toasts);
-				
+
 				expect(toastList).toHaveLength(1);
 				expect(toastList[0]).toEqual({
 					id,
@@ -222,7 +222,7 @@ describe('toast store', () => {
 			it('should add info toast with custom duration', () => {
 				const id = showInfo('Info message', 2000);
 				const toastList = get(toasts);
-				
+
 				expect(toastList[0]).toEqual({
 					id,
 					message: 'Info message',
@@ -236,7 +236,7 @@ describe('toast store', () => {
 			it('should add warning toast with default duration', () => {
 				const id = showWarning('Warning message');
 				const toastList = get(toasts);
-				
+
 				expect(toastList).toHaveLength(1);
 				expect(toastList[0]).toEqual({
 					id,
@@ -249,7 +249,7 @@ describe('toast store', () => {
 			it('should add warning toast with custom duration', () => {
 				const id = showWarning('Warning message', 4000);
 				const toastList = get(toasts);
-				
+
 				expect(toastList[0]).toEqual({
 					id,
 					message: 'Warning message',

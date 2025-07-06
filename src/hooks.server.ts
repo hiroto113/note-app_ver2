@@ -99,4 +99,10 @@ const monitoringHandle: Handle = async ({ event, resolve }) => {
 	return response;
 };
 
-export const handle: Handle = sequence(dbInitHandle, authHandle, adminApiAuth, securityHandle, monitoringHandle);
+export const handle: Handle = sequence(
+	dbInitHandle,
+	authHandle,
+	adminApiAuth,
+	securityHandle,
+	monitoringHandle
+);

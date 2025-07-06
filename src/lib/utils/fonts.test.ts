@@ -1,10 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import {
-	preloadFonts,
-	getFontDisplayClass,
-	observeFontLoading,
-	criticalFontCSS
-} from './fonts';
+import { preloadFonts, getFontDisplayClass, observeFontLoading, criticalFontCSS } from './fonts';
 
 describe('fonts utilities', () => {
 	beforeEach(() => {
@@ -38,7 +33,7 @@ describe('fonts utilities', () => {
 			const mockFonts = {
 				ready: Promise.resolve()
 			};
-			
+
 			Object.defineProperty(document, 'fonts', {
 				writable: true,
 				configurable: true,
@@ -54,7 +49,7 @@ describe('fonts utilities', () => {
 
 		it('should use fallback timeout when Font Loading API is not available', () => {
 			const callback = vi.fn();
-			
+
 			// Remove fonts API
 			const originalFonts = document.fonts;
 			// @ts-ignore
@@ -78,7 +73,7 @@ describe('fonts utilities', () => {
 			const mockFonts = {
 				ready: Promise.resolve()
 			};
-			
+
 			Object.defineProperty(document, 'fonts', {
 				writable: true,
 				configurable: true,
@@ -94,7 +89,7 @@ describe('fonts utilities', () => {
 			global.document = undefined;
 
 			const callback = vi.fn();
-			
+
 			expect(() => observeFontLoading(callback)).not.toThrow();
 			expect(callback).not.toHaveBeenCalled();
 

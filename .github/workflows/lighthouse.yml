@@ -39,15 +39,15 @@ jobs:
           pnpm run db:seed
         env:
           NODE_ENV: production
-          DATABASE_URL: "file:local.db"
+          DATABASE_URL: 'file:local.db'
 
       - name: Build application
         run: pnpm run build
         env:
           NODE_ENV: production
-          DATABASE_URL: "file:local.db"
-          PUBLIC_APP_NAME: "Note App"
-          PUBLIC_APP_URL: "http://localhost:4173"
+          DATABASE_URL: 'file:local.db'
+          PUBLIC_APP_NAME: 'Note App'
+          PUBLIC_APP_URL: 'http://localhost:4173'
 
       - name: Start application
         run: |
@@ -57,18 +57,18 @@ jobs:
         timeout-minutes: 3
         env:
           NODE_ENV: production
-          DATABASE_URL: "file:local.db"
-          PUBLIC_APP_NAME: "Note App"
-          PUBLIC_APP_URL: "http://localhost:4173"
+          DATABASE_URL: 'file:local.db'
+          PUBLIC_APP_NAME: 'Note App'
+          PUBLIC_APP_URL: 'http://localhost:4173'
 
       - name: Run Lighthouse CI
         run: pnpm dlx @lhci/cli@latest autorun
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
           LHCI_TOKEN: ${{ secrets.LHCI_TOKEN }}
-          DATABASE_URL: "file:local.db"
-          PUBLIC_APP_NAME: "Note App"
-          PUBLIC_APP_URL: "http://localhost:4173"
+          DATABASE_URL: 'file:local.db'
+          PUBLIC_APP_NAME: 'Note App'
+          PUBLIC_APP_URL: 'http://localhost:4173'
 
       - name: Upload Lighthouse reports
         uses: actions/upload-artifact@v4

@@ -26,16 +26,24 @@ const posts = sqliteTable('posts', {
 	title: text('title').notNull(),
 	excerpt: text('excerpt'),
 	content: text('content').notNull(),
-	status: text('status', { enum: ['draft', 'published'] }).notNull().default('draft'),
+	status: text('status', { enum: ['draft', 'published'] })
+		.notNull()
+		.default('draft'),
 	publishedAt: integer('published_at', { mode: 'timestamp' }),
-	userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+	userId: text('user_id')
+		.notNull()
+		.references(() => users.id, { onDelete: 'cascade' }),
 	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 });
 
 const postsToCategories = sqliteTable('posts_to_categories', {
-	postId: integer('post_id').notNull().references(() => posts.id, { onDelete: 'cascade' }),
-	categoryId: integer('category_id').notNull().references(() => categories.id, { onDelete: 'cascade' })
+	postId: integer('post_id')
+		.notNull()
+		.references(() => posts.id, { onDelete: 'cascade' }),
+	categoryId: integer('category_id')
+		.notNull()
+		.references(() => categories.id, { onDelete: 'cascade' })
 });
 
 const client = createClient({
