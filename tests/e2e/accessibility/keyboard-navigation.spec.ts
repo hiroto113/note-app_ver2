@@ -29,7 +29,7 @@ test.describe('キーボードナビゲーションテスト', () => {
 
 		// 数回のTab移動をテスト（フォーカスが移動することを確認）
 		for (let i = 0; i < Math.min(5, focusableCount - 1); i++) {
-			const previousElement = currentFocusedElement;
+			// const previousElement = currentFocusedElement;
 			await page.keyboard.press('Tab');
 			currentFocusedElement = await page.evaluate(() => document.activeElement?.tagName);
 
@@ -122,7 +122,7 @@ test.describe('キーボードナビゲーションテスト', () => {
 				// フォーカスの確認（エラー時はスキップ）
 				try {
 					await expect(currentElement).toBeFocused({ timeout: 1500 });
-				} catch (error) {
+				} catch {
 					console.log(`Element ${i} focus verification failed, but continuing test`);
 					// テストを続行（一部の要素でフォーカスが困難な場合があるため）
 				}
@@ -164,7 +164,7 @@ test.describe('キーボードナビゲーションテスト', () => {
 				// フォーカス確認（エラー時は警告のみ）
 				try {
 					await expect(nextElement).toBeFocused({ timeout: 1500 });
-				} catch (error) {
+				} catch {
 					console.log(
 						`Form element ${i + 1} focus verification failed, but continuing test`
 					);

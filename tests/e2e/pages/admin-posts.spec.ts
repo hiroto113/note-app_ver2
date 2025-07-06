@@ -112,7 +112,7 @@ test.describe('管理画面 - 記事管理', () => {
 			'[data-testid="title-input"], input[name="title"], input#title'
 		);
 		const contentContainer = page.locator('[data-testid="content-input"]');
-		const contentEditor = page.locator('[data-testid="content-input"] .cm-editor .cm-content');
+		// const contentEditor = page.locator('[data-testid="content-input"] .cm-editor .cm-content');
 
 		await expect(titleInput).toBeVisible();
 		await expect(contentContainer).toBeVisible();
