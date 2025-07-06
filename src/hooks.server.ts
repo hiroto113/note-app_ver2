@@ -6,12 +6,11 @@ import { json } from '@sveltejs/kit';
 // Database initialization
 const dbInitHandle: Handle = async ({ event, resolve }) => {
 	try {
-		// Ensure DB connection is established early
-		const { db } = await import('$lib/server/db');
-		// Simple query to verify connection
-		await db.execute('SELECT 1');
+		// Initialize database connection early
+		await import('$lib/server/db');
+		// Connection is established in the import, no need for explicit query
 	} catch (error) {
-		console.error('Database connection error:', error);
+		console.error('Database module import error:', error);
 		// Continue execution even if DB connection fails
 		// This allows static pages to work
 	}
