@@ -32,20 +32,22 @@
 					: val >= 70
 						? 'text-yellow-600'
 						: 'text-red-600';
-			case 'coverage':
+			case 'coverage': {
 				const coverage = val / 100;
 				return coverage >= 80
 					? 'text-green-600'
 					: coverage >= 60
 						? 'text-yellow-600'
 						: 'text-red-600';
-			case 'size':
+			}
+			case 'size': {
 				const sizeKb = val / 1024;
 				return sizeKb <= 500
 					? 'text-green-600'
 					: sizeKb <= 1000
 						? 'text-yellow-600'
 						: 'text-red-600';
+			}
 			case 'time':
 				return val <= 1000
 					? 'text-green-600'

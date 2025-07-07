@@ -1,7 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 // Skip component rendering tests in server environment
 // import { render, screen } from '@testing-library/svelte';
-import { tick } from 'svelte';
 import QualityOverview from './QualityOverview.svelte';
 import MetricCard from './MetricCard.svelte';
 import TrendChart from './TrendChart.svelte';
@@ -160,7 +159,7 @@ describe('TrendChart', () => {
 	});
 
 	it('should handle empty data gracefully', () => {
-		const emptyData: any[] = [];
+		const emptyData: QualityMetrics[] = [];
 		expect(emptyData).toHaveLength(0);
 
 		// Chart should handle empty data without errors

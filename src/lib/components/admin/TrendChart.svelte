@@ -19,7 +19,7 @@
 			const values: { [key: string]: number } = {};
 
 			metrics.forEach((metric) => {
-				let value = (item as any)[metric];
+				let value = item[metric as keyof QualityMetrics] as number;
 
 				// Normalize values based on type
 				if (metric.includes('Coverage')) {
