@@ -19,13 +19,13 @@ import { QualityMetricsService, type QualityTrend } from './quality-metrics';
 import { db } from './db';
 
 let service: QualityMetricsService;
-let mockDb: any;
+let mockDb: typeof db;
 
 describe('QualityMetricsService', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		service = new QualityMetricsService();
-		mockDb = vi.mocked(db);
+		mockDb = vi.mocked(db, true);
 
 		// Setup mock chain for query builder pattern
 		mockDb.insert.mockReturnValue({
