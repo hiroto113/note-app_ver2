@@ -48,7 +48,6 @@ describe('QualityMetricsService', () => {
 			// Test the calculateTrend private method through public interface
 			// Access through type assertion for testing purposes
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const calculateTrend = (service as any).calculateTrend;
 
 			if (typeof calculateTrend === 'function') {
