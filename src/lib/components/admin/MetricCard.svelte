@@ -10,7 +10,7 @@
 	// Format value based on type
 	function formatValue(val: number | null | undefined): string {
 		if (val === null || val === undefined) return 'N/A';
-		
+
 		switch (type) {
 			case 'size':
 				return (val / 1024).toFixed(1); // Convert bytes to KB
@@ -24,18 +24,34 @@
 	// Get color classes based on type and value
 	function getValueColor(val: number | null | undefined): string {
 		if (val === null || val === undefined) return 'text-gray-400';
-		
+
 		switch (type) {
 			case 'performance':
-				return val >= 90 ? 'text-green-600' : val >= 70 ? 'text-yellow-600' : 'text-red-600';
+				return val >= 90
+					? 'text-green-600'
+					: val >= 70
+						? 'text-yellow-600'
+						: 'text-red-600';
 			case 'coverage':
 				const coverage = val / 100;
-				return coverage >= 80 ? 'text-green-600' : coverage >= 60 ? 'text-yellow-600' : 'text-red-600';
+				return coverage >= 80
+					? 'text-green-600'
+					: coverage >= 60
+						? 'text-yellow-600'
+						: 'text-red-600';
 			case 'size':
 				const sizeKb = val / 1024;
-				return sizeKb <= 500 ? 'text-green-600' : sizeKb <= 1000 ? 'text-yellow-600' : 'text-red-600';
+				return sizeKb <= 500
+					? 'text-green-600'
+					: sizeKb <= 1000
+						? 'text-yellow-600'
+						: 'text-red-600';
 			case 'time':
-				return val <= 1000 ? 'text-green-600' : val <= 3000 ? 'text-yellow-600' : 'text-red-600';
+				return val <= 1000
+					? 'text-green-600'
+					: val <= 3000
+						? 'text-yellow-600'
+						: 'text-red-600';
 			default:
 				return 'text-gray-900';
 		}
@@ -65,7 +81,7 @@
 					return 'text-gray-600';
 			}
 		}
-		
+
 		// For performance and coverage, up is good
 		switch (trend.trend) {
 			case 'up':
@@ -86,7 +102,7 @@
 				{formatValue(value)}{unit}
 			</p>
 		</div>
-		
+
 		{#if trend}
 			<div class="flex flex-col items-end">
 				<div class="flex items-center space-x-1">
@@ -101,21 +117,29 @@
 			</div>
 		{/if}
 	</div>
-	
+
 	<!-- Additional context for some metrics -->
 	{#if type === 'performance' && value !== null && value !== undefined}
 		<div class="mt-4 h-2 w-full rounded-full bg-gray-200">
-			<div 
-				class="h-2 rounded-full transition-all duration-300 {value >= 90 ? 'bg-green-500' : value >= 70 ? 'bg-yellow-500' : 'bg-red-500'}"
+			<div
+				class="h-2 rounded-full transition-all duration-300 {value >= 90
+					? 'bg-green-500'
+					: value >= 70
+						? 'bg-yellow-500'
+						: 'bg-red-500'}"
 				style="width: {value}%"
 			></div>
 		</div>
 	{/if}
-	
+
 	{#if type === 'coverage' && value !== null && value !== undefined}
 		<div class="mt-4 h-2 w-full rounded-full bg-gray-200">
-			<div 
-				class="h-2 rounded-full transition-all duration-300 {value >= 8000 ? 'bg-green-500' : value >= 6000 ? 'bg-yellow-500' : 'bg-red-500'}"
+			<div
+				class="h-2 rounded-full transition-all duration-300 {value >= 8000
+					? 'bg-green-500'
+					: value >= 6000
+						? 'bg-yellow-500'
+						: 'bg-red-500'}"
 				style="width: {value / 100}%"
 			></div>
 		</div>

@@ -8,19 +8,19 @@ const qualityMetrics = sqliteTable('quality_metrics', {
 	timestamp: integer('timestamp', { mode: 'timestamp' }).notNull(),
 	commitHash: text('commit_hash').notNull(),
 	branch: text('branch').notNull(),
-	
+
 	// Lighthouse scores
 	lighthousePerformance: integer('lighthouse_performance'),
 	lighthouseAccessibility: integer('lighthouse_accessibility'),
 	lighthouseBestPractices: integer('lighthouse_best_practices'),
 	lighthouseSeo: integer('lighthouse_seo'),
 	lighthousePwa: integer('lighthouse_pwa'),
-	
+
 	// Core Web Vitals
 	lcp: integer('lcp'),
 	fid: integer('fid'),
 	cls: integer('cls'),
-	
+
 	// Test results
 	testUnitTotal: integer('test_unit_total'),
 	testUnitPassed: integer('test_unit_passed'),
@@ -34,16 +34,16 @@ const qualityMetrics = sqliteTable('quality_metrics', {
 	testE2ePassed: integer('test_e2e_passed'),
 	testE2eFailed: integer('test_e2e_failed'),
 	testE2eCoverage: integer('test_e2e_coverage'),
-	
+
 	// Performance metrics
 	bundleSize: integer('bundle_size'),
 	loadTime: integer('load_time'),
 	ttfb: integer('ttfb'),
-	
+
 	// Accessibility
 	wcagScore: integer('wcag_score'),
 	axeViolations: integer('axe_violations'),
-	
+
 	createdAt: integer('created_at', { mode: 'timestamp' })
 		.notNull()
 		.$defaultFn(() => new Date())
@@ -165,7 +165,6 @@ async function seedQualityMetrics() {
 		console.log('1. ブラウザで http://localhost:5173/admin/quality にアクセス');
 		console.log('2. 管理者でログイン (admin / admin123)');
 		console.log('3. 品質ダッシュボードでメトリクスを確認');
-
 	} catch (error) {
 		console.error('❌ サンプルデータ投入エラー:', error);
 		process.exit(1);

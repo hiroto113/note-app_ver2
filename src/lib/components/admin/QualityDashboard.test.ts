@@ -105,7 +105,7 @@ describe('MetricCard', () => {
 			unit: '/100',
 			type: 'performance' as const
 		};
-		
+
 		expect(testMetric.value).toBe(85);
 		expect(testMetric.type).toBe('performance');
 	});
@@ -122,7 +122,7 @@ describe('MetricCard', () => {
 		const bundleSize = 512000;
 		const sizeInKB = bundleSize / 1024;
 		expect(sizeInKB).toBe(500);
-		
+
 		// Test coverage percentage conversion
 		const coverage = 7500; // stored as percentage * 100
 		const coveragePercent = coverage / 100;
@@ -139,7 +139,7 @@ describe('TrendChart', () => {
 	it('should handle chart data processing', () => {
 		const chartData = [mockMetrics];
 		const metrics = ['lighthousePerformance'];
-		
+
 		expect(chartData).toHaveLength(1);
 		expect(metrics).toContain('lighthousePerformance');
 		expect(chartData[0].lighthousePerformance).toBe(85);
@@ -152,7 +152,7 @@ describe('TrendChart', () => {
 			metrics: ['lighthousePerformance'],
 			type: 'performance' as const
 		};
-		
+
 		expect(chartConfig.title).toBe('Test Chart');
 		expect(chartConfig.data).toHaveLength(1);
 		expect(chartConfig.metrics).toHaveLength(1);
@@ -162,9 +162,9 @@ describe('TrendChart', () => {
 	it('should handle empty data gracefully', () => {
 		const emptyData: any[] = [];
 		expect(emptyData).toHaveLength(0);
-		
+
 		// Chart should handle empty data without errors
-		const processedData = emptyData.map(item => item);
+		const processedData = emptyData.map((item) => item);
 		expect(processedData).toHaveLength(0);
 	});
 });

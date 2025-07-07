@@ -61,13 +61,13 @@ describe('Quality Dashboard Integration', () => {
 			// Note: This would be a real database test in a full integration setup
 			// For now, we test the service interface
 			const metrics = testMetrics[0];
-			
+
 			// This would fail in current setup due to missing database
 			// In a real integration test, we would:
 			// 1. Set up test database
 			// 2. Run migrations
 			// 3. Test actual database operations
-			
+
 			expect(metrics.id).toBe('test-1');
 			expect(metrics.branch).toBe('main');
 			expect(metrics.lighthousePerformance).toBe(85);
@@ -76,12 +76,12 @@ describe('Quality Dashboard Integration', () => {
 		it('should calculate trends correctly', async () => {
 			// Test trend calculation logic
 			const service = qualityMetricsService;
-			
+
 			// Access private method for testing
 			const calculateTrend = (service as any).calculateTrend;
-			
+
 			const trend = calculateTrend('Test Metric', 90, 85);
-			
+
 			expect(trend.metric).toBe('Test Metric');
 			expect(trend.current).toBe(90);
 			expect(trend.previous).toBe(85);
@@ -99,9 +99,9 @@ describe('Quality Dashboard Integration', () => {
 				'/api/quality-metrics/dashboard',
 				'/api/quality-metrics/trends'
 			];
-			
+
 			// This is a structural test - ensuring we have the right endpoints defined
-			expectedEndpoints.forEach(endpoint => {
+			expectedEndpoints.forEach((endpoint) => {
 				expect(endpoint).toMatch(/^\/api\/quality-metrics/);
 			});
 		});
@@ -124,7 +124,7 @@ describe('Quality Dashboard Integration', () => {
 				],
 				history: testMetrics
 			};
-			
+
 			const statistics = {
 				averageLighthouseScore: 87.5,
 				testSuccessRate: 97.6,
@@ -135,7 +135,7 @@ describe('Quality Dashboard Integration', () => {
 					stable: 0
 				}
 			};
-			
+
 			// Verify data structure
 			expect(mockDashboardData.latest?.lighthousePerformance).toBe(90);
 			expect(mockDashboardData.trends).toHaveLength(1);
@@ -153,7 +153,7 @@ describe('Quality Dashboard Integration', () => {
 				trends: [],
 				history: []
 			};
-			
+
 			const emptyStatistics = {
 				averageLighthouseScore: 0,
 				testSuccessRate: 0,
@@ -164,7 +164,7 @@ describe('Quality Dashboard Integration', () => {
 					stable: 0
 				}
 			};
-			
+
 			expect(emptyDashboard.latest).toBeNull();
 			expect(emptyDashboard.trends).toHaveLength(0);
 			expect(emptyStatistics.averageLighthouseScore).toBe(0);
@@ -172,7 +172,7 @@ describe('Quality Dashboard Integration', () => {
 
 		it('should validate metric data types', () => {
 			const metrics = testMetrics[0];
-			
+
 			expect(typeof metrics.id).toBe('string');
 			expect(metrics.timestamp).toBeInstanceOf(Date);
 			expect(typeof metrics.commitHash).toBe('string');

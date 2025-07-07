@@ -57,7 +57,7 @@
 					title="Lighthouse Performance"
 					value={data.dashboard.latest.lighthousePerformance}
 					unit="/100"
-					trend={data.dashboard.trends.find(t => t.metric === 'Lighthouse Performance')}
+					trend={data.dashboard.trends.find((t) => t.metric === 'Lighthouse Performance')}
 					type="performance"
 				/>
 
@@ -66,7 +66,7 @@
 					title="Test Coverage"
 					value={data.dashboard.latest.testUnitCoverage}
 					unit="%"
-					trend={data.dashboard.trends.find(t => t.metric === 'Test Coverage')}
+					trend={data.dashboard.trends.find((t) => t.metric === 'Test Coverage')}
 					type="coverage"
 				/>
 
@@ -75,7 +75,7 @@
 					title="Bundle Size"
 					value={data.dashboard.latest.bundleSize}
 					unit="KB"
-					trend={data.dashboard.trends.find(t => t.metric === 'Bundle Size')}
+					trend={data.dashboard.trends.find((t) => t.metric === 'Bundle Size')}
 					type="size"
 				/>
 
@@ -84,14 +84,16 @@
 					title="Load Time"
 					value={data.dashboard.latest.loadTime}
 					unit="ms"
-					trend={data.dashboard.trends.find(t => t.metric === 'Load Time')}
+					trend={data.dashboard.trends.find((t) => t.metric === 'Load Time')}
 					type="time"
 				/>
 			{:else}
 				<div class="col-span-full">
 					<div class="rounded-lg bg-gray-50 p-8 text-center">
 						<p class="text-gray-600">No quality metrics available yet.</p>
-						<p class="mt-2 text-sm text-gray-500">Metrics will appear after running CI/CD pipeline.</p>
+						<p class="mt-2 text-sm text-gray-500">
+							Metrics will appear after running CI/CD pipeline.
+						</p>
 					</div>
 				</div>
 			{/if}
@@ -128,15 +130,21 @@
 		<div class="rounded-lg bg-white p-6 shadow-sm">
 			<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
 				<div class="text-center">
-					<p class="text-2xl font-bold text-gray-900">{data.statistics.averageLighthouseScore}</p>
+					<p class="text-2xl font-bold text-gray-900">
+						{data.statistics.averageLighthouseScore}
+					</p>
 					<p class="text-sm text-gray-600">Avg Lighthouse Score</p>
 				</div>
 				<div class="text-center">
-					<p class="text-2xl font-bold text-gray-900">{data.statistics.testSuccessRate.toFixed(1)}%</p>
+					<p class="text-2xl font-bold text-gray-900">
+						{data.statistics.testSuccessRate.toFixed(1)}%
+					</p>
 					<p class="text-sm text-gray-600">Test Success Rate</p>
 				</div>
 				<div class="text-center">
-					<p class="text-2xl font-bold text-gray-900">{data.statistics.averageLoadTime}ms</p>
+					<p class="text-2xl font-bold text-gray-900">
+						{data.statistics.averageLoadTime}ms
+					</p>
 					<p class="text-sm text-gray-600">Avg Load Time</p>
 				</div>
 				<div class="text-center">

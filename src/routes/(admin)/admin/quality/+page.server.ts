@@ -15,7 +15,7 @@ export const load: PageServerLoad = async () => {
 		};
 	} catch (error) {
 		console.error('Failed to load quality dashboard data:', error);
-		
+
 		// Return empty state on error
 		return {
 			dashboard: {

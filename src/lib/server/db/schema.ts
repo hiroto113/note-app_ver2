@@ -146,19 +146,19 @@ export const qualityMetrics = sqliteTable('quality_metrics', {
 	timestamp: integer('timestamp', { mode: 'timestamp' }).notNull(),
 	commitHash: text('commit_hash').notNull(),
 	branch: text('branch').notNull(),
-	
+
 	// Lighthouse scores
 	lighthousePerformance: integer('lighthouse_performance'),
 	lighthouseAccessibility: integer('lighthouse_accessibility'),
 	lighthouseBestPractices: integer('lighthouse_best_practices'),
 	lighthouseSeo: integer('lighthouse_seo'),
 	lighthousePwa: integer('lighthouse_pwa'),
-	
+
 	// Core Web Vitals
 	lcp: integer('lcp'), // Largest Contentful Paint (ms)
 	fid: integer('fid'), // First Input Delay (ms)
 	cls: integer('cls'), // Cumulative Layout Shift (x1000)
-	
+
 	// Test results
 	testUnitTotal: integer('test_unit_total'),
 	testUnitPassed: integer('test_unit_passed'),
@@ -172,16 +172,16 @@ export const qualityMetrics = sqliteTable('quality_metrics', {
 	testE2ePassed: integer('test_e2e_passed'),
 	testE2eFailed: integer('test_e2e_failed'),
 	testE2eCoverage: integer('test_e2e_coverage'), // percentage x100
-	
+
 	// Performance metrics
 	bundleSize: integer('bundle_size'), // bytes
 	loadTime: integer('load_time'), // ms
 	ttfb: integer('ttfb'), // Time to First Byte (ms)
-	
+
 	// Accessibility
 	wcagScore: integer('wcag_score'), // percentage x100
 	axeViolations: integer('axe_violations'),
-	
+
 	createdAt: integer('created_at', { mode: 'timestamp' })
 		.notNull()
 		.$defaultFn(() => new Date())

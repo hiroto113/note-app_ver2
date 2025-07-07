@@ -14,30 +14,30 @@
 	// Process data for chart
 	function processData() {
 		if (data.length === 0) return [];
-		
+
 		const processed = data.map((item, index) => {
 			const values: { [key: string]: number } = {};
-			
-			metrics.forEach(metric => {
+
+			metrics.forEach((metric) => {
 				let value = (item as any)[metric];
-				
+
 				// Normalize values based on type
 				if (metric.includes('Coverage')) {
 					value = value ? value / 100 : 0; // Convert percentage
 				} else if (metric.includes('Size')) {
 					value = value ? value / 1024 : 0; // Convert to KB
 				}
-				
+
 				values[metric] = value || 0;
 			});
-			
+
 			return {
 				index,
 				timestamp: item.timestamp,
 				values
 			};
 		});
-		
+
 		return processed;
 	}
 
@@ -45,18 +45,21 @@
 	function getChartPoints(metric: string): string {
 		const processedData = processData();
 		if (processedData.length === 0) return '';
-		
-		const values = processedData.map(d => d.values[metric]);
+
+		const values = processedData.map((d) => d.values[metric]);
 		const maxValue = Math.max(...values);
 		const minValue = Math.min(...values);
 		const range = maxValue - minValue || 1;
-		
+
 		const points = processedData.map((d, i) => {
 			const x = padding + (i * (chartWidth - 2 * padding)) / (processedData.length - 1);
-			const y = chartHeight - padding - ((d.values[metric] - minValue) / range) * (chartHeight - 2 * padding);
+			const y =
+				chartHeight -
+				padding -
+				((d.values[metric] - minValue) / range) * (chartHeight - 2 * padding);
 			return `${x},${y}`;
 		});
-		
+
 		return points.join(' ');
 	}
 
@@ -68,7 +71,7 @@
 
 	// Format label
 	function formatLabel(metric: string): string {
-		return metric.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+		return metric.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
 	}
 
 	$: processedData = processData();
@@ -76,7 +79,7 @@
 
 <div class="rounded-lg bg-white p-6 shadow-sm">
 	<h3 class="mb-4 text-lg font-semibold text-gray-900">{title}</h3>
-	
+
 	{#if processedData.length > 0}
 		<!-- Chart -->
 		<div class="mb-4">
@@ -84,11 +87,11 @@
 				<!-- Grid lines -->
 				<defs>
 					<pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-						<path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f3f4f6" stroke-width="1"/>
+						<path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f3f4f6" stroke-width="1" />
 					</pattern>
 				</defs>
 				<rect width="100%" height="100%" fill="url(#grid)" />
-				
+
 				<!-- Chart lines -->
 				{#each metrics as metric, index}
 					<polyline
@@ -100,16 +103,22 @@
 						stroke-linejoin="round"
 					/>
 				{/each}
-				
+
 				<!-- Data points -->
 				{#each metrics as metric, index}
 					{#each processedData as point, pointIndex}
-						{@const x = padding + (pointIndex * (chartWidth - 2 * padding)) / (processedData.length - 1)}
-						{@const maxValue = Math.max(...processedData.map(d => d.values[metric]))}
-						{@const minValue = Math.min(...processedData.map(d => d.values[metric]))}
+						{@const x =
+							padding +
+							(pointIndex * (chartWidth - 2 * padding)) / (processedData.length - 1)}
+						{@const maxValue = Math.max(...processedData.map((d) => d.values[metric]))}
+						{@const minValue = Math.min(...processedData.map((d) => d.values[metric]))}
 						{@const range = maxValue - minValue || 1}
-						{@const y = chartHeight - padding - ((point.values[metric] - minValue) / range) * (chartHeight - 2 * padding)}
-						
+						{@const y =
+							chartHeight -
+							padding -
+							((point.values[metric] - minValue) / range) *
+								(chartHeight - 2 * padding)}
+
 						<circle
 							cx={x}
 							cy={y}
@@ -124,12 +133,12 @@
 				{/each}
 			</svg>
 		</div>
-		
+
 		<!-- Legend -->
 		<div class="flex flex-wrap gap-4">
 			{#each metrics as metric, index}
 				<div class="flex items-center space-x-2">
-					<div 
+					<div
 						class="h-3 w-3 rounded-full"
 						style="background-color: {getMetricColor(metric, index)}"
 					></div>
@@ -137,7 +146,7 @@
 				</div>
 			{/each}
 		</div>
-		
+
 		<!-- Latest values -->
 		<div class="mt-4 grid grid-cols-2 gap-4">
 			{#each metrics as metric}

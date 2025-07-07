@@ -121,7 +121,11 @@ export class QualityMetricsService {
 
 		// Bundle Size (reverse trend - smaller is better)
 		if (latest.bundleSize && previous.bundleSize) {
-			const trend = this.calculateTrend('Bundle Size', latest.bundleSize, previous.bundleSize);
+			const trend = this.calculateTrend(
+				'Bundle Size',
+				latest.bundleSize,
+				previous.bundleSize
+			);
 			// Reverse the trend direction for bundle size
 			trend.trend = trend.trend === 'up' ? 'down' : trend.trend === 'down' ? 'up' : 'stable';
 			trends.push(trend);
@@ -188,19 +192,24 @@ export class QualityMetricsService {
 					m.lighthouseBestPractices,
 					m.lighthouseSeo
 				].filter(Boolean);
-				return sum + (scores.length > 0 ? scores.reduce((a, b) => a! + b!, 0)! / scores.length : 0);
+				return (
+					sum +
+					(scores.length > 0 ? scores.reduce((a, b) => a! + b!, 0)! / scores.length : 0)
+				);
 			}, 0) / metrics.length;
 
 		const avgTestSuccess =
 			metrics.reduce((sum, m) => {
-				const total = (m.testUnitTotal || 0) + (m.testIntegrationTotal || 0) + (m.testE2eTotal || 0);
+				const total =
+					(m.testUnitTotal || 0) + (m.testIntegrationTotal || 0) + (m.testE2eTotal || 0);
 				const passed =
-					(m.testUnitPassed || 0) + (m.testIntegrationPassed || 0) + (m.testE2ePassed || 0);
+					(m.testUnitPassed || 0) +
+					(m.testIntegrationPassed || 0) +
+					(m.testE2ePassed || 0);
 				return sum + (total > 0 ? (passed / total) * 100 : 100);
 			}, 0) / metrics.length;
 
-		const avgLoadTime =
-			metrics.reduce((sum, m) => sum + (m.loadTime || 0), 0) / metrics.length;
+		const avgLoadTime = metrics.reduce((sum, m) => sum + (m.loadTime || 0), 0) / metrics.length;
 
 		// Get trends count
 		const trends = await this.getQualityTrends(branch);
@@ -225,24 +234,27 @@ export class QualityMetricsService {
 	/**
 	 * Private method to get previous metrics
 	 */
-	private async getPreviousMetrics(currentId: string, branch?: string): Promise<QualityMetrics | null> {
+	private async getPreviousMetrics(
+		currentId: string,
+		branch?: string
+	): Promise<QualityMetrics | null> {
 		// Get all metrics for the branch, ordered by timestamp
 		let query = db.select().from(qualityMetrics);
-		
+
 		if (branch) {
 			query = query.where(eq(qualityMetrics.branch, branch)) as any;
 		}
-		
+
 		const allMetrics = await (query as any).orderBy(desc(qualityMetrics.timestamp));
-		
+
 		// Find the current metric index
 		const currentIndex = allMetrics.findIndex((m: QualityMetrics) => m.id === currentId);
-		
+
 		// Return the previous metric (next in descending order)
 		if (currentIndex >= 0 && currentIndex + 1 < allMetrics.length) {
 			return allMetrics[currentIndex + 1];
 		}
-		
+
 		return null;
 	}
 
