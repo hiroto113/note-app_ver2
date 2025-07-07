@@ -1,41 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../setup';
 import { posts, categories, postsToCategories, users } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
-import bcrypt from 'bcryptjs';
+import { testIsolation } from '../utils/test-isolation';
 
 describe('Database Transactions', () => {
 	let testUserId: string;
 
 	beforeEach(async () => {
-		// Clean up database
-		await testDb.delete(postsToCategories);
-		await testDb.delete(posts);
-		await testDb.delete(categories);
-		await testDb.delete(users);
-
-		// Create test user
-		const hashedPassword = await bcrypt.hash('testpass', 10);
-		const [user] = await testDb
-			.insert(users)
-			.values({
-				id: crypto.randomUUID(),
-				username: 'testuser',
-				hashedPassword,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			})
-			.returning();
-		testUserId = user.id;
+		// Database tables are already created by setup.ts
+		// Clean database and create test user
+		testUserId = await testIsolation.createTestUser();
 	});
 
 	afterEach(async () => {
-		// Clean up
-		await testDb.delete(postsToCategories);
-		await testDb.delete(posts);
-		await testDb.delete(categories);
-		await testDb.delete(users);
+		// Clean up is handled automatically by setup.ts beforeEach
+		// No additional cleanup needed here
 	});
 
 	describe('Transaction Rollback', () => {
