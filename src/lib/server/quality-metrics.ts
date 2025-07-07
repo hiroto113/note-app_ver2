@@ -1,14 +1,9 @@
 import { desc, eq, and, gte, lte } from 'drizzle-orm';
-import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
 import { qualityMetrics, type QualityMetrics, type NewQualityMetrics } from './db/schema';
-import { DATABASE_URL } from '$env/static/private';
+import { db } from './db';
 
 // Re-export types for components
 export type { QualityMetrics, NewQualityMetrics } from './db/schema';
-
-const client = createClient({ url: DATABASE_URL });
-const db = drizzle(client);
 
 export interface QualityMetricsFilters {
 	limit?: number;
