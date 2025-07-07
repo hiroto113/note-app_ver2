@@ -140,6 +140,53 @@ export const mediaRelations = relations(media, ({ one }) => ({
 	})
 }));
 
+// Quality metrics table for dashboard
+export const qualityMetrics = sqliteTable('quality_metrics', {
+	id: text('id').primaryKey(),
+	timestamp: integer('timestamp', { mode: 'timestamp' }).notNull(),
+	commitHash: text('commit_hash').notNull(),
+	branch: text('branch').notNull(),
+	
+	// Lighthouse scores
+	lighthousePerformance: integer('lighthouse_performance'),
+	lighthouseAccessibility: integer('lighthouse_accessibility'),
+	lighthouseBestPractices: integer('lighthouse_best_practices'),
+	lighthouseSeo: integer('lighthouse_seo'),
+	lighthousePwa: integer('lighthouse_pwa'),
+	
+	// Core Web Vitals
+	lcp: integer('lcp'), // Largest Contentful Paint (ms)
+	fid: integer('fid'), // First Input Delay (ms)
+	cls: integer('cls'), // Cumulative Layout Shift (x1000)
+	
+	// Test results
+	testUnitTotal: integer('test_unit_total'),
+	testUnitPassed: integer('test_unit_passed'),
+	testUnitFailed: integer('test_unit_failed'),
+	testUnitCoverage: integer('test_unit_coverage'), // percentage x100
+	testIntegrationTotal: integer('test_integration_total'),
+	testIntegrationPassed: integer('test_integration_passed'),
+	testIntegrationFailed: integer('test_integration_failed'),
+	testIntegrationCoverage: integer('test_integration_coverage'), // percentage x100
+	testE2eTotal: integer('test_e2e_total'),
+	testE2ePassed: integer('test_e2e_passed'),
+	testE2eFailed: integer('test_e2e_failed'),
+	testE2eCoverage: integer('test_e2e_coverage'), // percentage x100
+	
+	// Performance metrics
+	bundleSize: integer('bundle_size'), // bytes
+	loadTime: integer('load_time'), // ms
+	ttfb: integer('ttfb'), // Time to First Byte (ms)
+	
+	// Accessibility
+	wcagScore: integer('wcag_score'), // percentage x100
+	axeViolations: integer('axe_violations'),
+	
+	createdAt: integer('created_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date())
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -151,3 +198,5 @@ export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;
 export type Media = typeof media.$inferSelect;
 export type NewMedia = typeof media.$inferInsert;
+export type QualityMetrics = typeof qualityMetrics.$inferSelect;
+export type NewQualityMetrics = typeof qualityMetrics.$inferInsert;
