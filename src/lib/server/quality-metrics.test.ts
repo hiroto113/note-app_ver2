@@ -175,7 +175,11 @@ describe('QualityMetricsService', () => {
 			// Access private method through type assertion
 			const result = (
 				service as unknown as {
-					calculateTrend: (metric: string, current: number, previous: number) => QualityTrend;
+					calculateTrend: (
+						metric: string,
+						current: number,
+						previous: number
+					) => QualityTrend;
 				}
 			).calculateTrend('Test Metric', 90, 80);
 
@@ -190,7 +194,11 @@ describe('QualityMetricsService', () => {
 		it('should calculate downward trend correctly', () => {
 			const result = (
 				service as unknown as {
-					calculateTrend: (metric: string, current: number, previous: number) => QualityTrend;
+					calculateTrend: (
+						metric: string,
+						current: number,
+						previous: number
+					) => QualityTrend;
 				}
 			).calculateTrend('Test Metric', 70, 80);
 
@@ -202,7 +210,11 @@ describe('QualityMetricsService', () => {
 		it('should identify stable trend for small changes', () => {
 			const result = (
 				service as unknown as {
-					calculateTrend: (metric: string, current: number, previous: number) => QualityTrend;
+					calculateTrend: (
+						metric: string,
+						current: number,
+						previous: number
+					) => QualityTrend;
 				}
 			).calculateTrend('Test Metric', 81, 80);
 
@@ -211,7 +223,15 @@ describe('QualityMetricsService', () => {
 		});
 
 		it('should handle zero previous value', () => {
-			const result = (service as unknown as { calculateTrend: (metric: string, current: number, previous: number) => QualityTrend }).calculateTrend('Test Metric', 80, 0);
+			const result = (
+				service as unknown as {
+					calculateTrend: (
+						metric: string,
+						current: number,
+						previous: number
+					) => QualityTrend;
+				}
+			).calculateTrend('Test Metric', 80, 0);
 
 			expect(result.changePercent).toBe(0);
 			expect(result.trend).toBe('up');

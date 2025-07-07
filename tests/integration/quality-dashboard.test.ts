@@ -78,7 +78,15 @@ describe('Quality Dashboard Integration', () => {
 			const service = qualityMetricsService;
 
 			// Access private method for testing
-			const calculateTrend = (service as unknown as { calculateTrend: (metric: string, current: number, previous: number) => QualityTrend }).calculateTrend;
+			const calculateTrend = (
+				service as unknown as {
+					calculateTrend: (
+						metric: string,
+						current: number,
+						previous: number
+					) => QualityTrend;
+				}
+			).calculateTrend;
 
 			const trend = calculateTrend('Test Metric', 90, 85);
 

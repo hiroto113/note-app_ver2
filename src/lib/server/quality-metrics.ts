@@ -58,9 +58,7 @@ export class QualityMetricsService {
 			query = query.where(and(...conditions)) as typeof query;
 		}
 
-		const result = query
-			.orderBy(desc(qualityMetrics.timestamp))
-			.limit(filters.limit || 50);
+		const result = query.orderBy(desc(qualityMetrics.timestamp)).limit(filters.limit || 50);
 
 		return await result;
 	}
