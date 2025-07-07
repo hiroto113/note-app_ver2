@@ -85,6 +85,8 @@ This is a blog/note-taking application built with SvelteKit, featuring a full ad
 - `pnpm run migrate` - Run database migrations
 - `pnpm run seed` - Seed database with sample data
 - `pnpm run check` - Run SvelteKit sync and type checking
+- `pnpm test` - Run all tests (unit + integration)
+- `pnpm test tests/integration/` - Run integration tests only
 
 ## Database
 
@@ -215,6 +217,40 @@ This is a blog/note-taking application built with SvelteKit, featuring a full ad
 - Target Lighthouse scores: 90+ for all metrics
 - Error handling at application and component levels
 
+## Database Testing Architecture (Issue #79)
+
+The project uses a comprehensive database testing architecture designed for stability and reliability:
+
+### Test Structure
+
+- **Integration Tests**: Located in `tests/integration/`
+- **Database Tests**: Specific database operations in `tests/integration/database/`
+- **Test Utilities**: Shared utilities in `tests/integration/utils/`
+
+### Key Components
+
+1. **DatabaseManager**: Singleton pattern for connection management
+2. **TestIsolation**: Automated cleanup and test data factories
+3. **Environment Configuration**: CI/local/dev environment handling
+
+### Test Writing Guidelines
+
+```typescript
+import { testIsolation } from '../utils/test-isolation';
+
+beforeEach(async () => {
+	testUserId = await testIsolation.createTestUser();
+});
+```
+
+### Configuration
+
+- **File-based databases** for better isolation than in-memory
+- **Sequential execution** to prevent database conflicts
+- **SQLite optimizations** for performance and reliability
+
+For detailed documentation, see `tests/integration/README.md`
+
 ## Claude Code Development Rules (CRITICAL)
 
 ### Core Principles
@@ -241,6 +277,7 @@ This is a blog/note-taking application built with SvelteKit, featuring a full ad
 ### Verification Requirements
 
 - Run `pnpm run check` after code changes
+- Run `pnpm test` for database-related changes
 - Verify build succeeds before marking tasks complete
 - Test functionality after implementation
 - Check for TypeScript errors

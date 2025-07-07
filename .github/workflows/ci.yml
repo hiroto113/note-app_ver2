@@ -36,15 +36,29 @@ jobs:
       - name: Run linter
         run: pnpm run lint
 
-      - name: Setup database
-        run: pnpm run db:push
+      - name: Setup test database
+        run: |
+          # Create temporary database for CI tests
+          export TEST_DB_PATH="./ci_test_$(date +%s).db"
+          echo "TEST_DB_PATH=$TEST_DB_PATH" >> $GITHUB_ENV
+
+          # Run database migrations to create schema
+          pnpm run db:push
         env:
-          DATABASE_URL: ':memory:'
+          DATABASE_URL: 'file:./ci_test.db'
 
       - name: Run unit tests
         run: pnpm run test
         env:
-          DATABASE_URL: ':memory:'
+          DATABASE_URL: 'file:./ci_test.db'
+          TEST_DB_PATH: ${{ env.TEST_DB_PATH }}
+          NODE_ENV: test
+
+      - name: Cleanup test database
+        if: always()
+        run: |
+          rm -f ./ci_test*.db || true
+          rm -f ./test_*.db || true
 
       - name: Build project
         run: pnpm run build

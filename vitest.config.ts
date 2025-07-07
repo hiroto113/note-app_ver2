@@ -12,8 +12,19 @@ export default defineConfig({
 		watch: false,
 		testTimeout: 10000, // 10 seconds for integration tests
 		hookTimeout: 10000, // 10 seconds for setup/teardown
+		// Database test optimizations
+		fileParallelism: false, // Disable parallel test file execution for database tests
+		poolOptions: {
+			threads: {
+				singleThread: true // All tests in one thread to avoid database conflicts
+			}
+		},
+		sequence: {
+			setupFiles: 'list' // Sequential setup execution to prevent race conditions
+		},
 		env: {
-			DATABASE_URL: ':memory:'
+			DATABASE_URL: 'file:./test.db',
+			NODE_ENV: 'test'
 		},
 		coverage: {
 			provider: 'v8',
