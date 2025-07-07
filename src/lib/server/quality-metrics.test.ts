@@ -50,10 +50,10 @@ describe('QualityMetricsService', () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const calculateTrend = (service as any).calculateTrend;
-			
+
 			if (typeof calculateTrend === 'function') {
 				const trend: QualityTrend = calculateTrend('Test Metric', 90, 80);
-				
+
 				expect(trend.metric).toBe('Test Metric');
 				expect(trend.current).toBe(90);
 				expect(trend.previous).toBe(80);
@@ -66,10 +66,10 @@ describe('QualityMetricsService', () => {
 		it('should calculate stable trend correctly', () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const calculateTrend = (service as any).calculateTrend;
-			
+
 			if (typeof calculateTrend === 'function') {
 				const trend: QualityTrend = calculateTrend('Test Metric', 81, 80);
-				
+
 				expect(trend.trend).toBe('stable');
 				expect(trend.changePercent).toBe(1.25);
 			}
@@ -78,10 +78,10 @@ describe('QualityMetricsService', () => {
 		it('should calculate downward trend correctly', () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const calculateTrend = (service as any).calculateTrend;
-			
+
 			if (typeof calculateTrend === 'function') {
 				const trend: QualityTrend = calculateTrend('Test Metric', 70, 80);
-				
+
 				expect(trend.trend).toBe('down');
 				expect(trend.change).toBe(-10);
 				expect(trend.changePercent).toBe(-12.5);
@@ -91,10 +91,10 @@ describe('QualityMetricsService', () => {
 		it('should handle zero previous value', () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const calculateTrend = (service as any).calculateTrend;
-			
+
 			if (typeof calculateTrend === 'function') {
 				const trend: QualityTrend = calculateTrend('Test Metric', 80, 0);
-				
+
 				expect(trend.changePercent).toBe(0);
 				expect(trend.trend).toBe('up');
 			}
@@ -155,12 +155,12 @@ describe('QualityMetricsService', () => {
 		it('should validate trend threshold logic', () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const calculateTrend = (service as any).calculateTrend;
-			
+
 			if (typeof calculateTrend === 'function') {
 				// Test 2% threshold for significant change
 				const smallChange = calculateTrend('Test', 101, 100); // 1% change
 				const largeChange = calculateTrend('Test', 103, 100); // 3% change
-				
+
 				expect(smallChange.trend).toBe('stable');
 				expect(largeChange.trend).toBe('up');
 			}
@@ -178,7 +178,7 @@ describe('QualityMetricsService', () => {
 
 			const change = sizeMetric.current - sizeMetric.previous; // -100
 			const isImprovement = sizeMetric.isReversed ? change < 0 : change > 0;
-			
+
 			expect(change).toBe(-100);
 			expect(isImprovement).toBe(true);
 		});
