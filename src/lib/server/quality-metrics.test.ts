@@ -19,16 +19,17 @@ import { QualityMetricsService, type QualityTrend } from './quality-metrics';
 import { db } from './db';
 
 let service: QualityMetricsService;
-let mockDb: typeof db;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let mockDb: any;
 
 describe('QualityMetricsService', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		service = new QualityMetricsService();
-		mockDb = vi.mocked(db, true);
+		mockDb = db as any;
 
 		// Setup mock chain for query builder pattern
-		mockDb.insert.mockReturnValue({
+		(mockDb.insert as any).mockReturnValue({
 			values: vi.fn().mockReturnValue({
 				returning: vi.fn().mockResolvedValue([
 					{
@@ -41,7 +42,7 @@ describe('QualityMetricsService', () => {
 			})
 		});
 
-		mockDb.select.mockReturnValue({
+		(mockDb.select as any).mockReturnValue({
 			from: vi.fn().mockReturnValue({
 				where: vi.fn().mockReturnThis(),
 				orderBy: vi.fn().mockReturnThis(),
@@ -97,7 +98,7 @@ describe('QualityMetricsService', () => {
 		});
 
 		it('should return latest metrics for branch', async () => {
-			mockDb.select.mockReturnValue({
+			(mockDb.select as any).mockReturnValue({
 				from: vi.fn().mockReturnValue({
 					where: vi.fn().mockReturnValue({
 						orderBy: vi.fn().mockReturnValue({
