@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../setup';
-import { posts, categories, postsToCategories, users } from '$lib/server/db/schema';
+import { posts, categories, postsToCategories } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { testIsolation } from '../utils/test-isolation';
 
@@ -51,7 +51,7 @@ describe('Database Transactions', () => {
 						updatedAt: new Date()
 					});
 				});
-			} catch (error) {
+			} catch {
 				// Transaction should have rolled back
 			}
 
@@ -104,7 +104,7 @@ describe('Database Transactions', () => {
 						updatedAt: new Date()
 					});
 				});
-			} catch (error) {
+			} catch {
 				// Expected to fail
 			}
 
@@ -398,7 +398,7 @@ describe('Database Transactions', () => {
 						updatedAt: new Date()
 					});
 				});
-			} catch (error) {
+			} catch {
 				// Expected to fail
 			}
 

@@ -152,7 +152,7 @@ async function initializeDatabase() {
 	try {
 		await db.run(`SELECT 1 FROM posts_to_categories LIMIT 0`);
 		console.log('posts_to_categories table verified');
-	} catch (error) {
+	} catch {
 		console.error('posts_to_categories table is missing after setup!');
 		// Try to create it manually if it's missing
 		await db.run(`CREATE TABLE IF NOT EXISTS posts_to_categories (
@@ -269,7 +269,7 @@ beforeEach(async () => {
 		for (const table of tables) {
 			try {
 				await db.run(`DELETE FROM ${table}`);
-			} catch (e) {
+			} catch {
 				console.log(`Table ${table} not found, skipping cleanup`);
 			}
 		}

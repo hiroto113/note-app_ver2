@@ -56,10 +56,10 @@ export function getDatabaseConfig(): DatabaseConfig {
 /**
  * Check if current environment supports file-based databases
  */
-export function supportsFileDatabase(): boolean {
+export async function supportsFileDatabase(): Promise<boolean> {
 	try {
 		// Check if we can write to current directory
-		const fs = require('fs');
+		const fs = await import('fs');
 		const testFile = './db_write_test.tmp';
 		fs.writeFileSync(testFile, 'test');
 		fs.unlinkSync(testFile);
