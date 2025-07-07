@@ -64,7 +64,7 @@ export class TestIsolation {
 				}
 			} catch (error) {
 				// Table might not exist, which is fine
-				if (!error.message.includes('no such table')) {
+				if (error instanceof Error && !error.message.includes('no such table')) {
 					throw error;
 				}
 			}

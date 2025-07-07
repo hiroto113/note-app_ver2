@@ -8,7 +8,7 @@ import * as schema from '../../../src/lib/server/db/schema';
  */
 export class TransactionTestIsolation {
 	private transaction: any = null;
-	private db: LibSQLDatabase<typeof schema>;
+	private db: ReturnType<typeof getTestDb>;
 
 	constructor() {
 		this.db = getTestDb();
