@@ -1,13 +1,11 @@
 import { getTestDb } from '../setup';
-import type { LibSQLDatabase } from 'drizzle-orm/libsql';
-import * as schema from '../../../src/lib/server/db/schema';
 
 /**
  * Transaction-based test isolation utility
  * Provides automatic rollback functionality for database tests
  */
 export class TransactionTestIsolation {
-	private transaction: any = null;
+	private transaction: unknown = null;
 	private db: ReturnType<typeof getTestDb>;
 
 	constructor() {
@@ -73,7 +71,7 @@ export class TransactionTestIsolation {
 /**
  * Helper function to run a test within a transaction that automatically rolls back
  */
-export async function withTransaction<T>(testFn: (tx: any) => Promise<T>): Promise<T> {
+export async function withTransaction<T>(testFn: (tx: unknown) => Promise<T>): Promise<T> {
 	const db = getTestDb();
 	let result: T;
 
