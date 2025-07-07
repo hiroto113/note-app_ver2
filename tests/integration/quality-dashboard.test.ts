@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { qualityMetricsService } from '$lib/server/quality-metrics';
+import { qualityMetricsService, type QualityTrend } from '$lib/server/quality-metrics';
 import type { NewQualityMetrics } from '$lib/server/db/schema';
 
 // Integration test for quality dashboard functionality
@@ -42,7 +42,7 @@ describe('Quality Dashboard Integration', () => {
 		try {
 			// Note: In a real integration test, you would clean the test database
 			// For now, we'll just ensure we have fresh state
-		} catch (error) {
+		} catch {
 			// Ignore cleanup errors
 		}
 	});
@@ -51,7 +51,7 @@ describe('Quality Dashboard Integration', () => {
 		// Clean up test data
 		try {
 			// Note: In a real integration test, you would clean the test database
-		} catch (error) {
+		} catch {
 			// Ignore cleanup errors
 		}
 	});
@@ -78,7 +78,7 @@ describe('Quality Dashboard Integration', () => {
 			const service = qualityMetricsService;
 
 			// Access private method for testing
-			const calculateTrend = (service as any).calculateTrend;
+			const calculateTrend = (service as unknown as { calculateTrend: (metric: string, current: number, previous: number) => QualityTrend }).calculateTrend;
 
 			const trend = calculateTrend('Test Metric', 90, 85);
 

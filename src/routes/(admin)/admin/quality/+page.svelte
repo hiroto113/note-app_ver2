@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import MetricCard from '$lib/components/admin/MetricCard.svelte';
 	import TrendChart from '$lib/components/admin/TrendChart.svelte';
 	import QualityOverview from '$lib/components/admin/QualityOverview.svelte';

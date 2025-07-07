@@ -55,10 +55,10 @@ export class QualityMetricsService {
 		}
 
 		if (conditions.length > 0) {
-			query = query.where(and(...conditions)) as any;
+			query = query.where(and(...conditions));
 		}
 
-		const result = (query as any)
+		const result = query
 			.orderBy(desc(qualityMetrics.timestamp))
 			.limit(filters.limit || 50);
 
@@ -72,10 +72,10 @@ export class QualityMetricsService {
 		let query = db.select().from(qualityMetrics);
 
 		if (branch) {
-			query = query.where(eq(qualityMetrics.branch, branch)) as any;
+			query = query.where(eq(qualityMetrics.branch, branch));
 		}
 
-		const result = await (query as any).orderBy(desc(qualityMetrics.timestamp)).limit(1);
+		const result = await query.orderBy(desc(qualityMetrics.timestamp)).limit(1);
 
 		return result[0] || null;
 	}
@@ -237,10 +237,10 @@ export class QualityMetricsService {
 		let query = db.select().from(qualityMetrics);
 
 		if (branch) {
-			query = query.where(eq(qualityMetrics.branch, branch)) as any;
+			query = query.where(eq(qualityMetrics.branch, branch));
 		}
 
-		const allMetrics = await (query as any).orderBy(desc(qualityMetrics.timestamp));
+		const allMetrics = await query.orderBy(desc(qualityMetrics.timestamp));
 
 		// Find the current metric index
 		const currentIndex = allMetrics.findIndex((m: QualityMetrics) => m.id === currentId);

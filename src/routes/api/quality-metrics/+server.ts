@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { qualityMetricsService } from '$lib/server/quality-metrics';
+import { qualityMetricsService, type QualityMetricsFilters } from '$lib/server/quality-metrics';
 
 export const GET: RequestHandler = async ({ url }) => {
 	try {
@@ -9,7 +9,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		const startDate = url.searchParams.get('startDate');
 		const endDate = url.searchParams.get('endDate');
 
-		const filters: any = { branch, limit };
+		const filters: QualityMetricsFilters = { branch, limit };
 
 		if (startDate && endDate) {
 			filters.dateRange = {
