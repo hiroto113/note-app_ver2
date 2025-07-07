@@ -15,11 +15,13 @@ AssertionError: expected 'CREATE TABLE `posts` ...' to contain 'UNIQUE'
 ```
 
 **Failing Tests:**
+
 - Index verification on `posts_to_categories` table (2 tests)
 - Unique constraint verification on `posts` table slug column (2 tests)
 
 **Root Cause:**
 The current database schema is missing:
+
 1. Indexes on the `posts_to_categories` junction table
 2. UNIQUE constraint on the `posts.slug` column
 
@@ -32,21 +34,22 @@ The current database schema is missing:
 ## Solution Requirements
 
 1. **Schema Updates:**
-   - Add indexes to `posts_to_categories` table for `post_id` and `category_id`
-   - Add UNIQUE constraint to `posts.slug` column
-   - Review and add any other missing constraints
+    - Add indexes to `posts_to_categories` table for `post_id` and `category_id`
+    - Add UNIQUE constraint to `posts.slug` column
+    - Review and add any other missing constraints
 
 2. **Migration Files:**
-   - Create new migration to add missing indexes and constraints
-   - Ensure migrations are idempotent and safe to run
+    - Create new migration to add missing indexes and constraints
+    - Ensure migrations are idempotent and safe to run
 
 3. **Test Validation:**
-   - Verify all migration tests pass after schema updates
-   - Ensure no performance regression from new indexes
+    - Verify all migration tests pass after schema updates
+    - Ensure no performance regression from new indexes
 
 ## Technical Details
 
 **Affected Files:**
+
 - `src/lib/server/db/schema.ts`
 - `drizzle/` migration files
 - `tests/integration/database/migrations.test.ts`

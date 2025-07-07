@@ -159,7 +159,8 @@ describe('Database Migrations', () => {
 			const postsInfo = await testDb.all(
 				sql`SELECT sql FROM sqlite_master WHERE type='table' AND name='posts'`
 			);
-			const hasPostsUnique = postsUniqueIndex.length > 0 || (postsInfo[0] as any).sql.includes('UNIQUE');
+			const hasPostsUnique =
+				postsUniqueIndex.length > 0 || (postsInfo[0] as any).sql.includes('UNIQUE');
 			expect(hasPostsUnique).toBe(true);
 
 			// Check categories slug and name uniqueness
@@ -169,7 +170,9 @@ describe('Database Migrations', () => {
 			const categoriesInfo = await testDb.all(
 				sql`SELECT sql FROM sqlite_master WHERE type='table' AND name='categories'`
 			);
-			const hasCategoriesUnique = categoriesUniqueIndex.length > 0 || (categoriesInfo[0] as any).sql.includes('UNIQUE');
+			const hasCategoriesUnique =
+				categoriesUniqueIndex.length > 0 ||
+				(categoriesInfo[0] as any).sql.includes('UNIQUE');
 			expect(hasCategoriesUnique).toBe(true);
 
 			// Check users username uniqueness
@@ -179,7 +182,8 @@ describe('Database Migrations', () => {
 			const usersInfo = await testDb.all(
 				sql`SELECT sql FROM sqlite_master WHERE type='table' AND name='users'`
 			);
-			const hasUsersUnique = usersUniqueIndex.length > 0 || (usersInfo[0] as any).sql.includes('UNIQUE');
+			const hasUsersUnique =
+				usersUniqueIndex.length > 0 || (usersInfo[0] as any).sql.includes('UNIQUE');
 			expect(hasUsersUnique).toBe(true);
 		});
 
