@@ -1,19 +1,20 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import type { NewQualityMetrics } from './db/schema';
 
-// Mock the drizzle database - create mock factory function
-vi.mock('./db', () => {
-	const mockDb = {
-		insert: vi.fn(),
-		select: vi.fn(),
-		where: vi.fn(),
-		orderBy: vi.fn(),
-		limit: vi.fn(),
-		returning: vi.fn(),
-		values: vi.fn()
-	};
+// Mock the drizzle database using 2025 best practices
+vi.mock('./db', async (importOriginal) => {
+	const actual = await importOriginal();
 	return {
-		db: mockDb
+		...actual,
+		db: {
+			insert: vi.fn(),
+			select: vi.fn(),
+			where: vi.fn(),
+			orderBy: vi.fn(),
+			limit: vi.fn(),
+			returning: vi.fn(),
+			values: vi.fn()
+		}
 	};
 });
 
@@ -22,21 +23,13 @@ import { QualityMetricsService, type QualityTrend } from './quality-metrics';
 import { db } from './db';
 
 let service: QualityMetricsService;
-let mockDb: {
-	insert: ReturnType<typeof vi.fn>;
-	select: ReturnType<typeof vi.fn>;
-	where: ReturnType<typeof vi.fn>;
-	orderBy: ReturnType<typeof vi.fn>;
-	limit: ReturnType<typeof vi.fn>;
-	returning: ReturnType<typeof vi.fn>;
-	values: ReturnType<typeof vi.fn>;
-};
+let mockDb: any;
 
 describe('QualityMetricsService', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		service = new QualityMetricsService();
-		mockDb = db;
+		mockDb = vi.mocked(db);
 
 		// Setup mock chain for query builder pattern
 		mockDb.insert.mockReturnValue({
@@ -62,7 +55,7 @@ describe('QualityMetricsService', () => {
 	});
 
 	afterEach(() => {
-		vi.clearAllMocks();
+		vi.restoreAllMocks();
 	});
 
 	describe('saveMetrics', () => {
