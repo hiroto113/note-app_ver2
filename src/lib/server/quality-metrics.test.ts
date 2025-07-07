@@ -22,7 +22,15 @@ import { QualityMetricsService, type QualityTrend } from './quality-metrics';
 import { db } from './db';
 
 let service: QualityMetricsService;
-let mockDb: any;
+let mockDb: {
+	insert: ReturnType<typeof vi.fn>;
+	select: ReturnType<typeof vi.fn>;
+	where: ReturnType<typeof vi.fn>;
+	orderBy: ReturnType<typeof vi.fn>;
+	limit: ReturnType<typeof vi.fn>;
+	returning: ReturnType<typeof vi.fn>;
+	values: ReturnType<typeof vi.fn>;
+};
 
 describe('QualityMetricsService', () => {
 	beforeEach(() => {
