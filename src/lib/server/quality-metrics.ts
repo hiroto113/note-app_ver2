@@ -55,7 +55,7 @@ export class QualityMetricsService {
 		}
 
 		if (conditions.length > 0) {
-			query = query.where(and(...conditions));
+			query = query.where(and(...conditions)) as typeof query;
 		}
 
 		const result = query
@@ -72,7 +72,7 @@ export class QualityMetricsService {
 		let query = db.select().from(qualityMetrics);
 
 		if (branch) {
-			query = query.where(eq(qualityMetrics.branch, branch));
+			query = query.where(eq(qualityMetrics.branch, branch)) as typeof query;
 		}
 
 		const result = await query.orderBy(desc(qualityMetrics.timestamp)).limit(1);
@@ -237,7 +237,7 @@ export class QualityMetricsService {
 		let query = db.select().from(qualityMetrics);
 
 		if (branch) {
-			query = query.where(eq(qualityMetrics.branch, branch));
+			query = query.where(eq(qualityMetrics.branch, branch)) as typeof query;
 		}
 
 		const allMetrics = await query.orderBy(desc(qualityMetrics.timestamp));
