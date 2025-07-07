@@ -2,21 +2,17 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import type { NewQualityMetrics } from './db/schema';
 
 // Mock the drizzle database using 2025 best practices
-vi.mock('./db', async (importOriginal) => {
-	const actual = await importOriginal();
-	return {
-		...actual,
-		db: {
-			insert: vi.fn(),
-			select: vi.fn(),
-			where: vi.fn(),
-			orderBy: vi.fn(),
-			limit: vi.fn(),
-			returning: vi.fn(),
-			values: vi.fn()
-		}
-	};
-});
+vi.mock('./db', () => ({
+	db: {
+		insert: vi.fn(),
+		select: vi.fn(),
+		where: vi.fn(),
+		orderBy: vi.fn(),
+		limit: vi.fn(),
+		returning: vi.fn(),
+		values: vi.fn()
+	}
+}));
 
 // Now import the service after mocking
 import { QualityMetricsService, type QualityTrend } from './quality-metrics';
