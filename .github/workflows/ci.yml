@@ -41,7 +41,7 @@ jobs:
           # Create temporary database for CI tests
           export TEST_DB_PATH="./ci_test_$(date +%s).db"
           echo "TEST_DB_PATH=$TEST_DB_PATH" >> $GITHUB_ENV
-          
+
           # Run database migrations to create schema
           pnpm run db:push
         env:

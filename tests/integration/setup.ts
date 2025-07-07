@@ -28,21 +28,22 @@ class DatabaseManager {
 			// Use environment-optimized database configuration
 			const databaseUrl = getOptimalDatabaseUrl();
 			const config = getDatabaseConfig();
-			
+
 			this._client = createClient({
 				url: databaseUrl,
 				// Configure for better concurrency and performance
-				...(databaseUrl !== ':memory:' && {
-					// Enable WAL mode for better concurrency (file databases only)
-					// Note: This is handled at the SQL level after connection
-				})
+				...(databaseUrl !== ':memory:' &&
+					{
+						// Enable WAL mode for better concurrency (file databases only)
+						// Note: This is handled at the SQL level after connection
+					})
 			});
-			
+
 			// Store the path for cleanup if it's a file database
 			if (config.isTemporary && databaseUrl.startsWith('file:')) {
 				this._dbPath = databaseUrl.replace('file:', '');
 			}
-			
+
 			console.log(`Database initialized: ${databaseUrl} (cleanup: ${config.cleanup})`);
 		}
 		return this._client;
@@ -69,7 +70,7 @@ class DatabaseManager {
 			this._client = null;
 			this._db = null;
 			this._isInitialized = false;
-			
+
 			// Clean up database file based on environment configuration
 			const config = getDatabaseConfig();
 			if (config.cleanup && this._dbPath && existsSync(this._dbPath)) {
@@ -119,7 +120,7 @@ async function initializeDatabase() {
 	}
 
 	const db = getTestDb();
-	
+
 	// テスト開始前の初期化
 	console.log('Setting up integration tests...');
 
@@ -146,7 +147,7 @@ async function initializeDatabase() {
 		// フォールバック: 手動でテーブルを作成
 		await createTablesManually();
 	}
-	
+
 	// Verify that all tables exist
 	try {
 		await db.run(`SELECT 1 FROM posts_to_categories LIMIT 0`);
@@ -254,7 +255,7 @@ afterAll(async () => {
 beforeEach(async () => {
 	// データベースが初期化されていない場合は初期化
 	await initializeDatabase();
-	
+
 	// テスト分離ユーティリティを使用してクリーンアップ
 	try {
 		const { testIsolation } = await import('./utils/test-isolation');

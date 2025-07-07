@@ -1,5 +1,12 @@
 import { getTestDb } from '../setup';
-import { posts, categories, postsToCategories, users, sessions, media } from '../../../src/lib/server/db/schema';
+import {
+	posts,
+	categories,
+	postsToCategories,
+	users,
+	sessions,
+	media
+} from '../../../src/lib/server/db/schema';
 
 /**
  * Test isolation utility for database tests
@@ -20,7 +27,7 @@ export class TestIsolation {
 			const tables = [
 				'posts_to_categories',
 				'media',
-				'sessions', 
+				'sessions',
 				'posts',
 				'categories',
 				'users'
@@ -36,7 +43,9 @@ export class TestIsolation {
 			}
 
 			// Reset sequences for autoincrement columns
-			await this.db.run(`DELETE FROM sqlite_sequence WHERE name IN ('posts', 'categories', 'media')`);
+			await this.db.run(
+				`DELETE FROM sqlite_sequence WHERE name IN ('posts', 'categories', 'media')`
+			);
 		} finally {
 			// Re-enable foreign key checks
 			await this.db.run('PRAGMA foreign_keys = ON');
@@ -60,7 +69,9 @@ export class TestIsolation {
 			try {
 				const count = await this.db.select().from(table.schema);
 				if (count.length > 0) {
-					throw new Error(`Table ${table.name} is not clean: contains ${count.length} rows`);
+					throw new Error(
+						`Table ${table.name} is not clean: contains ${count.length} rows`
+					);
 				}
 			} catch (error) {
 				// Table might not exist, which is fine
@@ -77,10 +88,12 @@ export class TestIsolation {
 	async createTestUser(userData?: Partial<typeof users.$inferInsert>): Promise<string> {
 		const bcrypt = await import('bcryptjs');
 		const hashedPassword = await bcrypt.hash(userData?.hashedPassword || 'testpass', 10);
-		
+
 		// Generate unique username to avoid conflicts
-		const uniqueUsername = userData?.username || `testuser_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
-		
+		const uniqueUsername =
+			userData?.username ||
+			`testuser_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+
 		const [user] = await this.db
 			.insert(users)
 			.values({
@@ -92,14 +105,16 @@ export class TestIsolation {
 				username: uniqueUsername // Ensure uniqueUsername takes precedence
 			})
 			.returning();
-			
+
 		return user.id;
 	}
 
 	/**
 	 * Create a test category and return the ID
 	 */
-	async createTestCategory(categoryData?: Partial<typeof categories.$inferInsert>): Promise<number> {
+	async createTestCategory(
+		categoryData?: Partial<typeof categories.$inferInsert>
+	): Promise<number> {
 		const [category] = await this.db
 			.insert(categories)
 			.values({
@@ -110,16 +125,19 @@ export class TestIsolation {
 				...categoryData
 			})
 			.returning();
-			
+
 		return category.id;
 	}
 
 	/**
 	 * Create a test post and return the ID
 	 */
-	async createTestPost(postData?: Partial<typeof posts.$inferInsert>, userId?: string): Promise<number> {
-		const testUserId = userId || await this.createTestUser();
-		
+	async createTestPost(
+		postData?: Partial<typeof posts.$inferInsert>,
+		userId?: string
+	): Promise<number> {
+		const testUserId = userId || (await this.createTestUser());
+
 		const [post] = await this.db
 			.insert(posts)
 			.values({
@@ -133,7 +151,7 @@ export class TestIsolation {
 				...postData
 			})
 			.returning();
-			
+
 		return post.id;
 	}
 

@@ -22,7 +22,7 @@ export class TransactionTestIsolation {
 		if (this.transaction) {
 			await this.rollback();
 		}
-		
+
 		// Start new transaction
 		this.transaction = await this.db.transaction(async (tx) => {
 			// Return the transaction object for later use
@@ -73,9 +73,7 @@ export class TransactionTestIsolation {
 /**
  * Helper function to run a test within a transaction that automatically rolls back
  */
-export async function withTransaction<T>(
-	testFn: (tx: any) => Promise<T>
-): Promise<T> {
+export async function withTransaction<T>(testFn: (tx: any) => Promise<T>): Promise<T> {
 	const db = getTestDb();
 	let result: T;
 
