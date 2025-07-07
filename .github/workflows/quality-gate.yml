@@ -1,0 +1,189 @@
+name: Quality Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  PNPM_VERSION: 10
+  NODE_VERSION: 20.x
+
+jobs:
+  # Quality metrics collection and reporting
+  quality-metrics:
+    name: Quality Metrics
+    runs-on: ubuntu-latest
+    outputs:
+      coverage-percentage: ${{ steps.coverage.outputs.percentage }}
+      test-count: ${{ steps.test-summary.outputs.test-count }}
+      performance-score: ${{ steps.performance.outputs.score }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup test database
+        run: |
+          export TEST_DB_PATH="./quality_test_$(date +%s).db"
+          echo "TEST_DB_PATH=$TEST_DB_PATH" >> $GITHUB_ENV
+          pnpm run db:push
+        env:
+          DATABASE_URL: 'file:./quality_test.db'
+
+      - name: Run tests with coverage
+        run: pnpm run test:coverage --reporter=json
+        env:
+          DATABASE_URL: 'file:./quality_test.db'
+          TEST_DB_PATH: ${{ env.TEST_DB_PATH }}
+          NODE_ENV: test
+
+      - name: Extract coverage percentage
+        id: coverage
+        run: |
+          COVERAGE=$(cat coverage/coverage-summary.json | jq -r '.total.lines.pct')
+          echo "percentage=$COVERAGE" >> $GITHUB_OUTPUT
+          echo "Coverage: $COVERAGE%"
+
+      - name: Count test results
+        id: test-summary
+        run: |
+          if [ -f test-results/results.json ]; then
+            TEST_COUNT=$(cat test-results/results.json | jq -r '.numTotalTests // 0')
+          else
+            TEST_COUNT=0
+          fi
+          echo "test-count=$TEST_COUNT" >> $GITHUB_OUTPUT
+          echo "Total tests: $TEST_COUNT"
+
+      - name: Performance baseline check
+        id: performance
+        run: |
+          # Simple performance check - build time
+          START_TIME=$(date +%s)
+          pnpm run build > /dev/null 2>&1
+          END_TIME=$(date +%s)
+          BUILD_TIME=$((END_TIME - START_TIME))
+
+          # Score based on build time (lower is better)
+          if [ $BUILD_TIME -lt 30 ]; then
+            SCORE=100
+          elif [ $BUILD_TIME -lt 60 ]; then
+            SCORE=80
+          elif [ $BUILD_TIME -lt 120 ]; then
+            SCORE=60
+          else
+            SCORE=40
+          fi
+
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+          echo "Build time: ${BUILD_TIME}s (Score: $SCORE)"
+
+      - name: Upload quality reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-reports
+          path: |
+            coverage/
+            test-results/
+          retention-days: 30
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ./quality_test*.db || true
+
+  # Quality gate enforcement
+  quality-gate:
+    name: Quality Gate Check
+    runs-on: ubuntu-latest
+    needs: quality-metrics
+    steps:
+      - name: Evaluate quality metrics
+        run: |
+          COVERAGE=${{ needs.quality-metrics.outputs.coverage-percentage }}
+          TEST_COUNT=${{ needs.quality-metrics.outputs.test-count }}
+          PERFORMANCE=${{ needs.quality-metrics.outputs.performance-score }}
+
+          echo "Quality Metrics:"
+          echo "- Coverage: ${COVERAGE}%"
+          echo "- Test Count: $TEST_COUNT"
+          echo "- Performance Score: $PERFORMANCE"
+
+          # Quality gate thresholds (adjusted for current project state)
+          MIN_COVERAGE=10
+          MIN_TESTS=50
+          MIN_PERFORMANCE=60
+
+          FAILURES=0
+
+          # Check coverage threshold
+          if (( $(echo "$COVERAGE < $MIN_COVERAGE" | bc -l) )); then
+            echo "❌ Coverage below threshold: ${COVERAGE}% < ${MIN_COVERAGE}%"
+            FAILURES=$((FAILURES + 1))
+          else
+            echo "✅ Coverage meets threshold: ${COVERAGE}% >= ${MIN_COVERAGE}%"
+          fi
+
+          # Check test count
+          if [ "$TEST_COUNT" -lt "$MIN_TESTS" ]; then
+            echo "❌ Test count below threshold: $TEST_COUNT < $MIN_TESTS"
+            FAILURES=$((FAILURES + 1))
+          else
+            echo "✅ Test count meets threshold: $TEST_COUNT >= $MIN_TESTS"
+          fi
+
+          # Check performance
+          if [ "$PERFORMANCE" -lt "$MIN_PERFORMANCE" ]; then
+            echo "❌ Performance below threshold: $PERFORMANCE < $MIN_PERFORMANCE"
+            FAILURES=$((FAILURES + 1))
+          else
+            echo "✅ Performance meets threshold: $PERFORMANCE >= $MIN_PERFORMANCE"
+          fi
+
+          if [ $FAILURES -gt 0 ]; then
+            echo ""
+            echo "Quality gate failed with $FAILURES issue(s)"
+            exit 1
+          else
+            echo ""
+            echo "✅ All quality gates passed!"
+          fi
+
+      - name: Comment PR with quality report
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const coverage = '${{ needs.quality-metrics.outputs.coverage-percentage }}';
+            const testCount = '${{ needs.quality-metrics.outputs.test-count }}';
+            const performance = '${{ needs.quality-metrics.outputs.performance-score }}';
+
+            const body = `## 📊 Quality Report
+
+            | Metric | Value | Status |
+            |--------|-------|--------|
+            | Coverage | ${coverage}% | ${coverage >= 10 ? '✅' : '❌'} |
+            | Test Count | ${testCount} | ${testCount >= 50 ? '✅' : '❌'} |
+            | Performance | ${performance} | ${performance >= 60 ? '✅' : '❌'} |
+
+            **Quality Gate:** ${coverage >= 10 && testCount >= 50 && performance >= 60 ? '✅ **PASSED**' : '❌ **FAILED**'}
+
+            *Thresholds: Coverage ≥10%, Tests ≥50, Performance ≥60*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });

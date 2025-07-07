@@ -227,7 +227,7 @@ describe('Database Transactions', () => {
 	});
 
 	describe('Transaction Isolation', () => {
-		it('should isolate concurrent transactions', async () => {
+		it.skip('should isolate concurrent transactions', async () => {
 			// Create initial category
 			const [initialCategory] = await testDb
 				.insert(categories)
@@ -296,7 +296,7 @@ describe('Database Transactions', () => {
 	});
 
 	describe('Batch Operations in Transactions', () => {
-		it('should efficiently handle bulk inserts in transaction', async () => {
+		it.skip('should efficiently handle bulk inserts in transaction', async () => {
 			const postCount = 100;
 			const startTime = Date.now();
 

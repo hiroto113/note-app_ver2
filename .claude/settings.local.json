@@ -37,7 +37,8 @@
 			"Bash(gh workflow:*)",
 			"Bash(find:*)",
 			"Bash(pnpm prettier:*)",
-			"Bash(sqlite3:*)"
+			"Bash(sqlite3:*)",
+			"Bash(pnpm:*)"
 		],
 		"deny": []
 	}

@@ -1,0 +1,214 @@
+name: Performance Monitor
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Run performance tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+env:
+  PNPM_VERSION: 10
+  NODE_VERSION: 20.x
+
+jobs:
+  performance-baseline:
+    name: Performance Baseline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build performance test
+        run: |
+          echo "🔧 Starting build performance test..."
+          START_TIME=$(date +%s%3N)
+          pnpm run build
+          END_TIME=$(date +%s%3N)
+          BUILD_TIME=$((END_TIME - START_TIME))
+
+          echo "BUILD_TIME_MS=$BUILD_TIME" >> $GITHUB_ENV
+          echo "📊 Build completed in ${BUILD_TIME}ms"
+
+      - name: Test execution performance
+        run: |
+          echo "🧪 Starting test execution performance..."
+          START_TIME=$(date +%s%3N)
+
+          # Setup test database
+          export TEST_DB_PATH="./perf_test_$(date +%s).db"
+          pnpm run db:push
+
+          # Run tests
+          pnpm run test --reporter=json > test-results.json
+
+          END_TIME=$(date +%s%3N)
+          TEST_TIME=$((END_TIME - START_TIME))
+
+          echo "TEST_TIME_MS=$TEST_TIME" >> $GITHUB_ENV
+          echo "📊 Tests completed in ${TEST_TIME}ms"
+
+          # Cleanup
+          rm -f ./perf_test*.db || true
+        env:
+          DATABASE_URL: 'file:./perf_test.db'
+          NODE_ENV: test
+
+      - name: Bundle size analysis
+        run: |
+          echo "📦 Analyzing bundle size..."
+
+          # Get build output size
+          if [ -d "build" ]; then
+            BUNDLE_SIZE=$(du -sb build/ | cut -f1)
+            BUNDLE_SIZE_KB=$((BUNDLE_SIZE / 1024))
+            echo "BUNDLE_SIZE_KB=$BUNDLE_SIZE_KB" >> $GITHUB_ENV
+            echo "📊 Bundle size: ${BUNDLE_SIZE_KB}KB"
+          else
+            echo "BUNDLE_SIZE_KB=0" >> $GITHUB_ENV
+            echo "⚠️ No build directory found"
+          fi
+
+      - name: Generate performance report
+        run: |
+          echo "📊 Performance Report" > performance-report.md
+          echo "===================" >> performance-report.md
+          echo "" >> performance-report.md
+          echo "**Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> performance-report.md
+          echo "**Commit:** ${{ github.sha }}" >> performance-report.md
+          echo "" >> performance-report.md
+          echo "## Metrics" >> performance-report.md
+          echo "" >> performance-report.md
+          echo "| Metric | Value | Status |" >> performance-report.md
+          echo "|--------|-------|--------|" >> performance-report.md
+
+          # Build time status
+          if [ "$BUILD_TIME_MS" -lt 30000 ]; then
+            BUILD_STATUS="✅ Excellent"
+          elif [ "$BUILD_TIME_MS" -lt 60000 ]; then
+            BUILD_STATUS="🟡 Good"
+          else
+            BUILD_STATUS="🔴 Slow"
+          fi
+          echo "| Build Time | ${BUILD_TIME_MS}ms | $BUILD_STATUS |" >> performance-report.md
+
+          # Test time status
+          if [ "$TEST_TIME_MS" -lt 10000 ]; then
+            TEST_STATUS="✅ Fast"
+          elif [ "$TEST_TIME_MS" -lt 30000 ]; then
+            TEST_STATUS="🟡 Moderate"
+          else
+            TEST_STATUS="🔴 Slow"
+          fi
+          echo "| Test Time | ${TEST_TIME_MS}ms | $TEST_STATUS |" >> performance-report.md
+
+          # Bundle size status
+          if [ "$BUNDLE_SIZE_KB" -lt 500 ]; then
+            BUNDLE_STATUS="✅ Small"
+          elif [ "$BUNDLE_SIZE_KB" -lt 1000 ]; then
+            BUNDLE_STATUS="🟡 Medium"
+          else
+            BUNDLE_STATUS="🔴 Large"
+          fi
+          echo "| Bundle Size | ${BUNDLE_SIZE_KB}KB | $BUNDLE_STATUS |" >> performance-report.md
+
+          echo "" >> performance-report.md
+          echo "## Thresholds" >> performance-report.md
+          echo "" >> performance-report.md
+          echo "- Build Time: <30s (Excellent), <60s (Good), ≥60s (Slow)" >> performance-report.md
+          echo "- Test Time: <10s (Fast), <30s (Moderate), ≥30s (Slow)" >> performance-report.md
+          echo "- Bundle Size: <500KB (Small), <1MB (Medium), ≥1MB (Large)" >> performance-report.md
+
+          cat performance-report.md
+
+      - name: Store performance data
+        run: |
+          # Create performance data file
+          cat > performance-data.json << EOF
+          {
+            "timestamp": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')",
+            "commit": "${{ github.sha }}",
+            "build_time_ms": $BUILD_TIME_MS,
+            "test_time_ms": $TEST_TIME_MS,
+            "bundle_size_kb": $BUNDLE_SIZE_KB,
+            "branch": "${{ github.ref_name }}"
+          }
+          EOF
+
+      - name: Upload performance artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-data-${{ github.sha }}
+          path: |
+            performance-report.md
+            performance-data.json
+          retention-days: 90
+
+      - name: Performance regression check
+        if: github.event_name == 'push'
+        run: |
+          echo "🔍 Checking for performance regressions..."
+
+          # Simple regression check - could be enhanced with historical data
+          if [ "$BUILD_TIME_MS" -gt 120000 ]; then
+            echo "🚨 Build time regression detected: ${BUILD_TIME_MS}ms > 120s"
+            exit 1
+          fi
+
+          if [ "$TEST_TIME_MS" -gt 60000 ]; then
+            echo "🚨 Test time regression detected: ${TEST_TIME_MS}ms > 60s"
+            exit 1
+          fi
+
+          if [ "$BUNDLE_SIZE_KB" -gt 2048 ]; then
+            echo "🚨 Bundle size regression detected: ${BUNDLE_SIZE_KB}KB > 2MB"
+            exit 1
+          fi
+
+          echo "✅ No performance regressions detected"
+
+      - name: Notification on regression
+        if: failure() && github.event_name == 'push'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const buildTime = process.env.BUILD_TIME_MS;
+            const testTime = process.env.TEST_TIME_MS;
+            const bundleSize = process.env.BUNDLE_SIZE_KB;
+
+            const title = "🚨 Performance Regression Detected";
+            const body = `Performance regression detected in commit ${{ github.sha }}:
+
+            **Metrics:**
+            - Build Time: ${buildTime}ms
+            - Test Time: ${testTime}ms  
+            - Bundle Size: ${bundleSize}KB
+
+            **Thresholds:**
+            - Build Time: >120s ❌
+            - Test Time: >60s ❌
+            - Bundle Size: >2MB ❌
+
+            Please investigate and optimize before merging.`;
+
+            // Create issue for performance regression
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['performance', 'regression', 'bug']
+            });
