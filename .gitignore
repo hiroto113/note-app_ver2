@@ -40,3 +40,5 @@ playwright-report/
 sqlite.db
 *.db
 *.sqlite
+# Test database files
+test_*.db*

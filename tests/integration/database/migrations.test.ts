@@ -151,23 +151,40 @@ describe('Database Migrations', () => {
 
 	describe('Constraint Verification', () => {
 		it('should have unique constraints', async () => {
-			// Check posts slug uniqueness
+			// In SQLite, UNIQUE constraints may be implemented as indexes
+			// Check posts slug uniqueness (either in table definition or as index)
+			const postsUniqueIndex = await testDb.all(
+				sql`SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='posts' AND name LIKE '%unique%' AND sql LIKE '%slug%'`
+			);
 			const postsInfo = await testDb.all(
 				sql`SELECT sql FROM sqlite_master WHERE type='table' AND name='posts'`
 			);
-			expect((postsInfo[0] as any).sql).toContain('UNIQUE');
+			const hasPostsUnique =
+				postsUniqueIndex.length > 0 || (postsInfo[0] as any).sql.includes('UNIQUE');
+			expect(hasPostsUnique).toBe(true);
 
 			// Check categories slug and name uniqueness
+			const categoriesUniqueIndex = await testDb.all(
+				sql`SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='categories' AND name LIKE '%unique%'`
+			);
 			const categoriesInfo = await testDb.all(
 				sql`SELECT sql FROM sqlite_master WHERE type='table' AND name='categories'`
 			);
-			expect((categoriesInfo[0] as any).sql).toContain('UNIQUE');
+			const hasCategoriesUnique =
+				categoriesUniqueIndex.length > 0 ||
+				(categoriesInfo[0] as any).sql.includes('UNIQUE');
+			expect(hasCategoriesUnique).toBe(true);
 
 			// Check users username uniqueness
+			const usersUniqueIndex = await testDb.all(
+				sql`SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='users' AND name LIKE '%unique%'`
+			);
 			const usersInfo = await testDb.all(
 				sql`SELECT sql FROM sqlite_master WHERE type='table' AND name='users'`
 			);
-			expect((usersInfo[0] as any).sql).toContain('UNIQUE');
+			const hasUsersUnique =
+				usersUniqueIndex.length > 0 || (usersInfo[0] as any).sql.includes('UNIQUE');
+			expect(hasUsersUnique).toBe(true);
 		});
 
 		it('should have foreign key constraints', async () => {

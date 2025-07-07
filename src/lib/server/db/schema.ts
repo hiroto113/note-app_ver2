@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, primaryKey, index } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 
 // Users table
@@ -63,14 +63,22 @@ export const posts = sqliteTable('posts', {
 });
 
 // Many-to-many relationship table for posts and categories
-export const postsToCategories = sqliteTable('posts_to_categories', {
-	postId: integer('post_id')
-		.notNull()
-		.references(() => posts.id, { onDelete: 'cascade' }),
-	categoryId: integer('category_id')
-		.notNull()
-		.references(() => categories.id, { onDelete: 'cascade' })
-});
+export const postsToCategories = sqliteTable(
+	'posts_to_categories',
+	{
+		postId: integer('post_id')
+			.notNull()
+			.references(() => posts.id, { onDelete: 'cascade' }),
+		categoryId: integer('category_id')
+			.notNull()
+			.references(() => categories.id, { onDelete: 'cascade' })
+	},
+	(table) => ({
+		pk: primaryKey({ columns: [table.postId, table.categoryId] }),
+		postIdIdx: index('posts_to_categories_post_id_idx').on(table.postId),
+		categoryIdIdx: index('posts_to_categories_category_id_idx').on(table.categoryId)
+	})
+);
 
 // Media table for uploaded files
 export const media = sqliteTable('media', {
