@@ -95,7 +95,7 @@ describe('QualityMetricsService', () => {
 				const trend: QualityTrend = calculateTrend('Test Metric', 80, 0);
 
 				expect(trend.changePercent).toBe(0);
-				expect(trend.trend).toBe('up');
+				expect(trend.trend).toBe('stable'); // changePercent = 0 should result in 'stable'
 			}
 		});
 	});
