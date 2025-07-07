@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened]
 
 env:
-  PNPM_VERSION: 8
+  PNPM_VERSION: 10
   NODE_VERSION: 20.x
 
 jobs:

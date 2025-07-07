@@ -7,7 +7,7 @@ on:
     branches: [main, develop]
 
 env:
-  PNPM_VERSION: 8
+  PNPM_VERSION: 10
   NODE_VERSION: 20.x
   DATABASE_URL: 'file:./ci_test.db'
 
