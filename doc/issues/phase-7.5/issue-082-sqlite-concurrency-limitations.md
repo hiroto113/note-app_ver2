@@ -15,11 +15,13 @@ LibsqlError: SQLITE_BUSY: cannot commit transaction - SQL statements in progress
 ```
 
 **Failing Tests:**
+
 - Transaction isolation test (concurrent transactions)
 - Bulk operations test (large transaction commits)
 
 **Root Cause:**
 SQLite has inherent limitations for concurrent transaction handling:
+
 1. Database-level locking prevents true concurrent transactions
 2. WAL mode limitations in test environments
 3. Transaction timeouts under heavy load
@@ -39,28 +41,30 @@ SQLite has inherent limitations for concurrent transaction handling:
 ## Solution Requirements
 
 1. **Database Architecture Review:**
-   - Evaluate alternatives to SQLite for concurrent workloads
-   - Consider connection pooling strategies
-   - Implement retry mechanisms for locked database scenarios
+    - Evaluate alternatives to SQLite for concurrent workloads
+    - Consider connection pooling strategies
+    - Implement retry mechanisms for locked database scenarios
 
 2. **Test Strategy Updates:**
-   - Implement proper transaction timeout handling
-   - Add retry logic for concurrent transaction tests
-   - Consider mocking concurrent scenarios instead of real parallelism
+    - Implement proper transaction timeout handling
+    - Add retry logic for concurrent transaction tests
+    - Consider mocking concurrent scenarios instead of real parallelism
 
 3. **Long-term Solutions:**
-   - Evaluate PostgreSQL for production/testing
-   - Implement proper connection management
-   - Add database-specific test configurations
+    - Evaluate PostgreSQL for production/testing
+    - Implement proper connection management
+    - Add database-specific test configurations
 
 ## Technical Details
 
 **Affected Files:**
+
 - `tests/integration/database/transactions.test.ts`
 - `tests/integration/setup.ts`
 - `vitest.config.ts`
 
 **SQLite Limitations:**
+
 - Single writer at a time
 - WAL mode still has locking contention
 - No true concurrent transaction support
@@ -77,16 +81,19 @@ SQLite has inherent limitations for concurrent transaction handling:
 ## Potential Solutions
 
 ### Option 1: Test Strategy Changes
+
 - Mock concurrent scenarios instead of real parallelism
 - Add retry logic for database lock scenarios
 - Implement proper test isolation
 
 ### Option 2: Database Technology
+
 - Evaluate PostgreSQL for better concurrency
 - Implement database-specific test configurations
 - Use in-memory databases with better concurrency support
 
 ### Option 3: SQLite Optimization
+
 - Fine-tune SQLite configuration for testing
 - Implement connection pooling
 - Add proper timeout and retry mechanisms

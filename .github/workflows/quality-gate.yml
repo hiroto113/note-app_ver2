@@ -74,7 +74,7 @@ jobs:
           pnpm run build > /dev/null 2>&1
           END_TIME=$(date +%s)
           BUILD_TIME=$((END_TIME - START_TIME))
-          
+
           # Score based on build time (lower is better)
           if [ $BUILD_TIME -lt 30 ]; then
             SCORE=100
@@ -85,7 +85,7 @@ jobs:
           else
             SCORE=40
           fi
-          
+
           echo "score=$SCORE" >> $GITHUB_OUTPUT
           echo "Build time: ${BUILD_TIME}s (Score: $SCORE)"
 
@@ -114,19 +114,19 @@ jobs:
           COVERAGE=${{ needs.quality-metrics.outputs.coverage-percentage }}
           TEST_COUNT=${{ needs.quality-metrics.outputs.test-count }}
           PERFORMANCE=${{ needs.quality-metrics.outputs.performance-score }}
-          
+
           echo "Quality Metrics:"
           echo "- Coverage: ${COVERAGE}%"
           echo "- Test Count: $TEST_COUNT"
           echo "- Performance Score: $PERFORMANCE"
-          
+
           # Quality gate thresholds
           MIN_COVERAGE=85
           MIN_TESTS=50
           MIN_PERFORMANCE=60
-          
+
           FAILURES=0
-          
+
           # Check coverage threshold
           if (( $(echo "$COVERAGE < $MIN_COVERAGE" | bc -l) )); then
             echo "❌ Coverage below threshold: ${COVERAGE}% < ${MIN_COVERAGE}%"
@@ -134,7 +134,7 @@ jobs:
           else
             echo "✅ Coverage meets threshold: ${COVERAGE}% >= ${MIN_COVERAGE}%"
           fi
-          
+
           # Check test count
           if [ "$TEST_COUNT" -lt "$MIN_TESTS" ]; then
             echo "❌ Test count below threshold: $TEST_COUNT < $MIN_TESTS"
@@ -142,7 +142,7 @@ jobs:
           else
             echo "✅ Test count meets threshold: $TEST_COUNT >= $MIN_TESTS"
           fi
-          
+
           # Check performance
           if [ "$PERFORMANCE" -lt "$MIN_PERFORMANCE" ]; then
             echo "❌ Performance below threshold: $PERFORMANCE < $MIN_PERFORMANCE"
@@ -150,7 +150,7 @@ jobs:
           else
             echo "✅ Performance meets threshold: $PERFORMANCE >= $MIN_PERFORMANCE"
           fi
-          
+
           if [ $FAILURES -gt 0 ]; then
             echo ""
             echo "Quality gate failed with $FAILURES issue(s)"
@@ -168,19 +168,19 @@ jobs:
             const coverage = '${{ needs.quality-metrics.outputs.coverage-percentage }}';
             const testCount = '${{ needs.quality-metrics.outputs.test-count }}';
             const performance = '${{ needs.quality-metrics.outputs.performance-score }}';
-            
+
             const body = `## 📊 Quality Report
-            
+
             | Metric | Value | Status |
             |--------|-------|--------|
             | Coverage | ${coverage}% | ${coverage >= 85 ? '✅' : '❌'} |
             | Test Count | ${testCount} | ${testCount >= 50 ? '✅' : '❌'} |
             | Performance | ${performance} | ${performance >= 60 ? '✅' : '❌'} |
-            
+
             **Quality Gate:** ${coverage >= 85 && testCount >= 50 && performance >= 60 ? '✅ **PASSED**' : '❌ **FAILED**'}
-            
+
             *Thresholds: Coverage ≥85%, Tests ≥50, Performance ≥60*`;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
