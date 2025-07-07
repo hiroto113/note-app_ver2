@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { QualityMetricsService, type QualityTrend } from './quality-metrics';
 import type { NewQualityMetrics } from './db/schema';
 
