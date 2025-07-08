@@ -1,12 +1,11 @@
 import { execSync } from 'child_process';
-import { readFileSync } from 'fs';
 
 // Test authentication directly
 console.log('Testing authentication...');
 
 try {
 	// Check if server is running
-	const response = execSync('curl -s http://localhost:5173/', { encoding: 'utf8' });
+	execSync('curl -s http://localhost:5173/', { encoding: 'utf8' });
 	console.log('Server is running');
 
 	// Test admin route
