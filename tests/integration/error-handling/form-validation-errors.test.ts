@@ -1,11 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../setup';
 import { testIsolation } from '../utils/test-isolation';
-import { validatePost, validateCategory, createValidationErrorResponse } from '$lib/server/validation';
+import {
+	validatePost,
+	validateCategory,
+	createValidationErrorResponse
+} from '$lib/server/validation';
 
 /**
  * Form Validation Error Tests
- * 
+ *
  * Tests form validation error scenarios including:
  * - Post creation and update validation
  * - Category validation errors
@@ -50,13 +55,11 @@ describe('Form Validation Error Tests', () => {
 
 			for (const { data, expectedFields } of invalidPostData) {
 				const validation = validatePost(data);
-				
+
 				expect(validation.isValid).toBe(false);
-				
+
 				for (const field of expectedFields) {
-					const hasFieldError = validation.errors.some(error => 
-						error.field === field
-					);
+					const hasFieldError = validation.errors.some((error) => error.field === field);
 					expect(hasFieldError).toBe(true);
 				}
 			}
@@ -83,11 +86,11 @@ describe('Form Validation Error Tests', () => {
 
 			for (const { data, expectedField } of lengthTestCases) {
 				const validation = validatePost(data);
-				
+
 				expect(validation.isValid).toBe(false);
-				
-				const hasExpectedError = validation.errors.some(error => 
-					error.field === expectedField && error.message.includes('characters')
+
+				const hasExpectedError = validation.errors.some(
+					(error) => error.field === expectedField && error.message.includes('characters')
 				);
 				expect(hasExpectedError).toBe(true);
 			}
@@ -107,22 +110,20 @@ describe('Form Validation Error Tests', () => {
 				const postData = {
 					title: 'Valid Title',
 					content: 'Valid content',
-					status
+					status: status as any
 				};
 
 				const validation = validatePost(postData);
-				
+
 				expect(validation.isValid).toBe(false);
-				
-				const hasStatusError = validation.errors.some(error => 
-					error.field === 'status'
-				);
+
+				const hasStatusError = validation.errors.some((error) => error.field === 'status');
 				expect(hasStatusError).toBe(true);
 			}
 
 			// Test valid status values
 			const validStatuses = ['draft', 'published'];
-			
+
 			for (const status of validStatuses) {
 				const postData = {
 					title: 'Valid Title',
@@ -131,11 +132,9 @@ describe('Form Validation Error Tests', () => {
 				};
 
 				const validation = validatePost(postData);
-				
+
 				// Should not have status-related errors
-				const hasStatusError = validation.errors.some(error => 
-					error.field === 'status'
-				);
+				const hasStatusError = validation.errors.some((error) => error.field === 'status');
 				expect(hasStatusError).toBe(false);
 			}
 		});
@@ -170,12 +169,12 @@ describe('Form Validation Error Tests', () => {
 			];
 
 			for (const { data, expectedField } of invalidCategoryData) {
-				const validation = validatePost(data);
-				
+				const validation = validatePost(data as any);
+
 				expect(validation.isValid).toBe(false);
-				
-				const hasExpectedError = validation.errors.some(error => 
-					error.field === expectedField
+
+				const hasExpectedError = validation.errors.some(
+					(error) => error.field === expectedField
 				);
 				expect(hasExpectedError).toBe(true);
 			}
@@ -188,8 +187,8 @@ describe('Form Validation Error Tests', () => {
 			};
 
 			const validation = validatePost(validData);
-			const hasCategoryError = validation.errors.some(error => 
-				error.field === 'categoryIds'
+			const hasCategoryError = validation.errors.some(
+				(error) => error.field === 'categoryIds'
 			);
 			expect(hasCategoryError).toBe(false);
 		});
@@ -204,7 +203,7 @@ describe('Form Validation Error Tests', () => {
 			};
 
 			const validation = validatePost(validPostData);
-			
+
 			expect(validation.isValid).toBe(true);
 			expect(validation.errors).toHaveLength(0);
 		});
@@ -229,13 +228,11 @@ describe('Form Validation Error Tests', () => {
 
 			for (const { data, expectedFields } of invalidCategoryData) {
 				const validation = validateCategory(data);
-				
+
 				expect(validation.isValid).toBe(false);
-				
+
 				for (const field of expectedFields) {
-					const hasFieldError = validation.errors.some(error => 
-						error.field === field
-					);
+					const hasFieldError = validation.errors.some((error) => error.field === field);
 					expect(hasFieldError).toBe(true);
 				}
 			}
@@ -256,16 +253,17 @@ describe('Form Validation Error Tests', () => {
 			for (const { name, expectedError } of lengthTests) {
 				const categoryData = { name };
 				const validation = validateCategory(categoryData);
-				
+
 				if (expectedError) {
 					expect(validation.isValid).toBe(false);
-					expect(validation.errors.some(error => 
-						error.field === 'name' && error.message.includes('100 characters')
-					)).toBe(true);
+					expect(
+						validation.errors.some(
+							(error) =>
+								error.field === 'name' && error.message.includes('100 characters')
+						)
+					).toBe(true);
 				} else {
-					const hasNameError = validation.errors.some(error => 
-						error.field === 'name'
-					);
+					const hasNameError = validation.errors.some((error) => error.field === 'name');
 					expect(hasNameError).toBe(false);
 				}
 			}
@@ -284,11 +282,12 @@ describe('Form Validation Error Tests', () => {
 
 			for (const { data, expectedField } of descriptionTests) {
 				const validation = validateCategory(data);
-				
+
 				expect(validation.isValid).toBe(false);
-				
-				const hasExpectedError = validation.errors.some(error => 
-					error.field === expectedField && error.message.includes('500 characters')
+
+				const hasExpectedError = validation.errors.some(
+					(error) =>
+						error.field === expectedField && error.message.includes('500 characters')
 				);
 				expect(hasExpectedError).toBe(true);
 			}
@@ -298,11 +297,11 @@ describe('Form Validation Error Tests', () => {
 				name: 'Valid Category',
 				description: 'Valid description within limits'
 			};
-			
+
 			const validation = validateCategory(validData);
-			
-			const hasDescriptionError = validation.errors.some(error => 
-				error.field === 'description'
+
+			const hasDescriptionError = validation.errors.some(
+				(error) => error.field === 'description'
 			);
 			expect(hasDescriptionError).toBe(false);
 		});
@@ -329,10 +328,8 @@ describe('Form Validation Error Tests', () => {
 
 			for (const { data, expectedError } of idTests) {
 				const validation = validateCategory(data);
-				
-				const hasIdError = validation.errors.some(error => 
-					error.field === 'id'
-				);
+
+				const hasIdError = validation.errors.some((error) => error.field === 'id');
 				expect(hasIdError).toBe(expectedError);
 			}
 		});
@@ -355,7 +352,7 @@ describe('Form Validation Error Tests', () => {
 
 			for (const categoryData of validCategoryData) {
 				const validation = validateCategory(categoryData);
-				
+
 				expect(validation.isValid).toBe(true);
 				expect(validation.errors).toHaveLength(0);
 			}
@@ -364,25 +361,19 @@ describe('Form Validation Error Tests', () => {
 
 	describe('Input Sanitization and Edge Cases', () => {
 		it('should handle malformed input data gracefully', async () => {
-			const malformedInputs = [
-				null,
-				undefined,
-				'not an object',
-				123,
-				[]
-			];
+			const malformedInputs = [null, undefined, 'not an object', 123, []];
 
 			for (const input of malformedInputs) {
 				try {
 					const validation = validatePost(input as any);
-					
+
 					// Should handle gracefully without crashing
 					expect(validation.isValid).toBe(false);
 					expect(Array.isArray(validation.errors)).toBe(true);
 				} catch (error) {
 					// If it throws, should be a proper error message
-					expect(error).toBeInstanceOf(Error);
-					expect(error.message).toBeDefined();
+					expect(error as Error).toBeInstanceOf(Error);
+					expect((error as Error).message).toBeDefined();
 				}
 			}
 		});
@@ -394,20 +385,19 @@ describe('Form Validation Error Tests', () => {
 			};
 
 			const validation = validatePost(extremelyLargeData);
-			
+
 			// Should handle without crashing and reject appropriately
 			expect(validation.isValid).toBe(false);
-			
-			const hasSizeError = validation.errors.some(error => 
-				error.message.includes('characters') || 
-				error.message.includes('length')
+
+			const hasSizeError = validation.errors.some(
+				(error) => error.message.includes('characters') || error.message.includes('length')
 			);
 			expect(hasSizeError).toBe(true);
 		});
 
 		it('should handle concurrent validation requests', async () => {
 			// Test concurrent validation handling
-			const concurrentValidations = Array.from({ length: 10 }, (_, i) => 
+			const concurrentValidations = Array.from({ length: 10 }, (_, i) =>
 				validatePost({
 					title: `Concurrent Title ${i}`,
 					content: `Concurrent content ${i}`,
@@ -416,7 +406,7 @@ describe('Form Validation Error Tests', () => {
 			);
 
 			const results = concurrentValidations;
-			
+
 			// All validations should complete successfully
 			results.forEach((result, index) => {
 				expect(result.isValid).toBe(true);
@@ -448,8 +438,8 @@ describe('Form Validation Error Tests', () => {
 
 			// Check individual error format
 			responseData.details.forEach((error: any) => {
-				expect(error).toHaveProperty('field');
-				expect(error).toHaveProperty('message');
+				expect(error as Error).toHaveProperty('field');
+				expect(error as Error).toHaveProperty('message');
 				expect(typeof error.field).toBe('string');
 				expect(typeof error.message).toBe('string');
 			});
@@ -474,7 +464,7 @@ describe('Form Validation Error Tests', () => {
 
 			for (const { data, expectedStatus } of errorScenarios) {
 				const validation = validatePost(data);
-				
+
 				if (!validation.isValid) {
 					const errorResponse = createValidationErrorResponse(validation.errors);
 					expect(errorResponse.status).toBe(expectedStatus);
@@ -500,12 +490,12 @@ describe('Form Validation Error Tests', () => {
 
 			for (const { data, expectedMessageParts } of testCases) {
 				const validation = validatePost(data);
-				
+
 				if (!validation.isValid) {
 					const allErrorMessages = validation.errors
-						.map(e => e.message.toLowerCase())
+						.map((e) => e.message.toLowerCase())
 						.join(' ');
-					
+
 					for (const part of expectedMessageParts) {
 						expect(allErrorMessages).toContain(part.toLowerCase());
 					}
@@ -524,14 +514,14 @@ describe('Form Validation Error Tests', () => {
 			expect(validation.isValid).toBe(false);
 
 			// Should have errors for multiple fields
-			const errorFields = validation.errors.map(e => e.field);
+			const errorFields = validation.errors.map((e) => e.field);
 			expect(errorFields).toContain('title');
 			expect(errorFields).toContain('content');
 			expect(errorFields).toContain('excerpt');
 			expect(errorFields).toContain('status');
 
 			// Each error should be descriptive
-			validation.errors.forEach(error => {
+			validation.errors.forEach((error) => {
 				expect(error.message.length).toBeGreaterThan(10);
 				expect(error.message.toLowerCase()).toContain(error.field.toLowerCase());
 			});

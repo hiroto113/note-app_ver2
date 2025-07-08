@@ -5,7 +5,11 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
 		// Test inclusion patterns - optimized for parallel execution
-		include: ['src/**/*.{test,spec}.{js,ts}', 'tests/integration/**/*.{test,spec}.{js,ts}'],
+		include: [
+			'src/**/*.{test,spec}.{js,ts}',
+			'tests/integration/**/*.{test,spec}.{js,ts}',
+			'tests/regression/**/*.{test,spec}.{js,ts}'
+		],
 		exclude: ['tests/e2e/**', 'tests/**/*.spec.ts'],
 		environment: 'jsdom',
 		globals: true,

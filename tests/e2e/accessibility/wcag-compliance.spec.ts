@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
 // import { injectAxe, checkA11y } from 'axe-playwright';
 import { waitForPageLoad } from '../utils/page-helpers';

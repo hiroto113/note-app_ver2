@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 /**
  * Environment-specific configuration for database tests
  * Handles differences between local, CI, and different OS environments

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
 import { testUsers } from '../fixtures/test-data';
 import { waitForPageLoad } from '../utils/page-helpers';
