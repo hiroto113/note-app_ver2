@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../../integration/setup';
-import { categories, posts, users } from '$lib/server/db/schema';
+import { categories, posts, users, postsToCategories } from '$lib/server/db/schema';
 import { eq, and, count } from 'drizzle-orm';
 import { RegressionTestHelpers } from '../utils/regression-helpers';
 import { regressionDataManager } from '../utils/regression-data-manager';
@@ -150,7 +150,7 @@ describe('Category Management Regression Tests', () => {
 					.replace(/[^\w\s-]/g, '') // Remove special characters
 					.replace(/\s+/g, '-') // Replace spaces with hyphens
 					.replace(/-+/g, '-') // Replace multiple hyphens with single
-					.trim('-'); // Remove leading/trailing hyphens
+					.replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 
 				const uniqueSlug = `${baseSlug}-${crypto.randomUUID()}`;
 
@@ -337,10 +337,11 @@ describe('Category Management Regression Tests', () => {
 			// 3. Allowing cascade deletion
 			
 			// For this test, we'll verify the business logic is consistent
+			// Check if posts exist in category through junction table
 			const postsInCategory = await testDb
 				.select()
-				.from(posts)
-				.where(`posts.category_id = ${categoryToDeleteId}`); // Adjust based on your schema
+				.from(postsToCategories)
+				.where(eq(postsToCategories.categoryId, categoryToDeleteId));
 
 			// If posts exist, deletion policy should be enforced
 			if (postsInCategory.length > 0) {
@@ -522,7 +523,7 @@ describe('Category Management Regression Tests', () => {
 				}).returning();
 
 				// If accepted, verify it's handled properly
-				expect(category.description.length).toBe(10000);
+				expect(category.description?.length).toBe(10000);
 				
 				// Performance check - large text should still be handled efficiently
 				const startTime = Date.now();
@@ -561,7 +562,7 @@ describe('Category Management Regression Tests', () => {
 						.replace(/[^\w\s-]/g, '')
 						.replace(/\s+/g, '-')
 						.replace(/-+/g, '-')
-						.trim('-') || 'untitled';
+						.replace(/^-+|-+$/g, '') || 'untitled';
 
 					const [category] = await testDb.insert(categories).values({
 						name: testCase.name,

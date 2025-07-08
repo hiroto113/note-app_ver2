@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../../integration/setup';
 import { testIsolation } from '../../integration/utils/test-isolation';
+import { users, posts } from '$lib/server/db/schema';
+import { eq, isNull } from 'drizzle-orm';
 
 /**
  * Regression Test Priority Levels
@@ -77,13 +79,13 @@ export abstract class RegressionTestBase {
 	protected async validateInitialState(): Promise<boolean> {
 		try {
 			// Verify database connectivity
-			await testDb.select().from({ users: testDb.select().from('users').limit(1) });
+			await testDb.select().from(users).limit(1);
 			
 			// Verify test data exists
 			if (this.testData?.userId) {
 				const userExists = await testDb.select()
-					.from('users')
-					.where('id', '=', this.testData.userId)
+					.from(users)
+					.where(eq(users.id, this.testData.userId))
 					.limit(1);
 				
 				return userExists.length > 0;
@@ -122,9 +124,9 @@ export abstract class RegressionTestBase {
 		// This is a simplified version - real implementation would be more comprehensive
 		
 		const orphanedPosts = await testDb.select()
-			.from('posts')
-			.leftJoin('users', 'posts.userId', 'users.id')
-			.where('users.id', 'is', null);
+			.from(posts)
+			.leftJoin(users, eq(posts.userId, users.id))
+			.where(isNull(users.id));
 		
 		if (orphanedPosts.length > 0) {
 			throw new Error(`Found ${orphanedPosts.length} orphaned posts without valid users`);

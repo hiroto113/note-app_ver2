@@ -222,8 +222,8 @@ describe('File Upload Error Handling Tests', () => {
 				validation.errors.forEach(error => {
 					expect(error).toHaveProperty('field');
 					expect(error).toHaveProperty('message');
-					expect(typeof error.field).toBe('string');
-					expect(typeof error.message).toBe('string');
+					expect(typeof (error as any).field).toBe('string');
+					expect(typeof (error as any).message).toBe('string');
 				});
 			}
 		});
@@ -291,8 +291,8 @@ describe('File Upload Error Handling Tests', () => {
 				await mockUploadProcess(invalidFile);
 				expect.fail('Should have thrown validation error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('Validation failed');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('Validation failed');
 			}
 		});
 

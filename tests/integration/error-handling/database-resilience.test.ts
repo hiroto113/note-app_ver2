@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { testDb } from '../setup';
 import { posts, categories, users } from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
 import { testIsolation } from '../utils/test-isolation';
 
 /**
@@ -41,7 +42,7 @@ describe('Database Error Resilience Tests', () => {
 				await mockDb.select().from(posts);
 				expect.fail('Should have thrown connection error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
+				expect(error as Error).toBeInstanceOf(Error);
 				expect((error as Error).message).toContain('SQLITE_CANTOPEN');
 			}
 		});
@@ -58,7 +59,7 @@ describe('Database Error Resilience Tests', () => {
 				await mockDb.select().from(posts);
 				expect.fail('Should have thrown busy error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
+				expect(error as Error).toBeInstanceOf(Error);
 				expect((error as Error).message).toContain('SQLITE_BUSY');
 				// In a real implementation, this would trigger retry logic
 			}
@@ -85,7 +86,7 @@ describe('Database Error Resilience Tests', () => {
 				});
 				expect.fail('Should have thrown readonly error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
+				expect(error as Error).toBeInstanceOf(Error);
 				expect((error as Error).message).toContain('SQLITE_READONLY');
 			}
 		});
@@ -104,7 +105,7 @@ describe('Database Error Resilience Tests', () => {
 				await timeoutPromise;
 				expect.fail('Should have thrown timeout error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
+				expect(error as Error).toBeInstanceOf(Error);
 				expect((error as Error).message).toContain('timeout');
 			}
 		});
@@ -140,7 +141,7 @@ describe('Database Error Resilience Tests', () => {
 				expect.fail('Transaction should have failed');
 			} catch (error) {
 				// Verify the transaction was properly rolled back
-				expect(error).toBeInstanceOf(Error);
+				expect(error as Error).toBeInstanceOf(Error);
 				
 				// Verify no posts were inserted due to rollback
 				const allPosts = await testDb.select().from(posts);
@@ -177,7 +178,7 @@ describe('Database Error Resilience Tests', () => {
 				expect.fail('Nested transaction should have failed');
 			} catch (error) {
 				// Verify both outer and inner transactions were rolled back
-				expect(error).toBeInstanceOf(Error);
+				expect(error as Error).toBeInstanceOf(Error);
 				
 				const allCategories = await testDb.select().from(categories);
 				const allPosts = await testDb.select().from(posts);
@@ -203,9 +204,9 @@ describe('Database Error Resilience Tests', () => {
 				});
 				expect.fail('Should have thrown foreign key constraint error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
+				expect(error as Error).toBeInstanceOf(Error);
 				// SQLite foreign key errors in libSQL format
-				expect(error.message.toLowerCase()).toContain('failed query');
+				expect((error as Error).message.toLowerCase()).toContain('failed query');
 			}
 		});
 
@@ -236,9 +237,9 @@ describe('Database Error Resilience Tests', () => {
 				});
 				expect.fail('Should have thrown unique constraint error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
+				expect(error as Error).toBeInstanceOf(Error);
 				// SQLite unique constraint errors in libSQL format
-				expect(error.message.toLowerCase()).toContain('failed query');
+				expect((error as Error).message.toLowerCase()).toContain('failed query');
 			}
 		});
 
@@ -257,9 +258,9 @@ describe('Database Error Resilience Tests', () => {
 				} as any); // Type assertion to bypass TypeScript checking
 				expect.fail('Should have thrown not null constraint error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
+				expect(error as Error).toBeInstanceOf(Error);
 				// SQLite not null constraint errors in libSQL format
-				expect(error.message.toLowerCase()).toContain('failed query');
+				expect((error as Error).message.toLowerCase()).toContain('failed query');
 			}
 		});
 	});
@@ -288,8 +289,8 @@ describe('Database Error Resilience Tests', () => {
 			// Test complex query performance
 			const queryStartTime = Date.now();
 			const results = await testDb.select().from(posts)
-				.where((posts) => posts.status === 'published')
-				.orderBy((posts) => posts.createdAt)
+				.where(eq(posts.status, 'published'))
+				.orderBy(posts.createdAt)
 				.limit(50);
 			const queryTime = Date.now() - queryStartTime;
 
@@ -332,8 +333,8 @@ describe('Database Error Resilience Tests', () => {
 				expect(totalPosts).toHaveLength(1000);
 			} catch (error) {
 				// If memory error occurs, it should be handled gracefully
-				expect(error).toBeInstanceOf(Error);
-				console.warn('Memory pressure test failed:', error.message);
+				expect(error as Error).toBeInstanceOf(Error);
+				console.warn('Memory pressure test failed:', (error as Error).message);
 			}
 		});
 	});
@@ -351,7 +352,7 @@ describe('Database Error Resilience Tests', () => {
 				await mockCorruptedDb.select().from(posts);
 				expect.fail('Should have thrown corruption error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
+				expect(error as Error).toBeInstanceOf(Error);
 				expect((error as Error).message).toContain('SQLITE_CORRUPT');
 				// In a real scenario, this would trigger database recovery procedures
 			}
@@ -369,8 +370,8 @@ describe('Database Error Resilience Tests', () => {
 				await mockVersionMismatchDb.select().from(posts);
 				expect.fail('Should have thrown schema version error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('Schema version mismatch');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('Schema version mismatch');
 				// In a real scenario, this would trigger migration procedures
 			}
 		});
@@ -390,16 +391,16 @@ describe('Database Error Resilience Tests', () => {
 				await mockBackupError.backup();
 				expect.fail('Should have thrown backup error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('Backup failed');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('Backup failed');
 			}
 
 			try {
 				await mockBackupError.restore();
 				expect.fail('Should have thrown restore error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('Restore failed');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('Restore failed');
 			}
 		});
 	});

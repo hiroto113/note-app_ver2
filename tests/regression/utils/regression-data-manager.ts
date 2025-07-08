@@ -1,7 +1,7 @@
 import { testDb } from '../../integration/setup';
 import { testIsolation, TestIsolation } from '../../integration/utils/test-isolation';
 import { users, posts, categories } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, isNull, not, inArray, like } from 'drizzle-orm';
 
 /**
  * Change log entry for tracking data modifications
@@ -74,8 +74,7 @@ export class RegressionDataManager extends TestIsolation {
 		try {
 			// Create primary user
 			result.userId = await this.createTestUser({
-				username: `regression_user_${Date.now()}`,
-				email: `regression_${Date.now()}@test.com`
+				username: `regression_user_${Date.now()}`
 			});
 
 			this.logChange('CREATE', 'users', result.userId, { primary: true }, scenarioName);
@@ -84,8 +83,7 @@ export class RegressionDataManager extends TestIsolation {
 			if (config.userCount && config.userCount > 1) {
 				for (let i = 1; i < config.userCount; i++) {
 					const additionalUserId = await this.createTestUser({
-						username: `regression_user_${Date.now()}_${i}`,
-						email: `regression_${Date.now()}_${i}@test.com`
+						username: `regression_user_${Date.now()}_${i}`
 					});
 					result.additionalUsers!.push(additionalUserId);
 					this.logChange('CREATE', 'users', additionalUserId, { additional: true, index: i }, scenarioName);
@@ -199,7 +197,7 @@ export class RegressionDataManager extends TestIsolation {
 			.select({ postId: posts.id, userId: posts.userId })
 			.from(posts)
 			.leftJoin(users, eq(posts.userId, users.id))
-			.where(eq(users.id, null));
+			.where(isNull(users.id));
 
 		if (postsWithInvalidUsers.length > 0) {
 			throw new Error(`Found ${postsWithInvalidUsers.length} posts with invalid user references`);
@@ -224,7 +222,7 @@ export class RegressionDataManager extends TestIsolation {
 		const postsWithInvalidStatus = await testDb
 			.select({ id: posts.id, status: posts.status })
 			.from(posts)
-			.where(`status NOT IN ('draft', 'published')`);
+			.where(not(inArray(posts.status, ['draft', 'published'])));
 
 		if (postsWithInvalidStatus.length > 0) {
 			throw new Error(`Found ${postsWithInvalidStatus.length} posts with invalid status values`);
@@ -298,17 +296,17 @@ export class RegressionDataManager extends TestIsolation {
 			const testUsers = await testDb
 				.select({ id: users.id, username: users.username })
 				.from(users)
-				.where(`username LIKE 'regression_%'`);
+				.where(like(users.username, 'regression_%'));
 
 			const testCategories = await testDb
 				.select({ id: categories.id, name: categories.name })
 				.from(categories)
-				.where(`name LIKE 'Regression Category%'`);
+				.where(like(categories.name, 'Regression Category%'));
 
 			const testPosts = await testDb
 				.select({ id: posts.id, title: posts.title })
 				.from(posts)
-				.where(`title LIKE 'Regression Test Post%'`);
+				.where(like(posts.title, 'Regression Test Post%'));
 
 			// Log findings for analysis
 			console.log(`Found ${testUsers.length} test users, ${testCategories.length} test categories, ${testPosts.length} test posts`);

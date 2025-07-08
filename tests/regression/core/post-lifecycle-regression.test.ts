@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../../integration/setup';
 import { posts, users, categories } from '$lib/server/db/schema';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, isNull } from 'drizzle-orm';
 import { RegressionTestHelpers } from '../utils/regression-helpers';
 import { regressionDataManager } from '../utils/regression-data-manager';
 
@@ -569,7 +569,7 @@ describe('Post Lifecycle Regression Tests', () => {
 				})
 				.from(posts)
 				.leftJoin(users, eq(posts.userId, users.id))
-				.where(`users.id IS NULL`);
+				.where(isNull(users.id));
 
 			expect(postsWithInvalidUsers).toHaveLength(0);
 		});

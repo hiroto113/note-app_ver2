@@ -1,7 +1,7 @@
 import { expect } from 'vitest';
 import { testDb } from '../../integration/setup';
 import { users, posts, categories } from '$lib/server/db/schema';
-import { eq, and, count } from 'drizzle-orm';
+import { eq, and, count, isNull, or, gt } from 'drizzle-orm';
 import type { RegressionResult, RegressionPriority, RegressionCategory } from './regression-test-base';
 
 /**
@@ -267,7 +267,7 @@ export class RegressionTestHelpers {
 				.select({ postId: posts.id, userId: posts.userId })
 				.from(posts)
 				.leftJoin(users, eq(posts.userId, users.id))
-				.where(`users.id IS NULL`);
+				.where(isNull(users.id));
 
 			if (orphanedPosts.length > 0) {
 				errors.push(`Found ${orphanedPosts.length} orphaned posts without valid users`);
@@ -277,7 +277,12 @@ export class RegressionTestHelpers {
 			const invalidPosts = await testDb
 				.select({ id: posts.id, title: posts.title, content: posts.content })
 				.from(posts)
-				.where(`title = '' OR content = '' OR title IS NULL OR content IS NULL`);
+				.where(or(
+				eq(posts.title, ''),
+				eq(posts.content, ''),
+				isNull(posts.title),
+				isNull(posts.content)
+			));
 
 			if (invalidPosts.length > 0) {
 				errors.push(`Found ${invalidPosts.length} posts with empty required fields`);
@@ -288,7 +293,7 @@ export class RegressionTestHelpers {
 				.select({ slug: posts.slug, count: count() })
 				.from(posts)
 				.groupBy(posts.slug)
-				.having(`count(*) > 1`);
+				.having(gt(count(), 1));
 
 			if (duplicatePostSlugs.length > 0) {
 				warnings.push(`Found ${duplicatePostSlugs.length} duplicate post slugs`);
@@ -298,7 +303,7 @@ export class RegressionTestHelpers {
 				.select({ slug: categories.slug, count: count() })
 				.from(categories)
 				.groupBy(categories.slug)
-				.having(`count(*) > 1`);
+				.having(gt(count(), 1));
 
 			if (duplicateCategorySlugs.length > 0) {
 				warnings.push(`Found ${duplicateCategorySlugs.length} duplicate category slugs`);

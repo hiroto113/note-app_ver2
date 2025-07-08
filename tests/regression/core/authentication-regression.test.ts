@@ -5,11 +5,11 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import {
 	RegressionTestBase,
-	RegressionScenario,
 	createRegressionScenario,
 	createSuccessResult,
 	createFailureResult
 } from '../utils/regression-test-base';
+import type { RegressionScenario } from '../utils/regression-test-base';
 import { RegressionTestHelpers } from '../utils/regression-helpers';
 import { regressionDataManager } from '../utils/regression-data-manager';
 
@@ -42,7 +42,6 @@ describe('Authentication Flow Regression Tests', () => {
 		const [user] = await testDb.insert(users).values({
 			id: crypto.randomUUID(),
 			username: testUsername,
-			email: `${testUsername}@test.com`,
 			hashedPassword,
 			createdAt: new Date(),
 			updatedAt: new Date()
@@ -308,8 +307,7 @@ describe('Authentication Flow Regression Tests', () => {
 			const [adminUser] = await testDb.insert(users).values({
 				id: crypto.randomUUID(),
 				username: `admin_${Date.now()}`,
-				email: `admin_${Date.now()}@test.com`,
-				hashedPassword: await bcrypt.hash('adminPassword123!', 10),
+					hashedPassword: await bcrypt.hash('adminPassword123!', 10),
 				createdAt: new Date(),
 				updatedAt: new Date()
 			}).returning();
@@ -333,8 +331,7 @@ describe('Authentication Flow Regression Tests', () => {
 			const [regularUser] = await testDb.insert(users).values({
 				id: crypto.randomUUID(),
 				username: `regular_${Date.now()}`,
-				email: `regular_${Date.now()}@test.com`,
-				hashedPassword: await bcrypt.hash('regularPassword123!', 10),
+					hashedPassword: await bcrypt.hash('regularPassword123!', 10),
 				createdAt: new Date(),
 				updatedAt: new Date()
 			}).returning();
@@ -342,8 +339,7 @@ describe('Authentication Flow Regression Tests', () => {
 			const [adminUser] = await testDb.insert(users).values({
 				id: crypto.randomUUID(),
 				username: `admin_${Date.now()}`,
-				email: `admin_${Date.now()}@test.com`,
-				hashedPassword: await bcrypt.hash('adminPassword123!', 10),
+					hashedPassword: await bcrypt.hash('adminPassword123!', 10),
 				createdAt: new Date(),
 				updatedAt: new Date()
 			}).returning();

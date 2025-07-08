@@ -107,7 +107,7 @@ describe('Form Validation Error Tests', () => {
 				const postData = {
 					title: 'Valid Title',
 					content: 'Valid content',
-					status
+					status: status as any
 				};
 
 				const validation = validatePost(postData);
@@ -170,7 +170,7 @@ describe('Form Validation Error Tests', () => {
 			];
 
 			for (const { data, expectedField } of invalidCategoryData) {
-				const validation = validatePost(data);
+				const validation = validatePost(data as any);
 				
 				expect(validation.isValid).toBe(false);
 				
@@ -381,8 +381,8 @@ describe('Form Validation Error Tests', () => {
 					expect(Array.isArray(validation.errors)).toBe(true);
 				} catch (error) {
 					// If it throws, should be a proper error message
-					expect(error).toBeInstanceOf(Error);
-					expect(error.message).toBeDefined();
+					expect(error as Error).toBeInstanceOf(Error);
+					expect((error as Error).message).toBeDefined();
 				}
 			}
 		});
@@ -448,8 +448,8 @@ describe('Form Validation Error Tests', () => {
 
 			// Check individual error format
 			responseData.details.forEach((error: any) => {
-				expect(error).toHaveProperty('field');
-				expect(error).toHaveProperty('message');
+				expect(error as Error).toHaveProperty('field');
+				expect(error as Error).toHaveProperty('message');
 				expect(typeof error.field).toBe('string');
 				expect(typeof error.message).toBe('string');
 			});

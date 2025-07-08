@@ -62,8 +62,8 @@ describe('Authentication Error Boundary Tests', () => {
 					await mockAuthenticateUser(username, 'password123');
 					expect.fail(`Should have thrown error for username: ${username}`);
 				} catch (error) {
-					expect(error).toBeInstanceOf(Error);
-					expect(error.message).toMatch(/(Invalid username|User not found)/);
+					expect(error as Error).toBeInstanceOf(Error);
+					expect((error as Error).message).toMatch(/(Invalid username|User not found)/);
 				}
 			}
 		});
@@ -107,8 +107,8 @@ describe('Authentication Error Boundary Tests', () => {
 					await mockValidatePassword(password, user.hashedPassword);
 					expect.fail(`Should have thrown error for password: ${password}`);
 				} catch (error) {
-					expect(error).toBeInstanceOf(Error);
-					expect(error.message).toMatch(/(Invalid password)/);
+					expect(error as Error).toBeInstanceOf(Error);
+					expect((error as Error).message).toMatch(/(Invalid password)/);
 				}
 			}
 		});
@@ -136,12 +136,12 @@ describe('Authentication Error Boundary Tests', () => {
 					await mockAuthenticateWithLockout('testuser', 'wrongpassword');
 					expect.fail('Should have thrown authentication error');
 				} catch (error) {
-					expect(error).toBeInstanceOf(Error);
+					expect(error as Error).toBeInstanceOf(Error);
 					
 					if (i < maxAttempts) {
-						expect(error.message).toBe('Invalid credentials');
+						expect((error as Error).message).toBe('Invalid credentials');
 					} else {
-						expect(error.message).toContain('Account locked until');
+						expect((error as Error).message).toContain('Account locked until');
 					}
 				}
 			}
@@ -188,8 +188,8 @@ describe('Authentication Error Boundary Tests', () => {
 					await mockValidateSession(token);
 					expect.fail(`Should have thrown error for token: ${token}`);
 				} catch (error) {
-					expect(error).toBeInstanceOf(Error);
-					expect(error.message).toMatch(/(Invalid session|Session not found|Session expired|too short|too long)/);
+					expect(error as Error).toBeInstanceOf(Error);
+					expect((error as Error).message).toMatch(/(Invalid session|Session not found|Session expired|too short|too long)/);
 				}
 			}
 		});
@@ -209,8 +209,8 @@ describe('Authentication Error Boundary Tests', () => {
 				await mockCleanupSessions(testUserId);
 				expect.fail('Should have thrown cleanup error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('Database error during session cleanup');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('Database error during session cleanup');
 			}
 
 			// Test with invalid user ID
@@ -218,8 +218,8 @@ describe('Authentication Error Boundary Tests', () => {
 				await mockCleanupSessions('');
 				expect.fail('Should have thrown user ID error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('User ID required');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('User ID required');
 			}
 		});
 
@@ -254,9 +254,9 @@ describe('Authentication Error Boundary Tests', () => {
 				await mockCreateSession(testUserId);
 				expect.fail('Should have thrown concurrent session limit error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('Maximum concurrent sessions');
-				expect(error.message).toContain('exceeded');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('Maximum concurrent sessions');
+				expect((error as Error).message).toContain('exceeded');
 			}
 		});
 	});
@@ -291,7 +291,7 @@ describe('Authentication Error Boundary Tests', () => {
 				try {
 					await mockRateLimitedLogin('testuser', 'wrongpassword');
 				} catch (error) {
-					expect(error.message).toBe('Invalid credentials');
+					expect((error as Error).message).toBe('Invalid credentials');
 				}
 			}
 
@@ -300,8 +300,8 @@ describe('Authentication Error Boundary Tests', () => {
 				await mockRateLimitedLogin('testuser', 'wrongpassword');
 				expect.fail('Should have thrown rate limit error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('Rate limit exceeded');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('Rate limit exceeded');
 			}
 		});
 
@@ -350,8 +350,8 @@ describe('Authentication Error Boundary Tests', () => {
 				await mockRateLimitedEndpoint('/api/auth/login');
 				expect.fail('Should have thrown rate limit error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('API rate limit exceeded');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('API rate limit exceeded');
 			}
 		});
 	});
@@ -400,8 +400,8 @@ describe('Authentication Error Boundary Tests', () => {
 					mockValidateJWT(token);
 					expect.fail(`Should have thrown error for token: ${token}`);
 				} catch (error) {
-					expect(error).toBeInstanceOf(Error);
-					expect(error.message).toContain(expectedError);
+					expect(error as Error).toBeInstanceOf(Error);
+					expect((error as Error).message).toContain(expectedError);
 				}
 			}
 
@@ -455,8 +455,8 @@ describe('Authentication Error Boundary Tests', () => {
 					await mockRefreshToken(token);
 					expect.fail(`Should have thrown error for refresh token: ${token}`);
 				} catch (error) {
-					expect(error).toBeInstanceOf(Error);
-					expect(error.message).toContain(expectedError);
+					expect(error as Error).toBeInstanceOf(Error);
+					expect((error as Error).message).toContain(expectedError);
 				}
 			}
 
@@ -515,8 +515,8 @@ describe('Authentication Error Boundary Tests', () => {
 					mockVerifyTOTP(code, secret);
 					expect.fail(`Should have thrown error for TOTP code: ${code}`);
 				} catch (error) {
-					expect(error).toBeInstanceOf(Error);
-					expect(error.message).toContain(expectedError);
+					expect(error as Error).toBeInstanceOf(Error);
+					expect((error as Error).message).toContain(expectedError);
 				}
 			}
 
@@ -571,8 +571,8 @@ describe('Authentication Error Boundary Tests', () => {
 					mockVerifyBackupCode(code, userBackupCodes);
 					expect.fail(`Should have thrown error for backup code: ${code}`);
 				} catch (error) {
-					expect(error).toBeInstanceOf(Error);
-					expect(error.message).toContain(expectedError);
+					expect(error as Error).toBeInstanceOf(Error);
+					expect((error as Error).message).toContain(expectedError);
 				}
 			}
 
@@ -632,8 +632,8 @@ describe('Authentication Error Boundary Tests', () => {
 					await mockOAuthAuthentication(provider, code);
 					expect.fail(`Should have thrown error for ${provider} with code: ${code}`);
 				} catch (error) {
-					expect(error).toBeInstanceOf(Error);
-					expect(error.message).toContain(expectedError);
+					expect(error as Error).toBeInstanceOf(Error);
+					expect((error as Error).message).toContain(expectedError);
 				}
 			}
 
@@ -668,8 +668,8 @@ describe('Authentication Error Boundary Tests', () => {
 				await mockAuthService.authenticate();
 				expect.fail('Should have thrown service unavailable error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('Authentication service is currently unavailable');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('Authentication service is currently unavailable');
 			}
 
 			// Test service timeout (degraded)
@@ -683,8 +683,8 @@ describe('Authentication Error Boundary Tests', () => {
 				await Promise.race([mockAuthService.authenticate(), timeoutPromise]);
 				expect.fail('Should have thrown timeout error');
 			} catch (error) {
-				expect(error).toBeInstanceOf(Error);
-				expect(error.message).toContain('timeout');
+				expect(error as Error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain('timeout');
 			}
 		});
 	});

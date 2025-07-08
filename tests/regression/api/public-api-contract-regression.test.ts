@@ -431,7 +431,7 @@ describe('Public API Contract Regression Tests', () => {
 				testDb
 					.select({ id: posts.id, title: posts.title })
 					.from(posts)
-					.where(`status = 'published'`)
+					.where(eq(posts.status, 'published'))
 					.limit(5)
 			);
 
