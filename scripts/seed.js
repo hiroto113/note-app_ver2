@@ -3,6 +3,7 @@ import { createClient } from '@libsql/client';
 import bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { eq } from 'drizzle-orm';
 
 // Define schema inline for seed script
 const users = sqliteTable('users', {
@@ -17,24 +18,26 @@ const categories = sqliteTable('categories', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	name: text('name').notNull().unique(),
 	slug: text('slug').notNull().unique(),
-	description: text('description')
+	description: text('description'),
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 });
 
 const posts = sqliteTable('posts', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	slug: text('slug').notNull().unique(),
 	title: text('title').notNull(),
-	excerpt: text('excerpt'),
+	slug: text('slug').notNull().unique(),
 	content: text('content').notNull(),
+	excerpt: text('excerpt'),
 	status: text('status', { enum: ['draft', 'published'] })
 		.notNull()
 		.default('draft'),
 	publishedAt: integer('published_at', { mode: 'timestamp' }),
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
 	userId: text('user_id')
 		.notNull()
-		.references(() => users.id, { onDelete: 'cascade' }),
-	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
+		.references(() => users.id, { onDelete: 'cascade' })
 });
 
 const postsToCategories = sqliteTable('posts_to_categories', {
@@ -75,24 +78,36 @@ export async function createAdminUser() {
 
 export async function createSampleData() {
 	try {
-		// Create categories
-		const techCategory = await db
-			.insert(categories)
-			.values({
-				name: 'Technology',
-				slug: 'technology',
-				description: 'Posts about technology and programming'
-			})
-			.returning();
+		const now = new Date();
+		
+		// Create categories (idempotent)
+		let techCategory = await db.select().from(categories).where(eq(categories.slug, 'technology'));
+		if (techCategory.length === 0) {
+			techCategory = await db
+				.insert(categories)
+				.values({
+					name: 'Technology',
+					slug: 'technology',
+					description: 'Posts about technology and programming',
+					createdAt: now,
+					updatedAt: now
+				})
+				.returning();
+		}
 
-		const aiCategory = await db
-			.insert(categories)
-			.values({
-				name: 'AI & Machine Learning',
-				slug: 'ai-ml',
-				description: 'Posts about AI and Machine Learning'
-			})
-			.returning();
+		let aiCategory = await db.select().from(categories).where(eq(categories.slug, 'ai-ml'));
+		if (aiCategory.length === 0) {
+			aiCategory = await db
+				.insert(categories)
+				.values({
+					name: 'AI & Machine Learning',
+					slug: 'ai-ml',
+					description: 'Posts about AI and Machine Learning',
+					createdAt: now,
+					updatedAt: now
+				})
+				.returning();
+		}
 
 		console.log('Categories created');
 
@@ -140,9 +155,23 @@ export async function createSampleData() {
 			}
 		];
 
-		// Insert posts
+		// Insert posts (idempotent)
 		for (const postData of samplePosts) {
-			const [post] = await db.insert(posts).values(postData).returning();
+			// Check if post already exists
+			const existingPost = await db.select().from(posts).where(eq(posts.slug, postData.slug));
+			if (existingPost.length > 0) {
+				console.log(`Post ${postData.slug} already exists, skipping`);
+				continue;
+			}
+
+			// Add missing timestamps for posts without them
+			const postWithTimestamps = {
+				...postData,
+				createdAt: postData.createdAt || now,
+				updatedAt: postData.updatedAt || now
+			};
+
+			const [post] = await db.insert(posts).values(postWithTimestamps).returning();
 
 			// Assign categories to posts
 			if (post.slug.includes('sveltekit') || post.slug.includes('api')) {
