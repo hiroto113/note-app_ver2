@@ -79,9 +79,12 @@ export async function createAdminUser() {
 export async function createSampleData() {
 	try {
 		const now = new Date();
-		
+
 		// Create categories (idempotent)
-		let techCategory = await db.select().from(categories).where(eq(categories.slug, 'technology'));
+		let techCategory = await db
+			.select()
+			.from(categories)
+			.where(eq(categories.slug, 'technology'));
 		if (techCategory.length === 0) {
 			techCategory = await db
 				.insert(categories)

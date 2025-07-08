@@ -42,9 +42,9 @@ describe('Factory System Integration', () => {
 			const users = await fixtures.createUsers(3);
 
 			expect(users).toHaveLength(3);
-			expect(users.every(user => user.id && user.username)).toBe(true);
+			expect(users.every((user) => user.id && user.username)).toBe(true);
 			// Ensure all usernames are unique
-			const usernames = users.map(u => u.username);
+			const usernames = users.map((u) => u.username);
 			expect(new Set(usernames).size).toBe(3);
 		});
 
@@ -279,21 +279,18 @@ describe('Factory System Integration', () => {
 			const markdown = testUtils.content.markdown(title);
 
 			expect(title).toContain('Blog');
-			expect(slug).toMatch(/^blog-test-/);  
+			expect(slug).toMatch(/^blog-test-/);
 			expect(excerpt).toContain('test excerpt');
 			expect(markdown).toContain('# ' + title);
 		});
 
 		it('should validate array properties', () => {
 			const testObj = { name: 'test', id: 123, active: true };
-			const hasRequired = testUtils.assert.hasRequiredProperties(
-				testObj,
-				['name', 'id']
-			);
-			const missingRequired = testUtils.assert.hasRequiredProperties(
-				testObj,
-				['name', 'missing' as keyof typeof testObj]
-			);
+			const hasRequired = testUtils.assert.hasRequiredProperties(testObj, ['name', 'id']);
+			const missingRequired = testUtils.assert.hasRequiredProperties(testObj, [
+				'name',
+				'missing' as keyof typeof testObj
+			]);
 
 			expect(hasRequired).toBe(true);
 			expect(missingRequired).toBe(false);

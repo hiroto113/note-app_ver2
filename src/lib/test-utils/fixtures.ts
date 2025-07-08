@@ -17,11 +17,7 @@ import {
 	type Category,
 	type Post
 } from '../server/db/schema';
-import {
-	factories,
-	createTechPostData,
-	createAiMlPostData
-} from './factories';
+import { factories, createTechPostData, createAiMlPostData } from './factories';
 
 /**
  * Test Fixtures for Database Integration
@@ -79,10 +75,10 @@ export class TestFixtures {
 	async createDefaultCategories(): Promise<{ tech: Category; aiMl: Category }> {
 		const techCategory = factories.techCategory.build();
 		const aiMlCategory = factories.aiCategory.build();
-		
+
 		const [tech] = await this.db.insert(categories).values(techCategory).returning();
 		const [aiMl] = await this.db.insert(categories).values(aiMlCategory).returning();
-		
+
 		return { tech, aiMl };
 	}
 
@@ -105,10 +101,7 @@ export class TestFixtures {
 	/**
 	 * Create a published post
 	 */
-	async createPublishedPost(
-		postData: Partial<NewPost> = {},
-		authorId?: string
-	): Promise<Post> {
+	async createPublishedPost(postData: Partial<NewPost> = {}, authorId?: string): Promise<Post> {
 		return this.createPost(
 			{ ...postData, status: 'published', publishedAt: new Date() },
 			authorId
@@ -119,10 +112,7 @@ export class TestFixtures {
 	 * Create a draft post
 	 */
 	async createDraftPost(postData: Partial<NewPost> = {}, authorId?: string): Promise<Post> {
-		return this.createPost(
-			{ ...postData, status: 'draft', publishedAt: null },
-			authorId
-		);
+		return this.createPost({ ...postData, status: 'draft', publishedAt: null }, authorId);
 	}
 
 	/**
@@ -134,7 +124,7 @@ export class TestFixtures {
 		authorId?: string
 	): Promise<{ post: Post; categoryIds: number[] }> {
 		const post = await this.createPost(postData, authorId);
-		
+
 		// If no category IDs provided, create default categories
 		let finalCategoryIds = categoryIds;
 		if (finalCategoryIds.length === 0) {

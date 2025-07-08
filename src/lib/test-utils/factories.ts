@@ -19,7 +19,8 @@ import type {
 export const userFactory = Factory.define<NewUser>(({ sequence, params }) => ({
 	id: params.id || randomUUID(),
 	username: params.username || `user${sequence}`,
-	hashedPassword: params.hashedPassword || '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // 'password'
+	hashedPassword:
+		params.hashedPassword || '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // 'password'
 	createdAt: params.createdAt || new Date(),
 	updatedAt: params.updatedAt || new Date()
 }));
@@ -34,7 +35,7 @@ export const adminUserFactory = userFactory.params({
 export const categoryFactory = Factory.define<NewCategory>(({ sequence, params }) => {
 	const name = params.name || `Category ${sequence}`;
 	const slug = params.slug || name.toLowerCase().replace(/\s+/g, '-');
-	
+
 	return {
 		name,
 		slug,
@@ -60,12 +61,19 @@ export const aiCategoryFactory = categoryFactory.params({
 // Post Factory
 export const postFactory = Factory.define<NewPost>(({ sequence, params }) => {
 	const title = params.title || `Post Title ${sequence}`;
-	const slug = params.slug || title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-	
+	const slug =
+		params.slug ||
+		title
+			.toLowerCase()
+			.replace(/\s+/g, '-')
+			.replace(/[^a-z0-9-]/g, '');
+
 	return {
 		title,
 		slug,
-		content: params.content || `# ${title}\n\nThis is the content for ${title}.\n\n## Section\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+		content:
+			params.content ||
+			`# ${title}\n\nThis is the content for ${title}.\n\n## Section\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.`,
 		excerpt: params.excerpt || `This is the excerpt for ${title}.`,
 		status: (params.status as 'draft' | 'published') || 'draft',
 		publishedAt: params.publishedAt || null,
@@ -99,7 +107,7 @@ export const sessionFactory = Factory.define<NewSession>(({ params }) => ({
 export const mediaFactory = Factory.define<NewMedia>(({ sequence, params }) => {
 	const filename = params.filename || `image-${sequence}.jpg`;
 	const originalName = params.originalName || `Original Image ${sequence}.jpg`;
-	
+
 	return {
 		filename,
 		originalName,
@@ -117,19 +125,19 @@ export const qualityMetricsFactory = Factory.define<NewQualityMetrics>(({ sequen
 	timestamp: params.timestamp || new Date(),
 	commitHash: params.commitHash || `abc123${sequence}`,
 	branch: params.branch || 'main',
-	
+
 	// Lighthouse scores (0-100)
 	lighthousePerformance: params.lighthousePerformance ?? Math.floor(Math.random() * 20) + 80, // 80-100
 	lighthouseAccessibility: params.lighthouseAccessibility ?? Math.floor(Math.random() * 20) + 80,
 	lighthouseBestPractices: params.lighthouseBestPractices ?? Math.floor(Math.random() * 20) + 80,
 	lighthouseSeo: params.lighthouseSeo ?? Math.floor(Math.random() * 20) + 80,
 	lighthousePwa: params.lighthousePwa ?? Math.floor(Math.random() * 20) + 60,
-	
+
 	// Core Web Vitals
 	lcp: params.lcp ?? Math.floor(Math.random() * 1000) + 1000, // 1-2s
 	fid: params.fid ?? Math.floor(Math.random() * 50) + 10, // 10-60ms
 	cls: params.cls ?? Math.floor(Math.random() * 100) + 10, // 0.01-0.11 (x1000)
-	
+
 	// Test results
 	testUnitTotal: params.testUnitTotal ?? Math.floor(Math.random() * 50) + 50,
 	testUnitPassed: params.testUnitPassed ?? null,
@@ -143,16 +151,16 @@ export const qualityMetricsFactory = Factory.define<NewQualityMetrics>(({ sequen
 	testE2ePassed: params.testE2ePassed ?? null,
 	testE2eFailed: params.testE2eFailed ?? null,
 	testE2eCoverage: params.testE2eCoverage ?? Math.floor(Math.random() * 20) + 50,
-	
+
 	// Performance metrics
 	bundleSize: params.bundleSize ?? Math.floor(Math.random() * 200000) + 300000, // 300-500KB
 	loadTime: params.loadTime ?? Math.floor(Math.random() * 1000) + 500, // 0.5-1.5s
 	ttfb: params.ttfb ?? Math.floor(Math.random() * 200) + 100, // 100-300ms
-	
+
 	// Accessibility
 	wcagScore: params.wcagScore ?? Math.floor(Math.random() * 20) + 80,
 	axeViolations: params.axeViolations ?? Math.floor(Math.random() * 5),
-	
+
 	createdAt: params.createdAt || new Date()
 }));
 
@@ -194,8 +202,8 @@ export function createPostWithCategoriesData(
 	categoriesData: Partial<NewCategory>[] = []
 ) {
 	const post = postFactory.build(postData);
-	const categories = categoriesData.map(catData => categoryFactory.build(catData));
-	
+	const categories = categoriesData.map((catData) => categoryFactory.build(catData));
+
 	return { post, categories };
 }
 
@@ -237,7 +245,8 @@ Backend development has also seen major innovations:
 4. **Security**: Follow OWASP guidelines
 
 The future of web development continues to evolve with new tools and methodologies emerging regularly.`,
-		excerpt: 'Explore the current landscape of modern web development, from frontend frameworks to backend technologies and best practices.'
+		excerpt:
+			'Explore the current landscape of modern web development, from frontend frameworks to backend technologies and best practices.'
 	},
 	aiMl: {
 		title: 'Introduction to Machine Learning',
@@ -278,7 +287,8 @@ Machine learning is transforming various industries:
 - Entertainment: Recommendation systems
 
 The field continues to advance rapidly with new breakthroughs in deep learning and AI research.`,
-		excerpt: 'Learn the fundamentals of machine learning, including types, algorithms, and real-world applications across various industries.'
+		excerpt:
+			'Learn the fundamentals of machine learning, including types, algorithms, and real-world applications across various industries.'
 	}
 };
 

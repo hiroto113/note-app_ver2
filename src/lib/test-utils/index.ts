@@ -48,9 +48,14 @@ export const testUtils = {
 	 */
 	content: {
 		title: (prefix = 'Test') => `${prefix} ${testUtils.generateTestId()}`,
-		slug: (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+		slug: (title: string) =>
+			title
+				.toLowerCase()
+				.replace(/[^a-z0-9]+/g, '-')
+				.replace(/(^-|-$)/g, ''),
 		excerpt: (title: string) => `This is a test excerpt for ${title}.`,
-		markdown: (title: string) => `# ${title}\n\nThis is test content for ${title}.\n\n## Section\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.`
+		markdown: (title: string) =>
+			`# ${title}\n\nThis is test content for ${title}.\n\n## Section\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.`
 	},
 
 	/**
@@ -76,7 +81,8 @@ export const testUtils = {
 			};
 			return mimeTypes[type as keyof typeof mimeTypes] || 'application/octet-stream';
 		},
-		size: (minKB = 100, maxKB = 1000) => Math.floor(Math.random() * (maxKB - minKB) + minKB) * 1024
+		size: (minKB = 100, maxKB = 1000) =>
+			Math.floor(Math.random() * (maxKB - minKB) + minKB) * 1024
 	},
 
 	/**
@@ -85,8 +91,10 @@ export const testUtils = {
 	metrics: {
 		lighthouseScore: (min = 80, max = 100) => Math.floor(Math.random() * (max - min) + min),
 		coverage: (min = 70, max = 95) => Math.floor(Math.random() * (max - min) + min),
-		performanceTime: (minMs = 500, maxMs = 2000) => Math.floor(Math.random() * (maxMs - minMs) + minMs),
-		bundleSize: (minKB = 200, maxKB = 500) => Math.floor(Math.random() * (maxKB - minKB) + minKB) * 1024
+		performanceTime: (minMs = 500, maxMs = 2000) =>
+			Math.floor(Math.random() * (maxMs - minMs) + minMs),
+		bundleSize: (minKB = 200, maxKB = 500) =>
+			Math.floor(Math.random() * (maxKB - minKB) + minKB) * 1024
 	},
 
 	/**
