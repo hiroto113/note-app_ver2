@@ -8,7 +8,8 @@ export default defineConfig({
 		include: [
 			'src/**/*.{test,spec}.{js,ts}',
 			'tests/integration/**/*.{test,spec}.{js,ts}',
-			'tests/regression/**/*.{test,spec}.{js,ts}'
+			'tests/regression/**/*.{test,spec}.{js,ts}',
+			'tests/security/**/*.{test,spec}.{js,ts}'
 		],
 		exclude: ['tests/e2e/**', 'tests/**/*.spec.ts'],
 		environment: 'jsdom',
