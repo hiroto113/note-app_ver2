@@ -275,7 +275,11 @@ export class SecurityTestHelpers {
 		passed: boolean;
 		results: Array<{ header: string; status: 'pass' | 'fail' | 'warning'; message: string }>;
 	} {
-		const results: Array<{ header: string; status: 'pass' | 'fail' | 'warning'; message: string }> = [];
+		const results: Array<{
+			header: string;
+			status: 'pass' | 'fail' | 'warning';
+			message: string;
+		}> = [];
 		let allPassed = true;
 
 		// Required security headers
@@ -377,8 +381,16 @@ export class SecurityTestHelpers {
 		responseTime: number;
 	}> {
 		const commonPasswords = [
-			'password', '123456', 'admin', 'root', 'qwerty',
-			'letmein', 'welcome', 'monkey', 'dragon', 'pass'
+			'password',
+			'123456',
+			'admin',
+			'root',
+			'qwerty',
+			'letmein',
+			'welcome',
+			'monkey',
+			'dragon',
+			'pass'
 		];
 
 		let attempts = 0;
@@ -406,15 +418,17 @@ export class SecurityTestHelpers {
 				}
 			} catch (error) {
 				// Authentication error indicates potential lockout mechanism
-				if ((error as Error).message.includes('locked') || 
-					(error as Error).message.includes('rate limit')) {
+				if (
+					(error as Error).message.includes('locked') ||
+					(error as Error).message.includes('rate limit')
+				) {
 					lockedOut = true;
 					break;
 				}
 			}
 
 			// Simulate delay between attempts (realistic attack pattern)
-			await new Promise(resolve => setTimeout(resolve, 100));
+			await new Promise((resolve) => setTimeout(resolve, 100));
 		}
 
 		return {
@@ -471,7 +485,8 @@ export class SecurityTestHelpers {
 
 		let recommendation = 'Input is properly sanitized';
 		if (!isSanitized) {
-			recommendation = 'Input requires additional sanitization. Consider using HTML sanitization libraries and prepared statements.';
+			recommendation =
+				'Input requires additional sanitization. Consider using HTML sanitization libraries and prepared statements.';
 		}
 
 		return {
@@ -519,7 +534,18 @@ export class SecurityTestHelpers {
 		else feedback.push('Password should contain special characters');
 
 		// Common password check
-		const commonPasswords = ['password', '123456', 'qwerty', 'admin', 'letmein', 'welcome', 'monkey', 'dragon', 'pass', 'test'];
+		const commonPasswords = [
+			'password',
+			'123456',
+			'qwerty',
+			'admin',
+			'letmein',
+			'welcome',
+			'monkey',
+			'dragon',
+			'pass',
+			'test'
+		];
 		const isCommonPassword = commonPasswords.includes(password.toLowerCase());
 		if (isCommonPassword) {
 			score = 0; // Force to very weak
@@ -570,11 +596,7 @@ export class SecurityTestHelpers {
 	 */
 	static async cleanupSecurityTestData(): Promise<void> {
 		// Remove test users created for security testing
-		await testDb.delete(users).where(
-			eq(users.username, 'security_admin_test')
-		);
-		await testDb.delete(users).where(
-			eq(users.username, 'security_user_test')
-		);
+		await testDb.delete(users).where(eq(users.username, 'security_admin_test'));
+		await testDb.delete(users).where(eq(users.username, 'security_user_test'));
 	}
 }

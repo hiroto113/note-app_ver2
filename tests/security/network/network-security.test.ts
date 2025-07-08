@@ -108,8 +108,8 @@ describe('Network Security Tests', () => {
 
 				// Check cipher suites
 				const weakCiphers = ['RC4', 'DES', 'MD5', 'NULL'];
-				const hasWeakCiphers = tlsConfig.cipherSuites.some(cipher =>
-					weakCiphers.some(weak => cipher.includes(weak))
+				const hasWeakCiphers = tlsConfig.cipherSuites.some((cipher) =>
+					weakCiphers.some((weak) => cipher.includes(weak))
 				);
 				if (hasWeakCiphers) {
 					issues.push('Weak cipher suites detected');
@@ -136,10 +136,16 @@ describe('Network Security Tests', () => {
 					secure: securityScore >= 80,
 					score: securityScore,
 					issues,
-					grade: securityScore >= 90 ? 'A' :
-						securityScore >= 80 ? 'B' :
-						securityScore >= 70 ? 'C' :
-						securityScore >= 60 ? 'D' : 'F'
+					grade:
+						securityScore >= 90
+							? 'A'
+							: securityScore >= 80
+								? 'B'
+								: securityScore >= 70
+									? 'C'
+									: securityScore >= 60
+										? 'D'
+										: 'F'
 				};
 			};
 
@@ -213,7 +219,9 @@ describe('Network Security Tests', () => {
 
 				// Check signature algorithm
 				const weakAlgorithms = ['md5', 'sha1'];
-				if (weakAlgorithms.some(alg => certificate.algorithm.toLowerCase().includes(alg))) {
+				if (
+					weakAlgorithms.some((alg) => certificate.algorithm.toLowerCase().includes(alg))
+				) {
 					issues.push(`Weak signature algorithm: ${certificate.algorithm}`);
 				}
 
@@ -228,15 +236,21 @@ describe('Network Security Tests', () => {
 				}
 
 				return {
-					valid: issues.filter(issue => 
-						issue.includes('expired') || 
-						issue.includes('not yet valid') ||
-						issue.includes('Weak key size')
-					).length === 0,
+					valid:
+						issues.filter(
+							(issue) =>
+								issue.includes('expired') ||
+								issue.includes('not yet valid') ||
+								issue.includes('Weak key size')
+						).length === 0,
 					issues,
 					daysUntilExpiry,
-					securityLevel: certificate.keySize >= 4096 ? 'high' :
-						certificate.keySize >= 2048 ? 'medium' : 'low'
+					securityLevel:
+						certificate.keySize >= 4096
+							? 'high'
+							: certificate.keySize >= 2048
+								? 'medium'
+								: 'low'
 				};
 			};
 
@@ -287,7 +301,8 @@ describe('Network Security Tests', () => {
 				'X-Content-Type-Options': 'nosniff',
 				'Referrer-Policy': 'strict-origin-when-cross-origin',
 				'X-XSS-Protection': '1; mode=block',
-				'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://vercel.live; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+				'Content-Security-Policy':
+					"default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://vercel.live; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
 				'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
 				'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 				'Cross-Origin-Embedder-Policy': 'require-corp',
@@ -295,9 +310,9 @@ describe('Network Security Tests', () => {
 			});
 
 			const result = SecurityTestHelpers.validateSecurityHeaders(mockResponseHeaders);
-			
+
 			expect(result.passed).toBe(true);
-			expect(result.results.filter(r => r.status === 'pass').length).toBeGreaterThan(0);
+			expect(result.results.filter((r) => r.status === 'pass').length).toBeGreaterThan(0);
 
 			// Test missing headers
 			const incompleteHeaders = new Headers({
@@ -312,10 +327,10 @@ describe('Network Security Tests', () => {
 		it('should validate Content Security Policy effectiveness', () => {
 			const mockCSPValidator = (csp: string) => {
 				const directives = new Map<string, string[]>();
-				const policies = csp.split(';').map(p => p.trim());
+				const policies = csp.split(';').map((p) => p.trim());
 
 				// Parse CSP directives
-				policies.forEach(policy => {
+				policies.forEach((policy) => {
 					const [directive, ...sources] = policy.split(/\s+/);
 					if (directive) {
 						directives.set(directive, sources);
@@ -327,7 +342,7 @@ describe('Network Security Tests', () => {
 
 				// Check required directives
 				const requiredDirectives = ['default-src'];
-				requiredDirectives.forEach(directive => {
+				requiredDirectives.forEach((directive) => {
 					if (!directives.has(directive)) {
 						issues.push(`Missing required directive: ${directive}`);
 					}
@@ -349,15 +364,18 @@ describe('Network Security Tests', () => {
 					}
 
 					// Check for HTTP sources in HTTPS context
-					sources.forEach(source => {
+					sources.forEach((source) => {
 						if (source.startsWith('http://')) {
-							warnings.push(`Mixed content risk: ${directive} allows HTTP source ${source}`);
+							warnings.push(
+								`Mixed content risk: ${directive} allows HTTP source ${source}`
+							);
 						}
 					});
 				});
 
 				// Check for XSS protection
-				const hasStrictScriptSrc = directives.has('script-src') && 
+				const hasStrictScriptSrc =
+					directives.has('script-src') &&
 					!directives.get('script-src')!.includes("'unsafe-inline'");
 
 				return {
@@ -370,7 +388,8 @@ describe('Network Security Tests', () => {
 			};
 
 			// Test secure CSP
-			const secureCSP = "default-src 'self'; script-src 'self' https://trusted-cdn.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; object-src 'none'";
+			const secureCSP =
+				"default-src 'self'; script-src 'self' https://trusted-cdn.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; object-src 'none'";
 			const secureResult = mockCSPValidator(secureCSP);
 			expect(secureResult.secure).toBe(true);
 			expect(secureResult.issues).toHaveLength(0);
@@ -400,13 +419,16 @@ describe('Network Security Tests', () => {
 				let preload = false;
 
 				// Parse HSTS header
-				const directives = hstsHeader.split(';').map(d => d.trim());
-				
-				directives.forEach(directive => {
+				const directives = hstsHeader.split(';').map((d) => d.trim());
+
+				directives.forEach((directive) => {
 					if (directive.startsWith('max-age=')) {
 						maxAge = parseInt(directive.split('=')[1]);
-						if (maxAge < 31536000) { // Less than 1 year
-							issues.push(`HSTS max-age too short: ${maxAge} seconds (recommended: 31536000+)`);
+						if (maxAge < 31536000) {
+							// Less than 1 year
+							issues.push(
+								`HSTS max-age too short: ${maxAge} seconds (recommended: 31536000+)`
+							);
 						}
 					} else if (directive === 'includeSubDomains') {
 						includeSubDomains = true;
@@ -440,7 +462,9 @@ describe('Network Security Tests', () => {
 			const weakHSTS = 'max-age=3600'; // Only 1 hour
 			const weakResult = mockHSTSValidator(weakHSTS);
 			expect(weakResult.secure).toBe(false);
-			expect(weakResult.issues).toContain('HSTS max-age too short: 3600 seconds (recommended: 31536000+)');
+			expect(weakResult.issues).toContain(
+				'HSTS max-age too short: 3600 seconds (recommended: 31536000+)'
+			);
 
 			// Test missing HSTS
 			const missingResult = mockHSTSValidator(null);
@@ -471,7 +495,7 @@ describe('Network Security Tests', () => {
 
 				// Check for dangerous methods
 				const dangerousMethods = ['TRACE', 'CONNECT'];
-				const hasDangerousMethods = corsConfig.allowedMethods.some(method =>
+				const hasDangerousMethods = corsConfig.allowedMethods.some((method) =>
 					dangerousMethods.includes(method.toUpperCase())
 				);
 				if (hasDangerousMethods) {
@@ -485,18 +509,22 @@ describe('Network Security Tests', () => {
 
 				// Check for security-sensitive headers
 				const sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'];
-				const allowsSensitiveHeaders = corsConfig.allowedHeaders.some(header =>
+				const allowsSensitiveHeaders = corsConfig.allowedHeaders.some((header) =>
 					sensitiveHeaders.includes(header.toLowerCase())
 				);
 
 				// Check preflight cache duration
-				if (corsConfig.maxAge > 86400) { // More than 24 hours
+				if (corsConfig.maxAge > 86400) {
+					// More than 24 hours
 					issues.push('CORS preflight cache duration too long');
 				}
 
 				// Validate origin format
-				corsConfig.allowedOrigins.forEach(origin => {
-					if (origin !== '*' && !origin.match(/^https?:\/\/[a-zA-Z0-9.-]+(?::[0-9]+)?$/)) {
+				corsConfig.allowedOrigins.forEach((origin) => {
+					if (
+						origin !== '*' &&
+						!origin.match(/^https?:\/\/[a-zA-Z0-9.-]+(?::[0-9]+)?$/)
+					) {
 						issues.push(`Invalid origin format: ${origin}`);
 					}
 				});
@@ -505,8 +533,7 @@ describe('Network Security Tests', () => {
 					secure: issues.length === 0,
 					issues,
 					allowsSensitiveHeaders,
-					riskLevel: issues.length === 0 ? 'low' :
-						issues.length <= 2 ? 'medium' : 'high'
+					riskLevel: issues.length === 0 ? 'low' : issues.length <= 2 ? 'medium' : 'high'
 				};
 			};
 
@@ -538,11 +565,14 @@ describe('Network Security Tests', () => {
 		});
 
 		it('should prevent CORS-based attacks', () => {
-			const mockCORSRequestValidator = (request: {
-				origin: string;
-				method: string;
-				headers: Record<string, string>;
-			}, allowedOrigins: string[]) => {
+			const mockCORSRequestValidator = (
+				request: {
+					origin: string;
+					method: string;
+					headers: Record<string, string>;
+				},
+				allowedOrigins: string[]
+			) => {
 				const issues: string[] = [];
 
 				// Validate origin
@@ -551,8 +581,10 @@ describe('Network Security Tests', () => {
 				}
 
 				// Check for origin spoofing attempts
-				if (request.origin.includes('localhost') && 
-					!allowedOrigins.some(origin => origin.includes('localhost'))) {
+				if (
+					request.origin.includes('localhost') &&
+					!allowedOrigins.some((origin) => origin.includes('localhost'))
+				) {
 					issues.push('Potential localhost origin spoofing');
 				}
 
@@ -579,10 +611,11 @@ describe('Network Security Tests', () => {
 				return {
 					allowed: issues.length === 0,
 					issues,
-					riskIndicators: issues.filter(issue => 
-						issue.includes('spoofing') || 
-						issue.includes('attack') ||
-						issue.includes('suspicious')
+					riskIndicators: issues.filter(
+						(issue) =>
+							issue.includes('spoofing') ||
+							issue.includes('attack') ||
+							issue.includes('suspicious')
 					)
 				};
 			};
@@ -630,7 +663,7 @@ describe('Network Security Tests', () => {
 		it('should implement effective rate limiting', () => {
 			const mockRateLimiter = {
 				limits: new Map<string, { count: number; resetTime: number }>(),
-				
+
 				checkRateLimit: (identifier: string, limit: number, windowMs: number) => {
 					const now = Date.now();
 					const existing = mockRateLimiter.limits.get(identifier);
@@ -695,27 +728,28 @@ describe('Network Security Tests', () => {
 			const requestCounts = new Map<string, number[]>();
 			const mockDDoSDetector = {
 				requestCounts,
-				
+
 				analyzeTraffic: (sourceIP: string, timeWindow: number = 60000) => {
 					const now = Date.now();
 					const requests = requestCounts.get(sourceIP) || [];
-					
+
 					// Remove old requests outside time window
-					const recentRequests = requests.filter((timestamp: number) => 
-						now - timestamp < timeWindow
+					const recentRequests = requests.filter(
+						(timestamp: number) => now - timestamp < timeWindow
 					);
-					
+
 					// Add current request
 					recentRequests.push(now);
 					requestCounts.set(sourceIP, recentRequests);
 
 					const requestRate = recentRequests.length / (timeWindow / 1000); // requests per second
-					
+
 					// Detect various attack patterns
 					const indicators = {
 						highVolume: requestRate > 100, // More than 100 req/sec
-						burstPattern: recentRequests.length > 50 && 
-							(recentRequests[recentRequests.length - 1] - recentRequests[0]) < 5000, // 50 requests in 5 seconds
+						burstPattern:
+							recentRequests.length > 50 &&
+							recentRequests[recentRequests.length - 1] - recentRequests[0] < 5000, // 50 requests in 5 seconds
 						suspiciousUserAgent: false, // Would check user agent patterns
 						geoAnomalies: false // Would check geographic patterns
 					};
@@ -727,8 +761,8 @@ describe('Network Security Tests', () => {
 						requestRate,
 						indicators,
 						threatLevel,
-						action: threatLevel >= 2 ? 'block' : 
-							threatLevel === 1 ? 'throttle' : 'allow'
+						action:
+							threatLevel >= 2 ? 'block' : threatLevel === 1 ? 'throttle' : 'allow'
 					};
 				},
 
@@ -737,21 +771,21 @@ describe('Network Security Tests', () => {
 						case 0:
 							return { action: 'allow', message: 'Normal traffic' };
 						case 1:
-							return { 
-								action: 'throttle', 
+							return {
+								action: 'throttle',
 								message: 'Rate limiting applied',
-								delay: 1000 
+								delay: 1000
 							};
 						case 2:
 						case 3:
-							return { 
-								action: 'block', 
+							return {
+								action: 'block',
 								message: 'DDoS attack detected - IP blocked',
 								blockDuration: 3600000 // 1 hour
 							};
 						default:
-							return { 
-								action: 'block', 
+							return {
+								action: 'block',
 								message: 'Severe attack detected - extended block',
 								blockDuration: 86400000 // 24 hours
 							};
@@ -766,18 +800,32 @@ describe('Network Security Tests', () => {
 
 			// Simulate high-volume attack
 			const attackerIP = '10.0.0.1';
-			
-			// Simulate burst of requests
-			for (let i = 0; i < 60; i++) {
-				mockDDoSDetector.analyzeTraffic(attackerIP);
-			}
 
+			// Simulate attack with both highVolume and burstPattern
+			const baseTime = Date.now();
+			const requests = [];
+			
+			// First, add a burst of 60 requests in 3 seconds (burstPattern)
+			for (let i = 0; i < 60; i++) {
+				requests.push(baseTime + i * 50); // 60 requests in 3 seconds
+			}
+			
+			// Then, add more requests throughout the 60-second window (highVolume)
+			for (let i = 60; i < 6100; i++) {
+				requests.push(baseTime + 5000 + (i - 60) * 9); // Spread remaining requests
+			}
+			
+			mockDDoSDetector.requestCounts.set(attackerIP, requests);
+
+			// This should trigger both highVolume and burstPattern
 			const attackResult = mockDDoSDetector.analyzeTraffic(attackerIP);
 			expect(attackResult.action).toBe('block');
 			expect(attackResult.threatLevel).toBeGreaterThan(1);
 
 			// Test mitigation response
-			const mitigation = mockDDoSDetector.generateMitigationResponse(attackResult.threatLevel);
+			const mitigation = mockDDoSDetector.generateMitigationResponse(
+				attackResult.threatLevel
+			);
 			expect(mitigation.action).toBe('block');
 			expect(mitigation.blockDuration).toBeGreaterThan(0);
 		});
@@ -793,15 +841,12 @@ describe('Network Security Tests', () => {
 
 				getEndpointRisk: (endpoint: string): 'low' | 'medium' | 'high' => {
 					if (endpoint.includes('/admin') || endpoint.includes('/delete')) return 'high';
-					if (endpoint.includes('/api/auth') || endpoint.includes('/upload')) return 'medium';
+					if (endpoint.includes('/api/auth') || endpoint.includes('/upload'))
+						return 'medium';
 					return 'low';
 				},
 
-				calculateDynamicLimit: (
-					userId: string, 
-					endpoint: string, 
-					currentLoad: number
-				) => {
+				calculateDynamicLimit: (userId: string, endpoint: string, currentLoad: number) => {
 					const userTier = mockAdaptiveRateLimit.getUserTier(userId);
 					const endpointRisk = mockAdaptiveRateLimit.getEndpointRisk(endpoint);
 
@@ -820,13 +865,10 @@ describe('Network Security Tests', () => {
 					};
 
 					// Load multipliers (reduce limits under high load)
-					const loadMultiplier = currentLoad > 0.8 ? 0.5 : 
-						currentLoad > 0.6 ? 0.7 : 1.0;
+					const loadMultiplier = currentLoad > 0.8 ? 0.5 : currentLoad > 0.6 ? 0.7 : 1.0;
 
 					const limit = Math.floor(
-						baseLimits[userTier] * 
-						riskMultipliers[endpointRisk] * 
-						loadMultiplier
+						baseLimits[userTier] * riskMultipliers[endpointRisk] * loadMultiplier
 					);
 
 					return {
@@ -866,16 +908,16 @@ describe('Network Security Tests', () => {
 
 			scenarios.forEach(({ userId, endpoint, load, expectedTier, expectedRisk }) => {
 				const result = mockAdaptiveRateLimit.calculateDynamicLimit(userId, endpoint, load);
-				
+
 				expect(result.userTier).toBe(expectedTier);
 				expect(result.endpointRisk).toBe(expectedRisk);
 				expect(result.limit).toBeGreaterThan(0);
-				
+
 				// Higher tier users should generally have higher limits
 				if (expectedTier === 'enterprise') {
 					expect(result.limit).toBeGreaterThan(100);
 				}
-				
+
 				// High load should reduce limits
 				if (load > 0.8) {
 					expect(result.loadMultiplier).toBe(0.5);
@@ -937,7 +979,7 @@ describe('Network Security Tests', () => {
 					}
 
 					// Check for required fields
-					Object.keys(expectedSchema).forEach(field => {
+					Object.keys(expectedSchema).forEach((field) => {
 						if (expectedSchema[field].required && !(field in body)) {
 							issues.push(`Missing required field: ${field}`);
 						}
@@ -959,12 +1001,22 @@ describe('Network Security Tests', () => {
 						}
 
 						// Length validation
-						if (schema.maxLength && typeof value === 'string' && value.length > schema.maxLength) {
-							issues.push(`Field ${field} exceeds maximum length of ${schema.maxLength}`);
+						if (
+							schema.maxLength &&
+							typeof value === 'string' &&
+							value.length > schema.maxLength
+						) {
+							issues.push(
+								`Field ${field} exceeds maximum length of ${schema.maxLength}`
+							);
 						}
 
 						// Pattern validation
-						if (schema.pattern && typeof value === 'string' && !schema.pattern.test(value)) {
+						if (
+							schema.pattern &&
+							typeof value === 'string' &&
+							!schema.pattern.test(value)
+						) {
 							issues.push(`Field ${field} does not match required pattern`);
 						}
 					});
@@ -1022,7 +1074,10 @@ describe('Network Security Tests', () => {
 				status: 'invalid-status' // Invalid pattern
 			};
 
-			const invalidBodyResult = mockRequestValidator.validateRequestBody(invalidBody, bodySchema);
+			const invalidBodyResult = mockRequestValidator.validateRequestBody(
+				invalidBody,
+				bodySchema
+			);
 			expect(invalidBodyResult.valid).toBe(false);
 			expect(invalidBodyResult.issues.length).toBeGreaterThan(0);
 		});
@@ -1041,13 +1096,15 @@ describe('Network Security Tests', () => {
 					'application/json': 1024 * 1024, // 1MB
 					'multipart/form-data': 10 * 1024 * 1024, // 10MB
 					'text/plain': 100 * 1024, // 100KB
-					'default': 512 * 1024 // 512KB
+					default: 512 * 1024 // 512KB
 				};
 
 				const limit = sizeLimits[request.contentType] || sizeLimits.default;
 
 				if (request.contentLength > limit) {
-					issues.push(`Request size ${request.contentLength} exceeds limit ${limit} for ${request.contentType}`);
+					issues.push(
+						`Request size ${request.contentLength} exceeds limit ${limit} for ${request.contentType}`
+					);
 				}
 
 				// Timeout validation
@@ -1058,10 +1115,13 @@ describe('Network Security Tests', () => {
 					DELETE: 30000
 				};
 
-				const timeoutLimit = timeoutLimits[request.method as keyof typeof timeoutLimits] || 30000;
+				const timeoutLimit =
+					timeoutLimits[request.method as keyof typeof timeoutLimits] || 30000;
 
 				if (request.processingTime > timeoutLimit) {
-					issues.push(`Request processing time ${request.processingTime}ms exceeds timeout ${timeoutLimit}ms`);
+					issues.push(
+						`Request processing time ${request.processingTime}ms exceeds timeout ${timeoutLimit}ms`
+					);
 				}
 
 				return {

