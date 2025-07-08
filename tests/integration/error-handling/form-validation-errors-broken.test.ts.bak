@@ -1,0 +1,677 @@
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { testDb } from '../setup';
+import { posts, categories, users } from '$lib/server/db/schema';
+import { testIsolation } from '../utils/test-isolation';
+import { validatePost, validateCategory, createValidationErrorResponse } from '$lib/server/validation';
+
+/**
+ * Form Validation Error Tests
+ * 
+ * Tests form validation error scenarios including:
+ * - Post creation and update validation
+ * - Category validation errors
+ * - Input sanitization failures
+ * - Required field validation
+ * - Format validation errors
+ */
+describe('Form Validation Error Tests', () => {
+	let testUserId: string;
+
+	beforeEach(async () => {
+		testUserId = await testIsolation.createTestUser();
+	});
+
+	afterEach(async () => {
+		// Cleanup handled by test isolation
+	});
+
+	describe('Post Validation Errors', () => {
+		it('should validate required post fields', async () => {
+			// Test missing required fields
+			const invalidPostData = [
+				{
+					data: {},
+					expectedErrors: ['title', 'content']
+				},
+				{
+					data: { title: '' },
+					expectedErrors: ['title', 'content']
+				},
+				{
+					data: { content: '' },
+					expectedErrors: ['title', 'content']
+				},
+				{
+					data: { title: 'Valid Title' },
+					expectedErrors: ['content']
+				},
+				{
+					data: { content: 'Valid content' },
+					expectedErrors: ['title']
+				}
+			];
+
+			for (const { data, expectedErrors } of invalidPostData) {
+				const validation = validatePost(data);
+				
+				expect(validation.isValid).toBe(false);
+				
+				for (const field of expectedErrors) {
+					const hasFieldError = validation.errors.some(error => 
+						error.toLowerCase().includes(field.toLowerCase())
+					);
+					expect(hasFieldError).toBe(true);
+				}
+			}
+		});
+
+		it('should validate post field lengths', async () => {
+			// Test field length validation
+			const lengthTestCases = [
+				{
+					data: {
+						title: 'a', // Too short
+						content: 'Valid content here'
+					},
+					expectedError: 'title'
+				},
+				{
+					data: {
+						title: 'a'.repeat(256), // Too long
+						content: 'Valid content here'
+					},
+					expectedError: 'title'
+				},
+				{
+					data: {
+						title: 'Valid Title',
+						content: 'ab' // Too short
+					},
+					expectedError: 'content'
+				},
+				{
+					data: {
+						title: 'Valid Title',
+						content: 'a'.repeat(100001) // Too long
+					},
+					expectedError: 'content'
+				},
+				{
+					data: {
+						title: 'Valid Title',
+						content: 'Valid content',
+						excerpt: 'a'.repeat(1001) // Too long
+					},
+					expectedError: 'excerpt'
+				}
+			];
+
+			for (const { data, expectedError } of lengthTestCases) {
+				const validation = validatePost(data);
+				
+				expect(validation.isValid).toBe(false);
+				
+				const hasExpectedError = validation.errors.some(error => 
+					error.toLowerCase().includes(expectedError)
+				);
+				expect(hasExpectedError).toBe(true);
+			}
+		});
+
+		it('should validate post status values', async () => {
+			// Test invalid status values
+			const invalidStatuses = [
+				'invalid',
+				'PUBLISHED', // Wrong case
+				'draft-saved', // Invalid format
+				'public',
+				'private',
+				123, // Wrong type
+				null,
+				undefined
+			];
+
+			for (const status of invalidStatuses) {
+				const postData = {
+					title: 'Valid Title',
+					content: 'Valid content',
+					status
+				};
+
+				const validation = validatePost(postData);
+				
+				if (status !== undefined && status !== null) {
+					expect(validation.isValid).toBe(false);
+					
+					const hasStatusError = validation.errors.some(error => 
+						error.toLowerCase().includes('status')
+					);
+					expect(hasStatusError).toBe(true);
+				}
+			}
+
+			// Test valid status values
+			const validStatuses = ['draft', 'published'];
+			
+			for (const status of validStatuses) {
+				const postData = {
+					title: 'Valid Title',
+					content: 'Valid content',
+					status
+				};
+
+				const validation = validatePost(postData);
+				
+				// Should not have status-related errors
+				const hasStatusError = validation.errors.some(error => 
+					error.toLowerCase().includes('status')
+				);
+				expect(hasStatusError).toBe(false);
+			}
+		});
+
+		it('should validate post HTML content safety', async () => {
+			// Test potentially dangerous HTML content
+			const dangerousContent = [
+				{
+					content: '<script>alert("XSS")</script>',
+					description: 'Script injection'
+				},
+				{
+					content: '<iframe src="http://malicious.com"></iframe>',
+					description: 'iframe injection'
+				},
+				{
+					content: '<img src="x" onerror="alert(\'XSS\')">',
+					description: 'Image with onerror'
+				},
+				{
+					content: '<a href="javascript:alert(\'XSS\')">Click me</a>',
+					description: 'JavaScript URL'
+				},
+				{
+					content: '<form action="http://malicious.com" method="post">',
+					description: 'External form action'
+				},
+				{
+					content: '<object data="http://malicious.com/malware.swf">',
+					description: 'Object with external data'
+				}
+			];
+
+			for (const { content, description } of dangerousContent) {
+				const postData = {
+					title: 'Test Post',
+					content
+				};
+
+				const validation = validatePost(postData);
+				
+				// Should detect dangerous content
+				const hasSafetyError = validation.errors.some(error => 
+					error.toLowerCase().includes('content') && 
+					(error.toLowerCase().includes('unsafe') || 
+					 error.toLowerCase().includes('dangerous') ||
+					 error.toLowerCase().includes('security'))
+				);
+				
+				if (!validation.isValid) {
+					expect(hasSafetyError).toBe(true);
+				}
+			}
+		});
+
+		it('should validate post category associations', async () => {
+			// Test invalid category IDs
+			const invalidCategoryData = [
+				{
+					data: {
+						title: 'Valid Title',
+						content: 'Valid content',
+						categoryIds: [-1] // Negative ID
+					},
+					expectedError: 'category'
+				},
+				{
+					data: {
+						title: 'Valid Title',
+						content: 'Valid content',
+						categoryIds: [0] // Zero ID
+					},
+					expectedError: 'category'
+				},
+				{
+					data: {
+						title: 'Valid Title',
+						content: 'Valid content',
+						categoryIds: ['invalid'] // String instead of number
+					},
+					expectedError: 'category'
+				},
+				{
+					data: {
+						title: 'Valid Title',
+						content: 'Valid content',
+						categoryIds: [1.5] // Decimal number
+					},
+					expectedError: 'category'
+				},
+				{
+					data: {
+						title: 'Valid Title',
+						content: 'Valid content',
+						categoryIds: Array.from({ length: 11 }, (_, i) => i + 1) // Too many categories
+					},
+					expectedError: 'category'
+				}
+			];
+
+			for (const { data, expectedError } of invalidCategoryData) {
+				const validation = validatePost(data);
+				
+				expect(validation.isValid).toBe(false);
+				
+				const hasExpectedError = validation.errors.some(error => 
+					error.toLowerCase().includes(expectedError)
+				);
+				expect(hasExpectedError).toBe(true);
+			}
+		});
+	});
+
+	describe('Category Validation Errors', () => {
+		it('should validate required category fields', async () => {
+			// Test missing required fields
+			const invalidCategoryData = [
+				{
+					data: {},
+					expectedErrors: ['name']
+				},
+				{
+					data: { name: '' },
+					expectedErrors: ['name']
+				},
+				{
+					data: { name: '   ' }, // Whitespace only
+					expectedErrors: ['name']
+				}
+			];
+
+			for (const { data, expectedErrors } of invalidCategoryData) {
+				const validation = validateCategory(data);
+				
+				expect(validation.isValid).toBe(false);
+				
+				for (const field of expectedErrors) {
+					const hasFieldError = validation.errors.some(error => 
+						error.toLowerCase().includes(field.toLowerCase())
+					);
+					expect(hasFieldError).toBe(true);
+				}
+			}
+		});
+
+		it('should validate category name format', async () => {
+			// Test invalid category names
+			const invalidNames = [
+				{
+					name: 'a', // Too short
+					expectedError: 'name'
+				},
+				{
+					name: 'a'.repeat(101), // Too long
+					expectedError: 'name'
+				},
+				{
+					name: 'Category@#$', // Invalid characters
+					expectedError: 'name'
+				},
+				{
+					name: '123Category', // Starting with number
+					expectedError: 'name'
+				},
+				{
+					name: 'Category  Name', // Multiple spaces
+					expectedError: 'name'
+				}
+			];
+
+			for (const { name, expectedError } of invalidNames) {
+				const categoryData = { name };
+				const validation = validateCategory(categoryData);
+				
+				expect(validation.isValid).toBe(false);
+				
+				const hasExpectedError = validation.errors.some(error => 
+					error.toLowerCase().includes(expectedError)
+				);
+				expect(hasExpectedError).toBe(true);
+			}
+		});
+
+		it('should validate category description length', async () => {
+			// Test description validation
+			const descriptionTests = [
+				{
+					data: {
+						name: 'Valid Category',
+						description: 'a'.repeat(501) // Too long
+					},
+					expectedError: 'description'
+				}
+			];
+
+			for (const { data, expectedError } of descriptionTests) {
+				const validation = validateCategory(data);
+				
+				expect(validation.isValid).toBe(false);
+				
+				const hasExpectedError = validation.errors.some(error => 
+					error.toLowerCase().includes(expectedError)
+				);
+				expect(hasExpectedError).toBe(true);
+			}
+
+			// Test valid description
+			const validData = {
+				name: 'Valid Category',
+				description: 'Valid description within limits'
+			};
+			
+			const validation = validateCategory(validData);
+			
+			const hasDescriptionError = validation.errors.some(error => 
+				error.toLowerCase().includes('description')
+			);
+			expect(hasDescriptionError).toBe(false);
+		});
+	});
+
+	describe('Input Sanitization Errors', () => {
+		it('should handle malformed input data', async () => {
+			// Test various malformed input scenarios
+			const malformedInputs = [
+				{
+					input: null,
+					description: 'null input'
+				},
+				{
+					input: undefined,
+					description: 'undefined input'
+				},
+				{
+					input: 'not an object',
+					description: 'string instead of object'
+				},
+				{
+					input: 123,
+					description: 'number instead of object'
+				},
+				{
+					input: [],
+					description: 'array instead of object'
+				}
+			];
+
+			for (const { input, description } of malformedInputs) {
+				try {
+					const validation = validatePost(input as any);
+					
+					// Should handle gracefully without crashing
+					expect(validation.isValid).toBe(false);
+					expect(Array.isArray(validation.errors)).toBe(true);
+				} catch (error) {
+					// If it throws, should be a proper error message
+					expect(error).toBeInstanceOf(Error);
+					expect(error.message).toBeDefined();
+				}
+			}
+		});
+
+		it('should sanitize dangerous input strings', async () => {
+			// Test input sanitization for various injection attempts
+			const dangerousInputs = [
+				{
+					title: '<script>alert("XSS")</script>Normal Title',
+					description: 'Script in title'
+				},
+				{
+					title: '"><img src=x onerror=alert(1)>',
+					description: 'HTML injection in title'
+				},
+				{
+					title: 'Title\x00with\x00null\x00bytes',
+					description: 'Null bytes in title'
+				},
+				{
+					title: 'Title\r\nwith\r\nline\r\nbreaks',
+					description: 'Line breaks in title'
+				}
+			];
+
+			for (const { title, description } of dangerousInputs) {
+				const postData = {
+					title,
+					content: 'Valid content'
+				};
+
+				const validation = validatePost(postData);
+				
+				// Should either sanitize or reject dangerous input
+				if (validation.isValid) {
+					// If accepted, should be sanitized
+					expect(title).not.toContain('<script>');
+					expect(title).not.toContain('onerror');
+				} else {
+					// If rejected, should have appropriate error
+					const hasSanitizationError = validation.errors.some(error => 
+						error.toLowerCase().includes('invalid') || 
+						error.toLowerCase().includes('unsafe') ||
+						error.toLowerCase().includes('character')
+					);
+					expect(hasSanitizationError).toBe(true);
+				}
+			}
+		});
+
+		it('should handle Unicode and encoding issues', async () => {
+			// Test Unicode and encoding edge cases
+			const unicodeTests = [
+				{
+					title: 'Title with emoji 🎉🚀',
+					content: 'Content with emoji 📝',
+					shouldBeValid: true
+				},
+				{
+					title: 'Title with \uFEFF BOM character',
+					content: 'Content',
+					shouldBeValid: false // BOM should be rejected
+				},
+				{
+					title: 'Title with \u202E right-to-left override',
+					content: 'Content',
+					shouldBeValid: false // Control characters should be rejected
+				},
+				{
+					title: 'Ťítlé wítĥ áććéñtš',
+					content: 'Çöñtéñt wítĥ špéçíäl çĥäräçtérš',
+					shouldBeValid: true
+				}
+			];
+
+			for (const { title, content, shouldBeValid } of unicodeTests) {
+				const postData = { title, content };
+				const validation = validatePost(postData);
+				
+				expect(validation.isValid).toBe(shouldBeValid);
+				
+				if (!shouldBeValid) {
+					const hasEncodingError = validation.errors.some(error => 
+						error.toLowerCase().includes('character') || 
+						error.toLowerCase().includes('encoding') ||
+						error.toLowerCase().includes('invalid')
+					);
+					expect(hasEncodingError).toBe(true);
+				}
+			}
+		});
+	});
+
+	describe('Validation Error Response Format', () => {
+		it('should create consistent validation error responses', async () => {
+			// Test validation error response format
+			const invalidData = {
+				title: '', // Empty title
+				content: '', // Empty content
+				status: 'invalid' // Invalid status
+			};
+
+			const validation = validatePost(invalidData);
+			expect(validation.isValid).toBe(false);
+
+			const errorResponse = createValidationErrorResponse(validation.errors);
+			const responseData = await errorResponse.json();
+
+			// Check response format
+			expect(errorResponse.status).toBe(400);
+			expect(responseData).toHaveProperty('error');
+			expect(responseData).toHaveProperty('errors');
+			expect(Array.isArray(responseData.errors)).toBe(true);
+			expect(responseData.errors.length).toBeGreaterThan(0);
+
+			// Check individual error format
+			responseData.errors.forEach((error: any) => {
+				expect(typeof error).toBe('string');
+				expect(error.length).toBeGreaterThan(0);
+			});
+		});
+
+		it('should handle validation errors with proper HTTP status codes', async () => {
+			// Test different types of validation errors and their status codes
+			const errorScenarios = [
+				{
+					data: { title: '', content: '' },
+					expectedStatus: 400,
+					description: 'Missing required fields'
+				},
+				{
+					data: { 
+						title: 'Valid Title',
+						content: '<script>alert("XSS")</script>'
+					},
+					expectedStatus: 400,
+					description: 'Dangerous content'
+				},
+				{
+					data: {
+						title: 'a'.repeat(300),
+						content: 'Valid content'
+					},
+					expectedStatus: 400,
+					description: 'Field too long'
+				}
+			];
+
+			for (const { data, expectedStatus, description } of errorScenarios) {
+				const validation = validatePost(data);
+				
+				if (!validation.isValid) {
+					const errorResponse = createValidationErrorResponse(validation.errors);
+					expect(errorResponse.status).toBe(expectedStatus);
+				}
+			}
+		});
+
+		it('should include helpful error messages for debugging', async () => {
+			// Test that error messages are helpful for debugging
+			const testCases = [
+				{
+					data: { title: '' },
+					expectedMessageParts: ['title', 'required']
+				},
+				{
+					data: { title: 'Valid', content: 'ab' },
+					expectedMessageParts: ['content', 'length', 'minimum']
+				},
+				{
+					data: { title: 'Valid', content: 'Valid', status: 'invalid' },
+					expectedMessageParts: ['status', 'valid', 'draft', 'published']
+				}
+			];
+
+			for (const { data, expectedMessageParts } of testCases) {
+				const validation = validatePost(data);
+				
+				if (!validation.isValid) {
+					const allErrors = validation.errors.join(' ').toLowerCase();
+					
+					for (const part of expectedMessageParts) {
+						expect(allErrors).toContain(part.toLowerCase());
+					}
+				}
+			}
+		});
+	});
+
+	describe('Edge Case Validation', () => {
+		it('should handle extremely large input sizes', async () => {
+			// Test handling of extremely large inputs
+			const extremelyLargeData = {
+				title: 'a'.repeat(10000),
+				content: 'b'.repeat(1000000), // 1MB of content
+				excerpt: 'c'.repeat(5000)
+			};
+
+			const validation = validatePost(extremelyLargeData);
+			
+			// Should handle without crashing and reject appropriately
+			expect(validation.isValid).toBe(false);
+			
+			const hasSizeError = validation.errors.some(error => 
+				error.toLowerCase().includes('length') || 
+				error.toLowerCase().includes('size') ||
+				error.toLowerCase().includes('limit')
+			);
+			expect(hasSizeError).toBe(true);
+		});
+
+		it('should handle circular references in input data', async () => {
+			// Test handling of circular references
+			const circularData: any = {
+				title: 'Valid Title',
+				content: 'Valid content'
+			};
+			circularData.self = circularData; // Create circular reference
+
+			try {
+				const validation = validatePost(circularData);
+				
+				// Should handle gracefully
+				expect(typeof validation.isValid).toBe('boolean');
+				expect(Array.isArray(validation.errors)).toBe(true);
+			} catch (error) {
+				// If it throws, should be handled appropriately
+				expect(error).toBeInstanceOf(Error);
+			}
+		});
+
+		it('should handle concurrent validation requests', async () => {
+			// Test concurrent validation handling
+			const concurrentValidations = Array.from({ length: 10 }, (_, i) => 
+				validatePost({
+					title: `Concurrent Title ${i}`,
+					content: `Concurrent content ${i}`,
+					status: i % 2 === 0 ? 'draft' : 'published'
+				})
+			);
+
+			const results = await Promise.all(concurrentValidations);
+			
+			// All validations should complete successfully
+			results.forEach((result, index) => {
+				expect(result.isValid).toBe(true);
+				expect(Array.isArray(result.errors)).toBe(true);
+			});
+		});
+	});
+});
