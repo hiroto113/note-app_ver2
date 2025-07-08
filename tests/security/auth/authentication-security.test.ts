@@ -42,11 +42,11 @@ describe('Authentication Security Tests', () => {
 
 			for (let i = 0; i < tokenCount; i++) {
 				const token = SecurityTestHelpers.generateSecureSessionToken();
-				
+
 				// Verify token format and length
 				expect(token).toMatch(/^[a-f0-9]{64}$/); // 32 bytes = 64 hex chars
 				expect(token.length).toBe(64);
-				
+
 				// Verify uniqueness
 				expect(tokens.has(token)).toBe(false);
 				tokens.add(token);
@@ -59,7 +59,7 @@ describe('Authentication Security Tests', () => {
 		it('should prevent session fixation attacks', async () => {
 			// Create initial session with known token
 			const fixedSessionToken = 'fixed-session-token-attack';
-			
+
 			// Attempt to create session with predetermined token should fail
 			const mockCreateSessionWithFixedToken = (token: string) => {
 				// Security rule: session tokens must be generated server-side
@@ -81,7 +81,7 @@ describe('Authentication Security Tests', () => {
 		it('should enforce session timeout policies', async () => {
 			const sessionTimeout = 30 * 60 * 1000; // 30 minutes
 			const now = new Date();
-			
+
 			const mockValidateSession = (createdAt: Date) => {
 				const sessionAge = now.getTime() - createdAt.getTime();
 				if (sessionAge > sessionTimeout) {
@@ -107,7 +107,9 @@ describe('Authentication Security Tests', () => {
 
 			const mockCreateSession = (userId: string) => {
 				if (activeSessions >= maxConcurrentSessions) {
-					throw new Error(`Maximum concurrent sessions (${maxConcurrentSessions}) exceeded for user ${userId}`);
+					throw new Error(
+						`Maximum concurrent sessions (${maxConcurrentSessions}) exceeded for user ${userId}`
+					);
 				}
 				activeSessions++;
 				return {
@@ -176,11 +178,19 @@ describe('Authentication Security Tests', () => {
 
 		it('should prevent common password usage', () => {
 			const commonPasswords = [
-				'password', '123456', 'qwerty', 'admin', 'letmein',
-				'welcome', 'monkey', 'dragon', 'pass', 'test'
+				'password',
+				'123456',
+				'qwerty',
+				'admin',
+				'letmein',
+				'welcome',
+				'monkey',
+				'dragon',
+				'pass',
+				'test'
 			];
 
-			commonPasswords.forEach(password => {
+			commonPasswords.forEach((password) => {
 				const result = SecurityTestHelpers.validatePasswordStrength(password);
 				expect(result.strength).toBe('very-weak');
 				expect(result.feedback).toContain('Password is too common');
@@ -209,15 +219,21 @@ describe('Authentication Security Tests', () => {
 
 			// Test invalid passwords
 			const invalidPasswords = [
-				{ password: 'short', expectedFailures: ['minLength', 'hasUppercase', 'hasNumbers', 'hasSpecialChars'] },
-				{ password: 'alllowercase', expectedFailures: ['hasUppercase', 'hasNumbers', 'hasSpecialChars'] },
+				{
+					password: 'short',
+					expectedFailures: ['minLength', 'hasUppercase', 'hasNumbers', 'hasSpecialChars']
+				},
+				{
+					password: 'alllowercase',
+					expectedFailures: ['hasUppercase', 'hasNumbers', 'hasSpecialChars']
+				},
 				{ password: 'NoNumbers!', expectedFailures: ['hasNumbers'] }
 			];
 
 			invalidPasswords.forEach(({ password, expectedFailures }) => {
 				const result = mockValidatePasswordComplexity(password);
 				expect(result.isValid).toBe(false);
-				expectedFailures.forEach(rule => {
+				expectedFailures.forEach((rule) => {
 					expect(result.failedRules).toContain(rule);
 				});
 			});
@@ -258,7 +274,7 @@ describe('Authentication Security Tests', () => {
 
 			const mockRateLimitedLogin = async (username: string, password: string) => {
 				const now = Date.now();
-				
+
 				// Reset counter if time window has passed
 				if (now - lastAttemptTime > timeWindow) {
 					attempts = 0;
@@ -268,7 +284,9 @@ describe('Authentication Security Tests', () => {
 				lastAttemptTime = now;
 
 				if (attempts > maxAttempts) {
-					throw new Error(`Rate limit exceeded. Try again after ${timeWindow / 1000} seconds`);
+					throw new Error(
+						`Rate limit exceeded. Try again after ${timeWindow / 1000} seconds`
+					);
 				}
 
 				// Simulate failed login for this test
@@ -299,7 +317,9 @@ describe('Authentication Security Tests', () => {
 				const delay = baseDelay * Math.pow(2, attempt - 1); // Exponential backoff
 
 				if (attempt > 3) {
-					throw new Error(`Account temporarily locked. Try again in ${delay / 1000} seconds`);
+					throw new Error(
+						`Account temporarily locked. Try again in ${delay / 1000} seconds`
+					);
 				}
 
 				// Simulate delay (in real implementation)
@@ -368,7 +388,9 @@ describe('Authentication Security Tests', () => {
 
 				if (failedAttempts >= maxFailedAttempts) {
 					lockoutEndTime = new Date(now.getTime() + lockoutDuration);
-					throw new Error(`Account locked due to multiple failed attempts. Locked until ${lockoutEndTime.toISOString()}`);
+					throw new Error(
+						`Account locked due to multiple failed attempts. Locked until ${lockoutEndTime.toISOString()}`
+					);
 				}
 
 				throw new Error('Invalid credentials');
@@ -388,7 +410,9 @@ describe('Authentication Security Tests', () => {
 				await mockLoginWithLockout(testUsers.regularUser.username, 'wrongpassword');
 				expect.fail('Should have triggered account lockout');
 			} catch (error) {
-				expect((error as Error).message).toContain('Account locked due to multiple failed attempts');
+				expect((error as Error).message).toContain(
+					'Account locked due to multiple failed attempts'
+				);
 			}
 
 			// Subsequent attempts should be blocked
@@ -422,9 +446,7 @@ describe('Authentication Security Tests', () => {
 			};
 
 			// Test invalid tokens
-			const invalidTokens = [
-				'', 'short', 'invalid-chars!@#', '123'
-			];
+			const invalidTokens = ['', 'short', 'invalid-chars!@#', '123'];
 
 			for (const token of invalidTokens) {
 				try {
@@ -457,7 +479,7 @@ describe('Authentication Security Tests', () => {
 				};
 
 				const roles = userRoles[userId] || [];
-				
+
 				for (const role of roles) {
 					const permissions = rolePermissions[role] || [];
 					if (permissions.includes(action)) {
@@ -506,7 +528,11 @@ describe('Authentication Security Tests', () => {
 		});
 
 		it('should validate resource ownership', async () => {
-			const mockCheckResourceOwnership = (userId: string, resourceId: string, resourceOwnerId: string) => {
+			const mockCheckResourceOwnership = (
+				userId: string,
+				resourceId: string,
+				resourceOwnerId: string
+			) => {
 				// Users can only access their own resources (unless admin)
 				if (userId !== testUsers.admin.id && userId !== resourceOwnerId) {
 					throw new Error('Access denied: insufficient permissions for this resource');
@@ -516,27 +542,31 @@ describe('Authentication Security Tests', () => {
 			};
 
 			// User accessing their own resource
-			expect(mockCheckResourceOwnership(
-				testUsers.regularUser.id, 
-				'resource-123', 
-				testUsers.regularUser.id
-			)).toBe(true);
+			expect(
+				mockCheckResourceOwnership(
+					testUsers.regularUser.id,
+					'resource-123',
+					testUsers.regularUser.id
+				)
+			).toBe(true);
 
 			// User accessing another user's resource
 			expect(() => {
 				mockCheckResourceOwnership(
-					testUsers.regularUser.id, 
-					'resource-456', 
+					testUsers.regularUser.id,
+					'resource-456',
 					testUsers.admin.id
 				);
 			}).toThrow('Access denied: insufficient permissions');
 
 			// Admin accessing any resource
-			expect(mockCheckResourceOwnership(
-				testUsers.admin.id, 
-				'resource-789', 
-				testUsers.regularUser.id
-			)).toBe(true);
+			expect(
+				mockCheckResourceOwnership(
+					testUsers.admin.id,
+					'resource-789',
+					testUsers.regularUser.id
+				)
+			).toBe(true);
 		});
 	});
 });

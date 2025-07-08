@@ -19,16 +19,16 @@ const userId = session?.user?.id; // undefined になる可能性
 
 // After: 適切なエラーハンドリング
 export const POST: RequestHandler = async ({ request, locals }) => {
-  try {
-    const session = await locals.getSession();
-    if (!session?.user?.id) {
-      return json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    // 処理継続
-  } catch (error) {
-    console.error('Authentication error:', error);
-    return json({ error: 'Authentication failed' }, { status: 500 });
-  }
+	try {
+		const session = await locals.getSession();
+		if (!session?.user?.id) {
+			return json({ error: 'Unauthorized' }, { status: 401 });
+		}
+		// 処理継続
+	} catch (error) {
+		console.error('Authentication error:', error);
+		return json({ error: 'Authentication failed' }, { status: 500 });
+	}
 };
 ```
 
@@ -39,30 +39,30 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 import { app } from '../../../src/app';
 
 describe('Real Admin API Integration', () => {
-  it('should create post with actual authentication', async () => {
-    // 実際のログイン
-    const loginRes = await app.fetch('/auth/signin/credentials', {
-      method: 'POST',
-      body: JSON.stringify({ username: 'admin', password: 'password' })
-    });
-    
-    const cookies = loginRes.headers.get('set-cookie');
-    
-    // 実際のAPI呼び出し
-    const createRes = await app.fetch('/api/admin/posts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': cookies
-      },
-      body: JSON.stringify({
-        title: 'Test Post',
-        content: 'Test Content'
-      })
-    });
-    
-    expect(createRes.status).toBe(201);
-  });
+	it('should create post with actual authentication', async () => {
+		// 実際のログイン
+		const loginRes = await app.fetch('/auth/signin/credentials', {
+			method: 'POST',
+			body: JSON.stringify({ username: 'admin', password: 'password' })
+		});
+
+		const cookies = loginRes.headers.get('set-cookie');
+
+		// 実際のAPI呼び出し
+		const createRes = await app.fetch('/api/admin/posts', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Cookie: cookies
+			},
+			body: JSON.stringify({
+				title: 'Test Post',
+				content: 'Test Content'
+			})
+		});
+
+		expect(createRes.status).toBe(201);
+	});
 });
 ```
 
@@ -75,7 +75,7 @@ graph TD
     A[Unit Tests] -->|Component Logic| B[Integration Tests]
     B -->|Real Services| C[E2E Tests]
     C -->|User Flows| D[Production]
-    
+
     A1[Mock Auth] -.->|Phase Out| A
     B1[Real Auth.js] -->|Phase In| B
     C1[Browser Tests] -->|Stabilize| C
@@ -84,16 +84,16 @@ graph TD
 #### 実装タスク
 
 1. **認証テストの実装修正**
-   - `tests/integration/auth/auth-flow-real.test.ts` - 実際のAuth.js使用
-   - `tests/integration/auth/session-management-real.test.ts` - JWT検証
+    - `tests/integration/auth/auth-flow-real.test.ts` - 実際のAuth.js使用
+    - `tests/integration/auth/session-management-real.test.ts` - JWT検証
 
 2. **API統合テストの修正**
-   - `tests/integration/api/admin-api-real.test.ts` - 実エンドポイント
-   - `tests/integration/api/public-api-real.test.ts` - 公開API
+    - `tests/integration/api/admin-api-real.test.ts` - 実エンドポイント
+    - `tests/integration/api/public-api-real.test.ts` - 公開API
 
 3. **E2Eテストの安定化**
-   - `tests/e2e/setup-auth.ts` - 認証セットアップ自動化
-   - `tests/e2e/fixtures/test-users.ts` - テストユーザー管理
+    - `tests/e2e/setup-auth.ts` - 認証セットアップ自動化
+    - `tests/e2e/fixtures/test-users.ts` - テストユーザー管理
 
 ### 2.3 Phase 3: 継続的改善プロセス（2週間）
 
@@ -105,23 +105,23 @@ name: Quality Gate
 on: [pull_request]
 
 jobs:
-  quality-check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Unit Tests
-        run: pnpm test:unit
-        
-      - name: Integration Tests (Real)
-        run: pnpm test:integration:real
-        
-      - name: E2E Tests
-        run: pnpm test:e2e
-        
-      - name: Security Tests
-        run: pnpm test:security
-        
-      - name: Coverage Check
-        run: pnpm coverage -- --threshold 80
+    quality-check:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Unit Tests
+              run: pnpm test:unit
+
+            - name: Integration Tests (Real)
+              run: pnpm test:integration:real
+
+            - name: E2E Tests
+              run: pnpm test:e2e
+
+            - name: Security Tests
+              run: pnpm test:security
+
+            - name: Coverage Check
+              run: pnpm coverage -- --threshold 80
 ```
 
 ## 3. データモデル
@@ -131,53 +131,51 @@ jobs:
 ```typescript
 // src/lib/server/db/test-config.ts
 export interface TestConfig {
-  useRealAuth: boolean;
-  useRealDatabase: boolean;
-  testUserCredentials: {
-    admin: { username: string; password: string };
-    user: { username: string; password: string };
-  };
+	useRealAuth: boolean;
+	useRealDatabase: boolean;
+	testUserCredentials: {
+		admin: { username: string; password: string };
+		user: { username: string; password: string };
+	};
 }
 ```
 
 ## 4. UI/UXデザイン
 
 - エラーメッセージの改善
-  - 認証エラー時の具体的なメッセージ表示
-  - リトライ可能なエラーの明示
-  - ユーザーガイダンスの追加
+    - 認証エラー時の具体的なメッセージ表示
+    - リトライ可能なエラーの明示
+    - ユーザーガイダンスの追加
 
 ## 5. テスト計画
 
 ### 5.1 段階的移行計画
 
-| Phase | 期間 | Unit Tests | Integration Tests | E2E Tests |
-|-------|------|------------|-------------------|-----------|
-| Phase 1 | 1-2日 | 現状維持 | 最小限の実環境テスト追加 | 認証修正 |
-| Phase 2 | 1週間 | リファクタリング | モック→実環境移行 | 安定化 |
-| Phase 3 | 2週間 | カバレッジ向上 | 完全移行 | CI/CD統合 |
+| Phase   | 期間  | Unit Tests       | Integration Tests        | E2E Tests |
+| ------- | ----- | ---------------- | ------------------------ | --------- |
+| Phase 1 | 1-2日 | 現状維持         | 最小限の実環境テスト追加 | 認証修正  |
+| Phase 2 | 1週間 | リファクタリング | モック→実環境移行        | 安定化    |
+| Phase 3 | 2週間 | カバレッジ向上   | 完全移行                 | CI/CD統合 |
 
 ### 5.2 成功指標
 
 - **短期（Phase 1完了時）**
-  - 記事投稿機能の復旧: 100%
-  - 認証エラー: 0件
-  
+    - 記事投稿機能の復旧: 100%
+    - 認証エラー: 0件
 - **中期（Phase 2完了時）**
-  - 実環境統合テスト: 30件以上
-  - E2Eテスト成功率: 95%以上
-  
+    - 実環境統合テスト: 30件以上
+    - E2Eテスト成功率: 95%以上
 - **長期（Phase 3完了時）**
-  - テストカバレッジ: 85%以上
-  - 本番環境バグ: 50%削減
+    - テストカバレッジ: 85%以上
+    - 本番環境バグ: 50%削減
 
 ### 5.3 リスクと対策
 
-| リスク | 影響度 | 対策 |
-|--------|--------|------|
-| テスト実行時間の増加 | 高 | 並列実行、キャッシュ活用 |
-| 認証テストの不安定性 | 中 | リトライ機構、タイムアウト調整 |
-| 既存テストの破壊 | 低 | 段階的移行、旧テスト保持 |
+| リスク               | 影響度 | 対策                           |
+| -------------------- | ------ | ------------------------------ |
+| テスト実行時間の増加 | 高     | 並列実行、キャッシュ活用       |
+| 認証テストの不安定性 | 中     | リトライ機構、タイムアウト調整 |
+| 既存テストの破壊     | 低     | 段階的移行、旧テスト保持       |
 
 ## 6. 関連ドキュメント
 
@@ -195,13 +193,13 @@ gantt
     section Phase 1
     認証修正           :active, p1-1, 2025-01-09, 1d
     緊急テスト追加     :p1-2, after p1-1, 1d
-    
+
     section Phase 2
     テスト設計         :p2-1, after p1-2, 2d
     認証テスト修正     :p2-2, after p2-1, 2d
     API統合テスト修正  :p2-3, after p2-1, 3d
     E2Eテスト安定化    :p2-4, after p2-2, 2d
-    
+
     section Phase 3
     品質ゲート実装     :p3-1, after p2-4, 3d
     モニタリング構築   :p3-2, after p3-1, 3d
