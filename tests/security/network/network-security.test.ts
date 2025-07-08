@@ -692,21 +692,22 @@ describe('Network Security Tests', () => {
 		});
 
 		it('should detect and mitigate DDoS attacks', () => {
+			const requestCounts = new Map<string, number[]>();
 			const mockDDoSDetector = {
-				requestCounts: new Map<string, number[]>(),
+				requestCounts,
 				
 				analyzeTraffic: (sourceIP: string, timeWindow: number = 60000) => {
 					const now = Date.now();
-					const requests = this.requestCounts.get(sourceIP) || [];
+					const requests = requestCounts.get(sourceIP) || [];
 					
 					// Remove old requests outside time window
-					const recentRequests = requests.filter(timestamp => 
+					const recentRequests = requests.filter((timestamp: number) => 
 						now - timestamp < timeWindow
 					);
 					
 					// Add current request
 					recentRequests.push(now);
-					this.requestCounts.set(sourceIP, recentRequests);
+					requestCounts.set(sourceIP, recentRequests);
 
 					const requestRate = recentRequests.length / (timeWindow / 1000); // requests per second
 					
@@ -1036,7 +1037,7 @@ describe('Network Security Tests', () => {
 				const issues: string[] = [];
 
 				// Size limits by content type
-				const sizeLimits = {
+				const sizeLimits: Record<string, number> = {
 					'application/json': 1024 * 1024, // 1MB
 					'multipart/form-data': 10 * 1024 * 1024, // 10MB
 					'text/plain': 100 * 1024, // 100KB

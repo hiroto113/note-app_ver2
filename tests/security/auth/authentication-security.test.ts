@@ -446,12 +446,12 @@ describe('Authentication Security Tests', () => {
 		it('should enforce role-based access control', async () => {
 			const mockCheckPermission = (userId: string, action: string) => {
 				// Simple role mapping for test
-				const userRoles = {
+				const userRoles: Record<string, string[]> = {
 					[testUsers.admin.id]: ['admin'],
 					[testUsers.regularUser.id]: ['user']
 				};
 
-				const rolePermissions = {
+				const rolePermissions: Record<string, string[]> = {
 					admin: ['create', 'read', 'update', 'delete', 'manage_users'],
 					user: ['create', 'read', 'update_own', 'delete_own']
 				};

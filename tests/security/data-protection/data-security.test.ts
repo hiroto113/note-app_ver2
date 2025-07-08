@@ -40,7 +40,8 @@ describe('Data Protection Security Tests', () => {
 
 				const algorithm = 'aes-256-gcm';
 				const iv = crypto.randomBytes(16);
-				const cipher = crypto.createCipher(algorithm, key);
+				const keyBuffer = Buffer.from(key, 'hex');
+				const cipher = crypto.createCipheriv(algorithm, keyBuffer, iv);
 
 				let encrypted = cipher.update(data, 'utf8', 'hex');
 				encrypted += cipher.final('hex');
@@ -297,7 +298,7 @@ describe('Data Protection Security Tests', () => {
 				purpose: string
 			) => {
 				// Define minimum required fields for different purposes
-				const purposeRequirements = {
+				const purposeRequirements: Record<string, string[]> = {
 					'user_registration': ['email', 'password'],
 					'profile_update': ['email'],
 					'content_creation': ['user_id'],
@@ -516,7 +517,7 @@ describe('Data Protection Security Tests', () => {
 
 				validateConsentRequirements: (operation: string, userConsents: Record<string, boolean>) => {
 					// Define consent requirements for different operations
-					const operationRequirements = {
+					const operationRequirements: Record<string, string[]> = {
 						'user_analytics': ['analytics'],
 						'email_marketing': ['marketing'],
 						'basic_functionality': ['necessary'],
@@ -660,7 +661,7 @@ describe('Data Protection Security Tests', () => {
 					// Encrypt secret value
 					const key = crypto.randomBytes(32);
 					const iv = crypto.randomBytes(16);
-					const cipher = crypto.createCipher('aes-256-gcm', key);
+					const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
 					
 					let encrypted = cipher.update(value, 'utf8', 'hex');
 					encrypted += cipher.final('hex');
@@ -680,7 +681,7 @@ describe('Data Protection Security Tests', () => {
 
 				validateSecretAccess: (secretName: string, requester: string, permissions: string[]) => {
 					// Define secret access policies
-					const secretPolicies = {
+					const secretPolicies: Record<string, string[]> = {
 						'database_password': ['admin', 'database_service'],
 						'api_keys': ['admin', 'api_service'],
 						'encryption_keys': ['admin'],
@@ -959,9 +960,9 @@ describe('Data Protection Security Tests', () => {
 					};
 				},
 
-				reversePseudonymization: (pseudoData: any, key: string, mapping: Map<string, string>) => {
+				reversePseudonymization: (pseudoData: Record<string, any>, key: string, mapping: Map<string, string>) => {
 					// In real implementation, this would use secure mapping storage
-					const reversed: any = {};
+					const reversed: Record<string, string> = {};
 					
 					Object.entries(pseudoData).forEach(([field, pseudoValue]) => {
 						if (typeof pseudoValue === 'string' && field.startsWith('pseudo')) {
