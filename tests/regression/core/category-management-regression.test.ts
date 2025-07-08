@@ -7,7 +7,7 @@ import { regressionDataManager } from '../utils/regression-data-manager';
 
 /**
  * Category Management Regression Tests
- * 
+ *
  * Prevents regression of category management functionality including:
  * - Category creation and validation
  * - Category updates and slug management
@@ -15,7 +15,7 @@ import { regressionDataManager } from '../utils/regression-data-manager';
  * - Category-post relationships
  * - Category hierarchy (if implemented)
  * - Performance with large category sets
- * 
+ *
  * Based on historical issues:
  * - Slug duplication in categories
  * - Orphaned posts after category deletion
@@ -44,7 +44,8 @@ describe('Category Management Regression Tests', () => {
 				description: 'Technology-related posts and articles'
 			};
 
-			const result = await RegressionTestHelpers.verifyCategoryManagementWorkflow(categoryData);
+			const result =
+				await RegressionTestHelpers.verifyCategoryManagementWorkflow(categoryData);
 
 			expect(result.success).toBe(true);
 			expect(result.errors).toHaveLength(0);
@@ -59,23 +60,29 @@ describe('Category Management Regression Tests', () => {
 
 			// Create first category
 			const firstSlug = `first-category-${crypto.randomUUID()}`;
-			const [firstCategory] = await testDb.insert(categories).values({
-				name: firstName,
-				slug: firstSlug,
-				description: 'First category',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [firstCategory] = await testDb
+				.insert(categories)
+				.values({
+					name: firstName,
+					slug: firstSlug,
+					description: 'First category',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Create second category with different name and slug
 			const uniqueSlug = `second-category-${crypto.randomUUID()}`;
-			const [secondCategory] = await testDb.insert(categories).values({
-				name: secondName,
-				slug: uniqueSlug,
-				description: 'Second category',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [secondCategory] = await testDb
+				.insert(categories)
+				.values({
+					name: secondName,
+					slug: uniqueSlug,
+					description: 'Second category',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			expect(firstCategory.slug).not.toBe(secondCategory.slug);
 			expect(secondCategory.slug).toBe(uniqueSlug);
@@ -113,19 +120,24 @@ describe('Category Management Regression Tests', () => {
 
 			try {
 				const longSlug = `very-long-category-name-${crypto.randomUUID()}`;
-				const [category] = await testDb.insert(categories).values({
-					name: longName,
-					slug: longSlug,
-					description: 'Testing long category names',
-					createdAt: new Date(),
-					updatedAt: new Date()
-				}).returning();
+				const [category] = await testDb
+					.insert(categories)
+					.values({
+						name: longName,
+						slug: longSlug,
+						description: 'Testing long category names',
+						createdAt: new Date(),
+						updatedAt: new Date()
+					})
+					.returning();
 
 				const duration = Date.now() - startTime;
 
 				// Check if the database accepted the long name
 				if (category.name.length > 100) {
-					console.warn('⚠️ Database accepted category name longer than recommended limit');
+					console.warn(
+						'⚠️ Database accepted category name longer than recommended limit'
+					);
 				}
 
 				expect(duration).toBeLessThan(2000);
@@ -154,13 +166,16 @@ describe('Category Management Regression Tests', () => {
 
 				const uniqueSlug = `${baseSlug}-${crypto.randomUUID()}`;
 
-				const [category] = await testDb.insert(categories).values({
-					name: testCase.name,
-					slug: uniqueSlug,
-					description: `Category for ${testCase.name}`,
-					createdAt: new Date(),
-					updatedAt: new Date()
-				}).returning();
+				const [category] = await testDb
+					.insert(categories)
+					.values({
+						name: testCase.name,
+						slug: uniqueSlug,
+						description: `Category for ${testCase.name}`,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					})
+					.returning();
 
 				expect(category.slug).toBeDefined();
 				expect(category.slug).not.toContain(' ');
@@ -175,14 +190,17 @@ describe('Category Management Regression Tests', () => {
 
 		beforeEach(async () => {
 			const uniqueSlug = `original-category-${crypto.randomUUID()}`;
-			const [category] = await testDb.insert(categories).values({
-				name: 'Original Category',
-				slug: uniqueSlug,
-				description: 'Original description',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
-			
+			const [category] = await testDb
+				.insert(categories)
+				.values({
+					name: 'Original Category',
+					slug: uniqueSlug,
+					description: 'Original description',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
+
 			existingCategoryId = category.id;
 		});
 
@@ -207,19 +225,22 @@ describe('Category Management Regression Tests', () => {
 		it('should prevent regression: category slug update maintains uniqueness', async () => {
 			// Create another category first
 			const otherSlug = `other-category-${crypto.randomUUID()}`;
-			const [otherCategory] = await testDb.insert(categories).values({
-				name: 'Other Category',
-				slug: otherSlug,
-				description: 'Another category',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [otherCategory] = await testDb
+				.insert(categories)
+				.values({
+					name: 'Other Category',
+					slug: otherSlug,
+					description: 'Another category',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Try to update our category to have the same slug
 			try {
 				await testDb
 					.update(categories)
-					.set({ 
+					.set({
 						slug: otherSlug, // Same as existing
 						updatedAt: new Date()
 					})
@@ -243,7 +264,7 @@ describe('Category Management Regression Tests', () => {
 			// Simulate two concurrent updates
 			const update1Promise = testDb
 				.update(categories)
-				.set({ 
+				.set({
 					name: 'Concurrent Update 1',
 					description: 'Description from update 1',
 					updatedAt: new Date()
@@ -253,7 +274,7 @@ describe('Category Management Regression Tests', () => {
 
 			const update2Promise = testDb
 				.update(categories)
-				.set({ 
+				.set({
 					name: 'Concurrent Update 2',
 					description: 'Description from update 2',
 					updatedAt: new Date()
@@ -284,14 +305,17 @@ describe('Category Management Regression Tests', () => {
 		beforeEach(async () => {
 			// Create category
 			const deleteSlug = `category-to-delete-${crypto.randomUUID()}`;
-			const [category] = await testDb.insert(categories).values({
-				name: 'Category to Delete',
-				slug: deleteSlug,
-				description: 'This category will be deleted',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
-			
+			const [category] = await testDb
+				.insert(categories)
+				.values({
+					name: 'Category to Delete',
+					slug: deleteSlug,
+					description: 'This category will be deleted',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
+
 			categoryToDeleteId = category.id;
 
 			// Create post in this category (if your schema supports it)
@@ -301,9 +325,7 @@ describe('Category Management Regression Tests', () => {
 
 		it('should prevent regression: category deletion removes record', async () => {
 			// Delete the category
-			await testDb
-				.delete(categories)
-				.where(eq(categories.id, categoryToDeleteId));
+			await testDb.delete(categories).where(eq(categories.id, categoryToDeleteId));
 
 			// Verify category is deleted
 			const deletedCategory = await testDb
@@ -335,7 +357,7 @@ describe('Category Management Regression Tests', () => {
 			// 1. Preventing deletion if posts exist
 			// 2. Moving posts to "Uncategorized"
 			// 3. Allowing cascade deletion
-			
+
 			// For this test, we'll verify the business logic is consistent
 			// Check if posts exist in category through junction table
 			const postsInCategory = await testDb
@@ -346,7 +368,7 @@ describe('Category Management Regression Tests', () => {
 			// If posts exist, deletion policy should be enforced
 			if (postsInCategory.length > 0) {
 				console.log(`Category has ${postsInCategory.length} associated posts`);
-				
+
 				// Test your specific business logic here
 				// For example, if you prevent deletion:
 				// try {
@@ -358,9 +380,7 @@ describe('Category Management Regression Tests', () => {
 			}
 
 			// If no posts, deletion should succeed
-			await testDb
-				.delete(categories)
-				.where(eq(categories.id, categoryToDeleteId));
+			await testDb.delete(categories).where(eq(categories.id, categoryToDeleteId));
 
 			const deletedCategory = await testDb
 				.select()
@@ -410,10 +430,7 @@ describe('Category Management Regression Tests', () => {
 			const searchTerm = 'Performance';
 			const startTime = Date.now();
 
-			const searchResults = await testDb
-				.select()
-				.from(categories)
-				.limit(20);
+			const searchResults = await testDb.select().from(categories).limit(20);
 
 			const duration = Date.now() - startTime;
 
@@ -424,9 +441,7 @@ describe('Category Management Regression Tests', () => {
 		it('should prevent regression: category count query performance', async () => {
 			const startTime = Date.now();
 
-			const [categoryCount] = await testDb
-				.select({ count: count() })
-				.from(categories);
+			const [categoryCount] = await testDb.select({ count: count() }).from(categories);
 
 			const duration = Date.now() - startTime;
 
@@ -497,14 +512,12 @@ describe('Category Management Regression Tests', () => {
 			});
 
 			// Check that both categories were created successfully
-			const allCategories = await testDb
-				.select()
-				.from(categories);
+			const allCategories = await testDb.select().from(categories);
 
 			expect(allCategories.length).toBeGreaterThanOrEqual(2);
-			
+
 			// Verify names are unique
-			const names = allCategories.map(c => c.name);
+			const names = allCategories.map((c) => c.name);
 			const uniqueNames = new Set(names);
 			expect(uniqueNames.size).toBe(names.length);
 		});
@@ -514,17 +527,20 @@ describe('Category Management Regression Tests', () => {
 
 			try {
 				const longDescSlug = `long-description-category-${crypto.randomUUID()}`;
-				const [category] = await testDb.insert(categories).values({
-					name: 'Long Description Category',
-					slug: longDescSlug,
-					description: veryLongDescription,
-					createdAt: new Date(),
-					updatedAt: new Date()
-				}).returning();
+				const [category] = await testDb
+					.insert(categories)
+					.values({
+						name: 'Long Description Category',
+						slug: longDescSlug,
+						description: veryLongDescription,
+						createdAt: new Date(),
+						updatedAt: new Date()
+					})
+					.returning();
 
 				// If accepted, verify it's handled properly
 				expect(category.description?.length).toBe(10000);
-				
+
 				// Performance check - large text should still be handled efficiently
 				const startTime = Date.now();
 				const [retrievedCategory] = await testDb
@@ -552,34 +568,42 @@ describe('Category Management Regression Tests', () => {
 				{ name: 'Category_with_Underscores', shouldPass: true },
 				{ name: 'Category/with/Slashes', shouldPass: true }, // Depending on requirements
 				{ name: '', shouldPass: false }, // Empty
-				{ name: '   ', shouldPass: false }, // Whitespace only
+				{ name: '   ', shouldPass: false } // Whitespace only
 			];
 
 			for (const testCase of validationCases) {
 				try {
-					const slug = testCase.name
-						.toLowerCase()
-						.replace(/[^\w\s-]/g, '')
-						.replace(/\s+/g, '-')
-						.replace(/-+/g, '-')
-						.replace(/^-+|-+$/g, '') || 'untitled';
+					const slug =
+						testCase.name
+							.toLowerCase()
+							.replace(/[^\w\s-]/g, '')
+							.replace(/\s+/g, '-')
+							.replace(/-+/g, '-')
+							.replace(/^-+|-+$/g, '') || 'untitled';
 
-					const [category] = await testDb.insert(categories).values({
-						name: testCase.name,
-						slug: `${slug}-${crypto.randomUUID()}`, // Ensure uniqueness
-						description: `Test category for ${testCase.name}`,
-						createdAt: new Date(),
-						updatedAt: new Date()
-					}).returning();
+					const [category] = await testDb
+						.insert(categories)
+						.values({
+							name: testCase.name,
+							slug: `${slug}-${crypto.randomUUID()}`, // Ensure uniqueness
+							description: `Test category for ${testCase.name}`,
+							createdAt: new Date(),
+							updatedAt: new Date()
+						})
+						.returning();
 
 					if (!testCase.shouldPass) {
-						expect.fail(`Category creation should have failed for name: "${testCase.name}"`);
+						expect.fail(
+							`Category creation should have failed for name: "${testCase.name}"`
+						);
 					}
 
 					expect(category.name).toBe(testCase.name);
 				} catch (error) {
 					if (testCase.shouldPass) {
-						expect.fail(`Category creation should have succeeded for name: "${testCase.name}"`);
+						expect.fail(
+							`Category creation should have succeeded for name: "${testCase.name}"`
+						);
 					}
 					expect(error).toBeDefined();
 				}
@@ -589,7 +613,7 @@ describe('Category Management Regression Tests', () => {
 		it('should prevent regression: category business rule validation', async () => {
 			// Test specific business rules for categories
 			// This might include reserved names, naming conventions, etc.
-			
+
 			const reservedNames = ['admin', 'api', 'system', 'uncategorized'];
 
 			for (const reservedName of reservedNames) {

@@ -2,18 +2,22 @@ import { expect } from 'vitest';
 import { testDb } from '../../integration/setup';
 import { users, posts, categories } from '$lib/server/db/schema';
 import { eq, and, count, isNull, or, gt } from 'drizzle-orm';
-import type { RegressionResult, RegressionPriority, RegressionCategory } from './regression-test-base';
+import type {
+	RegressionResult,
+	RegressionPriority,
+	RegressionCategory
+} from './regression-test-base';
 
 /**
  * Performance thresholds for different types of operations
  */
 export const PERFORMANCE_THRESHOLDS = {
-	DATABASE_QUERY: 1000,      // 1 second
-	API_REQUEST: 2000,         // 2 seconds
-	PAGE_LOAD: 3000,           // 3 seconds
-	AUTHENTICATION: 500,       // 500ms
-	FORM_SUBMISSION: 1500,     // 1.5 seconds
-	SEARCH_OPERATION: 2000     // 2 seconds
+	DATABASE_QUERY: 1000, // 1 second
+	API_REQUEST: 2000, // 2 seconds
+	PAGE_LOAD: 3000, // 3 seconds
+	AUTHENTICATION: 500, // 500ms
+	FORM_SUBMISSION: 1500, // 1.5 seconds
+	SEARCH_OPERATION: 2000 // 2 seconds
 } as const;
 
 /**
@@ -60,7 +64,9 @@ export class RegressionTestHelpers {
 
 			const duration = Date.now() - startTime;
 			if (duration > PERFORMANCE_THRESHOLDS.AUTHENTICATION) {
-				warnings.push(`Authentication took ${duration}ms, exceeding threshold of ${PERFORMANCE_THRESHOLDS.AUTHENTICATION}ms`);
+				warnings.push(
+					`Authentication took ${duration}ms, exceeding threshold of ${PERFORMANCE_THRESHOLDS.AUTHENTICATION}ms`
+				);
 			}
 
 			return {
@@ -102,11 +108,7 @@ export class RegressionTestHelpers {
 
 		try {
 			// 1. Verify user exists and has permission
-			const user = await testDb
-				.select()
-				.from(users)
-				.where(eq(users.id, userId))
-				.limit(1);
+			const user = await testDb.select().from(users).where(eq(users.id, userId)).limit(1);
 
 			if (user.length === 0) {
 				errors.push(`User ${userId} not found`);
@@ -122,7 +124,10 @@ export class RegressionTestHelpers {
 			// 2. Create post
 			const postInsertData = {
 				title: postData.title,
-				slug: postData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+				slug: postData.title
+					.toLowerCase()
+					.replace(/\s+/g, '-')
+					.replace(/[^a-z0-9-]/g, ''),
 				content: postData.content,
 				excerpt: postData.content.substring(0, 200),
 				status: postData.status || 'draft',
@@ -131,10 +136,7 @@ export class RegressionTestHelpers {
 				updatedAt: new Date()
 			};
 
-			const [newPost] = await testDb
-				.insert(posts)
-				.values(postInsertData)
-				.returning();
+			const [newPost] = await testDb.insert(posts).values(postInsertData).returning();
 
 			// 3. Verify post was created correctly
 			const verifyPost = await testDb
@@ -180,12 +182,10 @@ export class RegressionTestHelpers {
 	/**
 	 * Verify category management workflow
 	 */
-	static async verifyCategoryManagementWorkflow(
-		categoryData: {
-			name: string;
-			description?: string;
-		}
-	): Promise<RegressionResult> {
+	static async verifyCategoryManagementWorkflow(categoryData: {
+		name: string;
+		description?: string;
+	}): Promise<RegressionResult> {
 		const startTime = Date.now();
 		const errors: string[] = [];
 		const warnings: string[] = [];
@@ -194,7 +194,10 @@ export class RegressionTestHelpers {
 			// 1. Create category
 			const categoryInsertData = {
 				name: categoryData.name,
-				slug: categoryData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+				slug: categoryData.name
+					.toLowerCase()
+					.replace(/\s+/g, '-')
+					.replace(/[^a-z0-9-]/g, ''),
 				description: categoryData.description || null,
 				createdAt: new Date(),
 				updatedAt: new Date()
@@ -277,12 +280,14 @@ export class RegressionTestHelpers {
 			const invalidPosts = await testDb
 				.select({ id: posts.id, title: posts.title, content: posts.content })
 				.from(posts)
-				.where(or(
-				eq(posts.title, ''),
-				eq(posts.content, ''),
-				isNull(posts.title),
-				isNull(posts.content)
-			));
+				.where(
+					or(
+						eq(posts.title, ''),
+						eq(posts.content, ''),
+						isNull(posts.title),
+						isNull(posts.content)
+					)
+				);
 
 			if (invalidPosts.length > 0) {
 				errors.push(`Found ${invalidPosts.length} posts with empty required fields`);
@@ -346,7 +351,9 @@ export class RegressionTestHelpers {
 		const withinThreshold = duration <= threshold;
 
 		if (!withinThreshold) {
-			console.warn(`⚠️ Performance regression detected: ${operationName} took ${duration}ms (threshold: ${threshold}ms)`);
+			console.warn(
+				`⚠️ Performance regression detected: ${operationName} took ${duration}ms (threshold: ${threshold}ms)`
+			);
 		}
 
 		return { result, duration, withinThreshold };
@@ -357,12 +364,13 @@ export class RegressionTestHelpers {
 	 */
 	static assertRegressionSuccess(result: RegressionResult, testName: string): void {
 		if (!result.success) {
-			const errorMessage = `Regression test failed: ${testName}\n` +
+			const errorMessage =
+				`Regression test failed: ${testName}\n` +
 				`Errors: ${result.errors.join(', ')}\n` +
 				`Warnings: ${result.warnings.join(', ')}\n` +
 				`Duration: ${result.duration}ms\n` +
 				`Metadata: ${JSON.stringify(result.metadata, null, 2)}`;
-			
+
 			throw new Error(errorMessage);
 		}
 
@@ -390,7 +398,9 @@ export class RegressionTestHelpers {
 				const duration = Date.now() - startTime;
 
 				if (duration > threshold) {
-					warnings.push(`Operation exceeded performance threshold: ${duration}ms > ${threshold}ms`);
+					warnings.push(
+						`Operation exceeded performance threshold: ${duration}ms > ${threshold}ms`
+					);
 				}
 
 				return {
@@ -435,7 +445,7 @@ export class RegressionTestHelpers {
 
 		try {
 			const bugPresent = await verificationFn();
-			
+
 			if (bugPresent) {
 				errors.push(`Bug ${bugId} has regressed: ${description}`);
 			}
@@ -478,16 +488,19 @@ export class RegressionTestHelpers {
 			// Test that failed transactions don't leave partial data
 			await testDb.transaction(async (tx) => {
 				// Create a post
-				const [tempPost] = await tx.insert(posts).values({
-					title: 'Transaction Test Post',
-					slug: 'transaction-test-post',
-					content: 'This post should not persist',
-					excerpt: 'Test excerpt',
-					status: 'draft',
-					userId: 'non-existent-user', // This should cause a foreign key error
-					createdAt: new Date(),
-					updatedAt: new Date()
-				}).returning();
+				const [tempPost] = await tx
+					.insert(posts)
+					.values({
+						title: 'Transaction Test Post',
+						slug: 'transaction-test-post',
+						content: 'This post should not persist',
+						excerpt: 'Test excerpt',
+						status: 'draft',
+						userId: 'non-existent-user', // This should cause a foreign key error
+						createdAt: new Date(),
+						updatedAt: new Date()
+					})
+					.returning();
 
 				// Transaction should fail due to foreign key constraint
 				// Post should not exist after rollback
@@ -525,7 +538,7 @@ export class RegressionTestHelpers {
 export async function runParallelRegressionChecks(
 	checks: Array<() => Promise<RegressionResult>>
 ): Promise<RegressionResult[]> {
-	return Promise.all(checks.map(check => check()));
+	return Promise.all(checks.map((check) => check()));
 }
 
 /**
@@ -538,11 +551,11 @@ export function aggregateRegressionResults(results: RegressionResult[]): {
 	warningCount: number;
 	successRate: number;
 } {
-	const overallSuccess = results.every(r => r.success);
+	const overallSuccess = results.every((r) => r.success);
 	const totalDuration = results.reduce((sum, r) => sum + r.duration, 0);
 	const errorCount = results.reduce((sum, r) => sum + r.errors.length, 0);
 	const warningCount = results.reduce((sum, r) => sum + r.warnings.length, 0);
-	const successRate = results.filter(r => r.success).length / results.length;
+	const successRate = results.filter((r) => r.success).length / results.length;
 
 	return {
 		overallSuccess,

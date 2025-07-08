@@ -38,19 +38,23 @@ tests/regression/
 ## Test Categories
 
 ### 1. Critical Path Regression Tests
+
 - Authentication flows
 - Content management lifecycle
 - Data integrity operations
 - Security boundaries
 
 ### 2. Bug Prevention Tests
+
 Based on historical bug patterns:
+
 - Database migration failures
 - Authentication session issues
 - UI navigation problems
 - Performance degradation
 
 ### 3. Integration Regression Tests
+
 - API contract stability
 - Database transaction consistency
 - Service integration points
@@ -83,30 +87,34 @@ import { testIsolation } from '../integration/utils/test-isolation';
 import { RegressionTestBase } from './utils/regression-test-base';
 
 class MyRegressionTest extends RegressionTestBase {
-  async setupTestData() {
-    return await testIsolation.setupBasicTestData();
-  }
+	async setupTestData() {
+		return await testIsolation.setupBasicTestData();
+	}
 }
 ```
 
 ## Test Guidelines
 
 ### 1. Test Independence
+
 - Each test must be completely isolated
 - No dependencies on test execution order
 - Clean state before and after each test
 
 ### 2. Historical Bug Coverage
+
 - Every significant bug fix should have a corresponding regression test
 - Tests should validate the specific conditions that caused the original bug
 - Include edge cases and boundary conditions
 
 ### 3. Performance Considerations
+
 - Regression tests should complete in under 5 minutes total
 - Use efficient data setup and teardown
 - Avoid unnecessary database operations
 
 ### 4. Maintainability
+
 - Clear test descriptions explaining what regression is being prevented
 - Reference original bug reports or issues when applicable
 - Regular review and updates as system evolves
@@ -114,11 +122,13 @@ class MyRegressionTest extends RegressionTestBase {
 ## Metrics and Monitoring
 
 ### Coverage Targets
+
 - Core functionality: 95% regression coverage
 - API contracts: 100% regression coverage
 - Critical user journeys: 90% regression coverage
 
 ### Performance Targets
+
 - Full suite execution: < 5 minutes
 - Individual test execution: < 30 seconds
 - False positive rate: < 1%
@@ -126,9 +136,11 @@ class MyRegressionTest extends RegressionTestBase {
 ## Integration with Development Workflow
 
 ### Pre-commit Hooks
+
 Critical regression tests run automatically before commits.
 
 ### CI/CD Pipeline Integration
+
 - Pull requests: High-priority regression tests
 - Merge to main: Full regression test suite
 - Nightly builds: Extended regression suite with performance tests
@@ -136,6 +148,7 @@ Critical regression tests run automatically before commits.
 ## Historical Context
 
 This regression test suite was implemented to address patterns identified in the project's bug history, including:
+
 - Database migration failures
 - Authentication security issues
 - UI accessibility problems
@@ -145,6 +158,7 @@ This regression test suite was implemented to address patterns identified in the
 ## Maintenance
 
 ### Adding New Regression Tests
+
 1. Identify the root cause of the bug
 2. Create a test that would have caught the bug
 3. Verify the test fails on the buggy code
@@ -152,6 +166,7 @@ This regression test suite was implemented to address patterns identified in the
 5. Add documentation linking to the original issue
 
 ### Updating Existing Tests
+
 - Review regression tests quarterly
 - Update tests when system architecture changes
 - Remove obsolete tests for deprecated features

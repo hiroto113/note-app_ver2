@@ -80,17 +80,18 @@ export abstract class RegressionTestBase {
 		try {
 			// Verify database connectivity
 			await testDb.select().from(users).limit(1);
-			
+
 			// Verify test data exists
 			if (this.testData?.userId) {
-				const userExists = await testDb.select()
+				const userExists = await testDb
+					.select()
 					.from(users)
 					.where(eq(users.id, this.testData.userId))
 					.limit(1);
-				
+
 				return userExists.length > 0;
 			}
-			
+
 			return true;
 		} catch (error) {
 			console.error('Initial state validation failed:', error);
@@ -105,10 +106,10 @@ export abstract class RegressionTestBase {
 		try {
 			// Verify no data corruption
 			await this.validateDataIntegrity();
-			
+
 			// Verify no resource leaks
 			await this.validateResourceCleanup();
-			
+
 			return true;
 		} catch (error) {
 			console.error('Final state validation failed:', error);
@@ -122,12 +123,13 @@ export abstract class RegressionTestBase {
 	private async validateDataIntegrity(): Promise<void> {
 		// Check foreign key constraints are maintained
 		// This is a simplified version - real implementation would be more comprehensive
-		
-		const orphanedPosts = await testDb.select()
+
+		const orphanedPosts = await testDb
+			.select()
 			.from(posts)
 			.leftJoin(users, eq(posts.userId, users.id))
 			.where(isNull(users.id));
-		
+
 		if (orphanedPosts.length > 0) {
 			throw new Error(`Found ${orphanedPosts.length} orphaned posts without valid users`);
 		}
@@ -146,13 +148,13 @@ export abstract class RegressionTestBase {
 	 */
 	protected async executeScenario(scenario: RegressionScenario): Promise<RegressionResult> {
 		const startTime = Date.now();
-		
+
 		try {
 			console.log(`🔍 Executing regression scenario: ${scenario.name}`);
-			
+
 			const result = await scenario.execute();
 			const duration = Date.now() - startTime;
-			
+
 			return {
 				...result,
 				duration,
@@ -166,7 +168,7 @@ export abstract class RegressionTestBase {
 			};
 		} catch (error) {
 			const duration = Date.now() - startTime;
-			
+
 			return {
 				success: false,
 				duration,
@@ -188,22 +190,28 @@ export abstract class RegressionTestBase {
 	 */
 	protected generateReport(results: RegressionResult[]): RegressionTestReport {
 		const totalTests = results.length;
-		const successfulTests = results.filter(r => r.success).length;
+		const successfulTests = results.filter((r) => r.success).length;
 		const failedTests = totalTests - successfulTests;
 		const totalDuration = results.reduce((sum, r) => sum + r.duration, 0);
 		const averageDuration = totalDuration / totalTests;
 
-		const priorityBreakdown = results.reduce((acc, r) => {
-			const priority = r.metadata.priority as RegressionPriority;
-			acc[priority] = (acc[priority] || 0) + 1;
-			return acc;
-		}, {} as Record<RegressionPriority, number>);
+		const priorityBreakdown = results.reduce(
+			(acc, r) => {
+				const priority = r.metadata.priority as RegressionPriority;
+				acc[priority] = (acc[priority] || 0) + 1;
+				return acc;
+			},
+			{} as Record<RegressionPriority, number>
+		);
 
-		const categoryBreakdown = results.reduce((acc, r) => {
-			const category = r.metadata.category as RegressionCategory;
-			acc[category] = (acc[category] || 0) + 1;
-			return acc;
-		}, {} as Record<RegressionCategory, number>);
+		const categoryBreakdown = results.reduce(
+			(acc, r) => {
+				const category = r.metadata.category as RegressionCategory;
+				acc[category] = (acc[category] || 0) + 1;
+				return acc;
+			},
+			{} as Record<RegressionCategory, number>
+		);
 
 		return {
 			summary: {
@@ -218,8 +226,8 @@ export abstract class RegressionTestBase {
 				priority: priorityBreakdown,
 				category: categoryBreakdown
 			},
-			failures: results.filter(r => !r.success),
-			warnings: results.flatMap(r => r.warnings),
+			failures: results.filter((r) => !r.success),
+			warnings: results.flatMap((r) => r.warnings),
 			timestamp: new Date().toISOString()
 		};
 	}
@@ -233,11 +241,13 @@ export abstract class RegressionTestBase {
 		// Setup phase
 		this.startTime = Date.now();
 		this.testData = await this.setupTestData();
-		
+
 		// Validate initial state
 		const initialStateValid = await this.validateInitialState();
 		if (!initialStateValid) {
-			throw new Error('Initial state validation failed - cannot proceed with regression tests');
+			throw new Error(
+				'Initial state validation failed - cannot proceed with regression tests'
+			);
 		}
 
 		// Execute all scenarios
@@ -249,7 +259,9 @@ export abstract class RegressionTestBase {
 		// Validate final state
 		const finalStateValid = await this.validateFinalState();
 		if (!finalStateValid) {
-			console.warn('Final state validation failed - some tests may have caused data corruption');
+			console.warn(
+				'Final state validation failed - some tests may have caused data corruption'
+			);
 		}
 
 		// Generate and return report
@@ -274,14 +286,14 @@ export abstract class RegressionTestBase {
 			});
 
 			// Create individual test cases for each scenario
-			this.testScenarios.forEach(scenario => {
+			this.testScenarios.forEach((scenario) => {
 				const testName = `should prevent regression: ${scenario.name}`;
 				const testFn = async () => {
 					const result = await this.executeScenario(scenario);
-					
+
 					expect(result.success).toBe(true);
 					expect(result.errors).toHaveLength(0);
-					
+
 					// Priority-based performance expectations
 					switch (scenario.priority) {
 						case 'CRITICAL':

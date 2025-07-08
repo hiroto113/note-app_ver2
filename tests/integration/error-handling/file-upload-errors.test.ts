@@ -5,7 +5,7 @@ import { validateMediaUpload } from '$lib/server/validation';
 
 /**
  * File Upload Error Handling Tests
- * 
+ *
  * Tests file upload error scenarios including:
  * - File validation errors
  * - Basic security checks
@@ -32,17 +32,19 @@ describe('File Upload Error Handling Tests', () => {
 
 			for (const file of invalidFiles) {
 				const validation = validateMediaUpload(file as any);
-				
+
 				expect(validation.isValid).toBe(false);
-				expect(validation.errors.some(e => 
-					e.field === 'filename' && e.message.includes('required')
-				)).toBe(true);
+				expect(
+					validation.errors.some(
+						(e) => e.field === 'filename' && e.message.includes('required')
+					)
+				).toBe(true);
 			}
 		});
 
 		it('should validate filename length limits', async () => {
 			const longFilename = 'a'.repeat(300) + '.jpg';
-			
+
 			const validation = validateMediaUpload({
 				filename: longFilename,
 				mimeType: 'image/jpeg',
@@ -50,9 +52,11 @@ describe('File Upload Error Handling Tests', () => {
 			});
 
 			expect(validation.isValid).toBe(false);
-			expect(validation.errors.some(e => 
-				e.field === 'filename' && e.message.includes('255 characters')
-			)).toBe(true);
+			expect(
+				validation.errors.some(
+					(e) => e.field === 'filename' && e.message.includes('255 characters')
+				)
+			).toBe(true);
 		});
 
 		it('should validate MIME type requirements', async () => {
@@ -71,9 +75,11 @@ describe('File Upload Error Handling Tests', () => {
 				});
 
 				expect(validation.isValid).toBe(false);
-				expect(validation.errors.some(e => 
-					e.field === 'mimeType' && e.message.includes('required')
-				)).toBe(true);
+				expect(
+					validation.errors.some(
+						(e) => e.field === 'mimeType' && e.message.includes('required')
+					)
+				).toBe(true);
 			}
 		});
 
@@ -92,19 +98,16 @@ describe('File Upload Error Handling Tests', () => {
 				});
 
 				expect(validation.isValid).toBe(false);
-				expect(validation.errors.some(e => 
-					e.field === 'size' && e.message.includes('positive integer')
-				)).toBe(true);
+				expect(
+					validation.errors.some(
+						(e) => e.field === 'size' && e.message.includes('positive integer')
+					)
+				).toBe(true);
 			}
 		});
 
 		it('should validate category values', async () => {
-			const invalidCategories = [
-				'invalid',
-				'video',
-				'audio',
-				123
-			];
+			const invalidCategories = ['invalid', 'video', 'audio', 123];
 
 			for (const category of invalidCategories) {
 				const validation = validateMediaUpload({
@@ -115,9 +118,11 @@ describe('File Upload Error Handling Tests', () => {
 				});
 
 				expect(validation.isValid).toBe(false);
-				expect(validation.errors.some(e => 
-					e.field === 'category' && e.message.includes('image')
-				)).toBe(true);
+				expect(
+					validation.errors.some(
+						(e) => e.field === 'category' && e.message.includes('image')
+					)
+				).toBe(true);
 			}
 		});
 
@@ -145,7 +150,7 @@ describe('File Upload Error Handling Tests', () => {
 
 			for (const file of validFiles) {
 				const validation = validateMediaUpload(file);
-				
+
 				expect(validation.isValid).toBe(true);
 				expect(validation.errors).toHaveLength(0);
 			}
@@ -155,14 +160,10 @@ describe('File Upload Error Handling Tests', () => {
 	describe('Advanced Security Scenarios', () => {
 		// Note: These tests represent future security enhancements
 		// Currently marked as skipped until advanced file validation is implemented
-		
+
 		it.skip('should detect malicious file extensions', async () => {
 			// TODO: Implement advanced file type detection
-			const maliciousFiles = [
-				'virus.exe',
-				'script.php',
-				'malware.bat'
-			];
+			const maliciousFiles = ['virus.exe', 'script.php', 'malware.bat'];
 
 			for (const filename of maliciousFiles) {
 				const validation = validateMediaUpload({
@@ -186,7 +187,7 @@ describe('File Upload Error Handling Tests', () => {
 			};
 
 			const validation = validateMediaUpload(spoofedFile);
-			
+
 			// Future: Should detect MIME type mismatch
 			expect(validation.isValid).toBe(false);
 		});
@@ -217,9 +218,9 @@ describe('File Upload Error Handling Tests', () => {
 			expect(validation).toHaveProperty('isValid');
 			expect(validation).toHaveProperty('errors');
 			expect(Array.isArray(validation.errors)).toBe(true);
-			
+
 			if (validation.errors.length > 0) {
-				validation.errors.forEach(error => {
+				validation.errors.forEach((error) => {
 					expect(error).toHaveProperty('field');
 					expect(error).toHaveProperty('message');
 					expect(typeof (error as any).field).toBe('string');
@@ -240,11 +241,11 @@ describe('File Upload Error Handling Tests', () => {
 			expect(validation.errors.length).toBeGreaterThan(0);
 
 			// Check that error messages are descriptive
-			const errorMessages = validation.errors.map(e => e.message.toLowerCase());
-			expect(errorMessages.some(msg => msg.includes('filename'))).toBe(true);
-			expect(errorMessages.some(msg => msg.includes('mime'))).toBe(true);
-			expect(errorMessages.some(msg => msg.includes('size'))).toBe(true);
-			expect(errorMessages.some(msg => msg.includes('category'))).toBe(true);
+			const errorMessages = validation.errors.map((e) => e.message.toLowerCase());
+			expect(errorMessages.some((msg) => msg.includes('filename'))).toBe(true);
+			expect(errorMessages.some((msg) => msg.includes('mime'))).toBe(true);
+			expect(errorMessages.some((msg) => msg.includes('size'))).toBe(true);
+			expect(errorMessages.some((msg) => msg.includes('category'))).toBe(true);
 		});
 	});
 
@@ -255,11 +256,13 @@ describe('File Upload Error Handling Tests', () => {
 				// Step 1: Validate file metadata
 				const validation = validateMediaUpload(fileData);
 				if (!validation.isValid) {
-					throw new Error(`Validation failed: ${validation.errors.map(e => e.message).join(', ')}`);
+					throw new Error(
+						`Validation failed: ${validation.errors.map((e) => e.message).join(', ')}`
+					);
 				}
 
 				// Step 2: Simulate file processing
-				await new Promise(resolve => setTimeout(resolve, 10));
+				await new Promise((resolve) => setTimeout(resolve, 10));
 
 				return {
 					success: true,
@@ -305,7 +308,7 @@ describe('File Upload Error Handling Tests', () => {
 				category: i % 2 === 0 ? 'image' : 'document'
 			}));
 
-			const validationPromises = files.map(file => 
+			const validationPromises = files.map((file) =>
 				Promise.resolve(validateMediaUpload(file))
 			);
 

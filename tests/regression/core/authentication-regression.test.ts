@@ -15,14 +15,14 @@ import { regressionDataManager } from '../utils/regression-data-manager';
 
 /**
  * Authentication Flow Regression Tests
- * 
+ *
  * Prevents regression of critical authentication functionality including:
  * - User login/logout flows
  * - Session management
  * - Password security
  * - Account lockout mechanisms
  * - Permission validation
- * 
+ *
  * Based on historical issues:
  * - Session timeout bugs
  * - Password validation bypasses
@@ -38,15 +38,18 @@ describe('Authentication Flow Regression Tests', () => {
 		// Create test user with known credentials
 		testUsername = `auth_test_${Date.now()}`;
 		const hashedPassword = await bcrypt.hash(testPassword, 10);
-		
-		const [user] = await testDb.insert(users).values({
-			id: crypto.randomUUID(),
-			username: testUsername,
-			hashedPassword,
-			createdAt: new Date(),
-			updatedAt: new Date()
-		}).returning();
-		
+
+		const [user] = await testDb
+			.insert(users)
+			.values({
+				id: crypto.randomUUID(),
+				username: testUsername,
+				hashedPassword,
+				createdAt: new Date(),
+				updatedAt: new Date()
+			})
+			.returning();
+
 		testUserId = user.id;
 	});
 
@@ -80,7 +83,10 @@ describe('Authentication Flow Regression Tests', () => {
 					.limit(1);
 
 				if (user.length > 0) {
-					const isValidPassword = await bcrypt.compare('wrongpassword', user[0].hashedPassword);
+					const isValidPassword = await bcrypt.compare(
+						'wrongpassword',
+						user[0].hashedPassword
+					);
 					authenticationFailed = !isValidPassword;
 				}
 			} catch (error) {
@@ -116,7 +122,8 @@ describe('Authentication Flow Regression Tests', () => {
 			const mockSession = { ...sessionData };
 
 			// Verify session is valid
-			const isValidSession = mockSession.expiresAt > new Date() && mockSession.userId === testUserId;
+			const isValidSession =
+				mockSession.expiresAt > new Date() && mockSession.userId === testUserId;
 			expect(isValidSession).toBe(true);
 
 			// Verify session cleanup
@@ -153,7 +160,7 @@ describe('Authentication Flow Regression Tests', () => {
 			const sessionCreatedAt = Date.now();
 
 			// Simulate time passing
-			await new Promise(resolve => setTimeout(resolve, 1100));
+			await new Promise((resolve) => setTimeout(resolve, 1100));
 
 			const currentTime = Date.now();
 			const sessionAge = currentTime - sessionCreatedAt;
@@ -245,7 +252,7 @@ describe('Authentication Flow Regression Tests', () => {
 			// Simulate failed login attempts
 			for (let i = 0; i < maxAttempts + 1; i++) {
 				failedAttempts++;
-				
+
 				if (failedAttempts >= maxAttempts) {
 					isLocked = true;
 					break;
@@ -264,11 +271,11 @@ describe('Authentication Flow Regression Tests', () => {
 			let isLocked = true;
 
 			// Wait for lockout to expire
-			await new Promise(resolve => setTimeout(resolve, lockoutDuration + 10));
+			await new Promise((resolve) => setTimeout(resolve, lockoutDuration + 10));
 
 			const currentTime = Date.now();
 			const lockoutAge = currentTime - lockoutStartTime;
-			
+
 			if (lockoutAge > lockoutDuration) {
 				isLocked = false;
 			}
@@ -284,16 +291,16 @@ describe('Authentication Flow Regression Tests', () => {
 			// Simulate rapid authentication attempts
 			for (let i = 0; i < rateLimit + 2; i++) {
 				const now = Date.now();
-				
+
 				// Clean old attempts outside window
-				const validAttempts = attempts.filter(time => now - time < windowDuration);
-				
+				const validAttempts = attempts.filter((time) => now - time < windowDuration);
+
 				if (validAttempts.length >= rateLimit) {
 					// Rate limit should kick in
 					expect(validAttempts.length).toBeGreaterThanOrEqual(rateLimit);
 					break;
 				}
-				
+
 				attempts.push(now);
 			}
 
@@ -304,13 +311,16 @@ describe('Authentication Flow Regression Tests', () => {
 	describe('Permission System Regression', () => {
 		it('should prevent regression: user permissions are properly enforced', async () => {
 			// Create admin user
-			const [adminUser] = await testDb.insert(users).values({
-				id: crypto.randomUUID(),
-				username: `admin_${Date.now()}`,
+			const [adminUser] = await testDb
+				.insert(users)
+				.values({
+					id: crypto.randomUUID(),
+					username: `admin_${Date.now()}`,
 					hashedPassword: await bcrypt.hash('adminPassword123!', 10),
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Simulate permission check
 			const checkPermission = (userId: string, action: string): boolean => {
@@ -321,28 +331,34 @@ describe('Authentication Flow Regression Tests', () => {
 
 			// Admin should have permission
 			expect(checkPermission(adminUser.id, 'admin.posts.create')).toBe(true);
-			
+
 			// Regular user should not have admin permission
 			expect(checkPermission(testUserId, 'admin.posts.create')).toBe(false);
 		});
 
 		it('should prevent regression: privilege escalation is prevented', async () => {
 			// Create two users with different privilege levels
-			const [regularUser] = await testDb.insert(users).values({
-				id: crypto.randomUUID(),
-				username: `regular_${Date.now()}`,
+			const [regularUser] = await testDb
+				.insert(users)
+				.values({
+					id: crypto.randomUUID(),
+					username: `regular_${Date.now()}`,
 					hashedPassword: await bcrypt.hash('regularPassword123!', 10),
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
-			const [adminUser] = await testDb.insert(users).values({
-				id: crypto.randomUUID(),
-				username: `admin_${Date.now()}`,
+			const [adminUser] = await testDb
+				.insert(users)
+				.values({
+					id: crypto.randomUUID(),
+					username: `admin_${Date.now()}`,
 					hashedPassword: await bcrypt.hash('adminPassword123!', 10),
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Simulate privilege escalation attempt
 			const attemptPrivilegeEscalation = (userId: string, targetUserId: string): boolean => {
@@ -414,9 +430,9 @@ describe('Authentication Flow Regression Tests', () => {
 			});
 
 			const concurrentResults = await Promise.all(promises);
-			
+
 			// All concurrent authentications should succeed or fail consistently
-			const allSucceeded = concurrentResults.every(result => result === true);
+			const allSucceeded = concurrentResults.every((result) => result === true);
 			expect(allSucceeded).toBe(true);
 		});
 	});

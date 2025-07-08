@@ -7,7 +7,7 @@ import { regressionDataManager } from '../utils/regression-data-manager';
 
 /**
  * Post Lifecycle Regression Tests
- * 
+ *
  * Prevents regression of core post management functionality including:
  * - Post creation workflow
  * - Post editing and updates
@@ -15,7 +15,7 @@ import { regressionDataManager } from '../utils/regression-data-manager';
  * - Status transitions (draft/published)
  * - Slug generation and uniqueness
  * - Content validation and sanitization
- * 
+ *
  * Based on historical issues:
  * - Slug duplication bugs
  * - Status transition validation
@@ -58,31 +58,37 @@ describe('Post Lifecycle Regression Tests', () => {
 
 		it('should prevent regression: post with duplicate title creates unique slug', async () => {
 			const baseTitle = 'Duplicate Title Test';
-			
+
 			// Create first post
-			const firstPost = await testDb.insert(posts).values({
-				title: baseTitle,
-				slug: 'duplicate-title-test',
-				content: 'First post content',
-				excerpt: 'First excerpt',
-				status: 'draft',
-				userId: testData.userId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const firstPost = await testDb
+				.insert(posts)
+				.values({
+					title: baseTitle,
+					slug: 'duplicate-title-test',
+					content: 'First post content',
+					excerpt: 'First excerpt',
+					status: 'draft',
+					userId: testData.userId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Create second post with same title
 			const secondSlug = 'duplicate-title-test-2'; // Should auto-generate unique slug
-			const secondPost = await testDb.insert(posts).values({
-				title: baseTitle,
-				slug: secondSlug,
-				content: 'Second post content',
-				excerpt: 'Second excerpt',
-				status: 'draft',
-				userId: testData.userId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const secondPost = await testDb
+				.insert(posts)
+				.values({
+					title: baseTitle,
+					slug: secondSlug,
+					content: 'Second post content',
+					excerpt: 'Second excerpt',
+					status: 'draft',
+					userId: testData.userId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			expect(firstPost[0].slug).not.toBe(secondPost[0].slug);
 			expect(secondPost[0].slug).toBe(secondSlug);
@@ -90,7 +96,7 @@ describe('Post Lifecycle Regression Tests', () => {
 
 		it('should prevent regression: post creation with invalid user fails', async () => {
 			const invalidUserId = 'non-existent-user-id';
-			
+
 			try {
 				await testDb.insert(posts).values({
 					title: 'Invalid User Post',
@@ -102,7 +108,7 @@ describe('Post Lifecycle Regression Tests', () => {
 					createdAt: new Date(),
 					updatedAt: new Date()
 				});
-				
+
 				expect.fail('Post creation with invalid user should have failed');
 			} catch (error) {
 				expect(error).toBeDefined();
@@ -126,7 +132,9 @@ describe('Post Lifecycle Regression Tests', () => {
 				try {
 					await testDb.insert(posts).values({
 						title: data.title,
-						slug: data.title ? data.title.toLowerCase().replace(/\s+/g, '-') : 'empty-title',
+						slug: data.title
+							? data.title.toLowerCase().replace(/\s+/g, '-')
+							: 'empty-title',
 						content: data.content,
 						excerpt: data.content.substring(0, 200),
 						status: 'draft',
@@ -134,7 +142,7 @@ describe('Post Lifecycle Regression Tests', () => {
 						createdAt: new Date(),
 						updatedAt: new Date()
 					});
-					
+
 					// If we get here and title/content is empty, that's a regression
 					if (!data.title || !data.content) {
 						expect.fail('Post creation with empty required fields should have failed');
@@ -150,16 +158,19 @@ describe('Post Lifecycle Regression Tests', () => {
 			const longContent = 'A'.repeat(100000); // 100KB content
 			const startTime = Date.now();
 
-			const [post] = await testDb.insert(posts).values({
-				title: 'Long Content Test',
-				slug: 'long-content-test',
-				content: longContent,
-				excerpt: longContent.substring(0, 500),
-				status: 'draft',
-				userId: testData.userId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [post] = await testDb
+				.insert(posts)
+				.values({
+					title: 'Long Content Test',
+					slug: 'long-content-test',
+					content: longContent,
+					excerpt: longContent.substring(0, 500),
+					status: 'draft',
+					userId: testData.userId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			const duration = Date.now() - startTime;
 
@@ -173,17 +184,20 @@ describe('Post Lifecycle Regression Tests', () => {
 		let existingPostId: number;
 
 		beforeEach(async () => {
-			const [post] = await testDb.insert(posts).values({
-				title: 'Original Title',
-				slug: 'original-title',
-				content: 'Original content',
-				excerpt: 'Original excerpt',
-				status: 'draft',
-				userId: testData.userId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
-			
+			const [post] = await testDb
+				.insert(posts)
+				.values({
+					title: 'Original Title',
+					slug: 'original-title',
+					content: 'Original content',
+					excerpt: 'Original excerpt',
+					status: 'draft',
+					userId: testData.userId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
+
 			existingPostId = post.id;
 		});
 
@@ -208,11 +222,11 @@ describe('Post Lifecycle Regression Tests', () => {
 
 		it('should prevent regression: post update cannot change ownership', async () => {
 			const anotherUserId = testData.additionalUsers[0];
-			
+
 			try {
 				await testDb
 					.update(posts)
-					.set({ 
+					.set({
 						title: 'Hijacked Post',
 						userId: anotherUserId,
 						updatedAt: new Date()
@@ -228,7 +242,9 @@ describe('Post Lifecycle Regression Tests', () => {
 				// In a properly secured system, this should be prevented at the application level
 				// For this test, we verify the database operation completed but application should prevent it
 				expect(post.userId).toBe(anotherUserId);
-				console.warn('⚠️ Post ownership change succeeded - ensure application-level protection');
+				console.warn(
+					'⚠️ Post ownership change succeeded - ensure application-level protection'
+				);
 			} catch (error) {
 				// If database constraints prevent this, that's also acceptable
 				expect(error).toBeDefined();
@@ -237,11 +253,11 @@ describe('Post Lifecycle Regression Tests', () => {
 
 		it('should prevent regression: concurrent post updates handle conflicts', async () => {
 			const originalUpdatedAt = new Date();
-			
+
 			// Simulate two concurrent updates
 			const update1Promise = testDb
 				.update(posts)
-				.set({ 
+				.set({
 					title: 'Update 1',
 					content: 'Content from update 1',
 					updatedAt: new Date()
@@ -251,7 +267,7 @@ describe('Post Lifecycle Regression Tests', () => {
 
 			const update2Promise = testDb
 				.update(posts)
-				.set({ 
+				.set({
 					title: 'Update 2',
 					content: 'Content from update 2',
 					updatedAt: new Date()
@@ -279,24 +295,27 @@ describe('Post Lifecycle Regression Tests', () => {
 		let draftPostId: number;
 
 		beforeEach(async () => {
-			const [post] = await testDb.insert(posts).values({
-				title: 'Draft Post',
-				slug: 'draft-post',
-				content: 'Draft content',
-				excerpt: 'Draft excerpt',
-				status: 'draft',
-				userId: testData.userId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
-			
+			const [post] = await testDb
+				.insert(posts)
+				.values({
+					title: 'Draft Post',
+					slug: 'draft-post',
+					content: 'Draft content',
+					excerpt: 'Draft excerpt',
+					status: 'draft',
+					userId: testData.userId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
+
 			draftPostId = post.id;
 		});
 
 		it('should prevent regression: draft to published transition', async () => {
 			const [publishedPost] = await testDb
 				.update(posts)
-				.set({ 
+				.set({
 					status: 'published',
 					updatedAt: new Date()
 				})
@@ -317,7 +336,7 @@ describe('Post Lifecycle Regression Tests', () => {
 			// Then revert to draft
 			const [draftPost] = await testDb
 				.update(posts)
-				.set({ 
+				.set({
 					status: 'draft',
 					updatedAt: new Date()
 				})
@@ -334,7 +353,7 @@ describe('Post Lifecycle Regression Tests', () => {
 				try {
 					await testDb
 						.update(posts)
-						.set({ 
+						.set({
 							status: invalidStatus as any,
 							updatedAt: new Date()
 						})
@@ -360,25 +379,26 @@ describe('Post Lifecycle Regression Tests', () => {
 		let postToDeleteId: number;
 
 		beforeEach(async () => {
-			const [post] = await testDb.insert(posts).values({
-				title: 'Post to Delete',
-				slug: 'post-to-delete',
-				content: 'This post will be deleted',
-				excerpt: 'Delete excerpt',
-				status: 'draft',
-				userId: testData.userId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
-			
+			const [post] = await testDb
+				.insert(posts)
+				.values({
+					title: 'Post to Delete',
+					slug: 'post-to-delete',
+					content: 'This post will be deleted',
+					excerpt: 'Delete excerpt',
+					status: 'draft',
+					userId: testData.userId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
+
 			postToDeleteId = post.id;
 		});
 
 		it('should prevent regression: post deletion removes record', async () => {
 			// Delete the post
-			await testDb
-				.delete(posts)
-				.where(eq(posts.id, postToDeleteId));
+			await testDb.delete(posts).where(eq(posts.id, postToDeleteId));
 
 			// Verify post is deleted
 			const deletedPost = await testDb
@@ -393,9 +413,7 @@ describe('Post Lifecycle Regression Tests', () => {
 			const nonExistentId = 999999;
 
 			try {
-				const result = await testDb
-					.delete(posts)
-					.where(eq(posts.id, nonExistentId));
+				const result = await testDb.delete(posts).where(eq(posts.id, nonExistentId));
 
 				// Should not throw error, just affect 0 rows
 				expect(result).toBeDefined();
@@ -493,12 +511,7 @@ describe('Post Lifecycle Regression Tests', () => {
 			const publishedPosts = await testDb
 				.select()
 				.from(posts)
-				.where(
-					and(
-						eq(posts.userId, testData.userId),
-						eq(posts.status, 'published')
-					)
-				)
+				.where(and(eq(posts.userId, testData.userId), eq(posts.status, 'published')))
 				.orderBy(desc(posts.createdAt));
 
 			const duration = Date.now() - startTime;

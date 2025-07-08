@@ -6,7 +6,7 @@ import { testIsolation } from '../utils/test-isolation';
 
 /**
  * Database Error Resilience Tests
- * 
+ *
  * Tests database error handling scenarios including:
  * - Connection failures
  * - Transaction errors
@@ -142,7 +142,7 @@ describe('Database Error Resilience Tests', () => {
 			} catch (error) {
 				// Verify the transaction was properly rolled back
 				expect(error as Error).toBeInstanceOf(Error);
-				
+
 				// Verify no posts were inserted due to rollback
 				const allPosts = await testDb.select().from(posts);
 				expect(allPosts).toHaveLength(0);
@@ -154,12 +154,15 @@ describe('Database Error Resilience Tests', () => {
 			try {
 				await testDb.transaction(async (outerTx) => {
 					// Insert category in outer transaction
-					const [category] = await outerTx.insert(categories).values({
-						name: 'Test Category',
-						slug: 'test-category',
-						createdAt: new Date(),
-						updatedAt: new Date()
-					}).returning();
+					const [category] = await outerTx
+						.insert(categories)
+						.values({
+							name: 'Test Category',
+							slug: 'test-category',
+							createdAt: new Date(),
+							updatedAt: new Date()
+						})
+						.returning();
 
 					// Simulate nested transaction that fails
 					await outerTx.transaction(async (innerTx) => {
@@ -179,7 +182,7 @@ describe('Database Error Resilience Tests', () => {
 			} catch (error) {
 				// Verify both outer and inner transactions were rolled back
 				expect(error as Error).toBeInstanceOf(Error);
-				
+
 				const allCategories = await testDb.select().from(categories);
 				const allPosts = await testDb.select().from(posts);
 				expect(allCategories).toHaveLength(0);
@@ -288,7 +291,9 @@ describe('Database Error Resilience Tests', () => {
 
 			// Test complex query performance
 			const queryStartTime = Date.now();
-			const results = await testDb.select().from(posts)
+			const results = await testDb
+				.select()
+				.from(posts)
 				.where(eq(posts.status, 'published'))
 				.orderBy(posts.createdAt)
 				.limit(50);

@@ -6,14 +6,14 @@ import { regressionDataManager } from '../utils/regression-data-manager';
 
 /**
  * Public API Contract Regression Tests
- * 
+ *
  * Prevents regression of public API functionality including:
  * - Posts API endpoint contracts
  * - Categories API endpoint contracts
  * - Response format consistency
  * - Error response standards
  * - Performance characteristics
- * 
+ *
  * Based on historical issues:
  * - API response format changes
  * - Missing fields in responses
@@ -40,7 +40,7 @@ describe('Public API Contract Regression Tests', () => {
 			// Simulate GET /api/posts API call by directly querying the database
 			// In a real scenario, this would make HTTP requests to the actual API
 			const startTime = Date.now();
-			
+
 			const apiResponse = await testDb
 				.select({
 					id: posts.id,
@@ -60,10 +60,10 @@ describe('Public API Contract Regression Tests', () => {
 
 			// Verify response structure
 			expect(Array.isArray(apiResponse)).toBe(true);
-			
+
 			if (apiResponse.length > 0) {
 				const post = apiResponse[0];
-				
+
 				// Verify required fields are present
 				expect(post).toHaveProperty('id');
 				expect(post).toHaveProperty('title');
@@ -91,16 +91,19 @@ describe('Public API Contract Regression Tests', () => {
 
 		it('should prevent regression: GET /api/posts/[slug] response format', async () => {
 			// Create a published post for testing
-			const [publishedPost] = await testDb.insert(posts).values({
-				title: 'API Test Post',
-				slug: `api-test-post-${crypto.randomUUID()}`,
-				content: 'Full content for API testing including more detailed information.',
-				excerpt: 'API test excerpt',
-				status: 'published',
-				userId: testData.userId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [publishedPost] = await testDb
+				.insert(posts)
+				.values({
+					title: 'API Test Post',
+					slug: `api-test-post-${crypto.randomUUID()}`,
+					content: 'Full content for API testing including more detailed information.',
+					excerpt: 'API test excerpt',
+					status: 'published',
+					userId: testData.userId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			const startTime = Date.now();
 
@@ -402,10 +405,7 @@ describe('Public API Contract Regression Tests', () => {
 				{
 					name: 'Categories List',
 					test: async () => {
-						return await testDb
-							.select()
-							.from(categories)
-							.orderBy(categories.name);
+						return await testDb.select().from(categories).orderBy(categories.name);
 					},
 					maxDuration: 200
 				}
@@ -440,7 +440,7 @@ describe('Public API Contract Regression Tests', () => {
 
 			// Verify all requests completed successfully
 			expect(results).toHaveLength(concurrentRequests);
-			results.forEach(result => {
+			results.forEach((result) => {
 				expect(Array.isArray(result)).toBe(true);
 			});
 
@@ -484,35 +484,36 @@ describe('Public API Contract Regression Tests', () => {
 				.from(posts)
 				.where(eq(posts.status, 'published'));
 
-			const allPosts = await testDb
-				.select()
-				.from(posts);
+			const allPosts = await testDb.select().from(posts);
 
 			// Verify filtering
 			expect(publicPosts.length).toBeLessThanOrEqual(allPosts.length);
-			
+
 			// Verify all returned posts are published
-			publicPosts.forEach(post => {
+			publicPosts.forEach((post) => {
 				expect(post.status).toBe('published');
 			});
 
 			// Verify draft posts are not included
-			const draftInPublic = publicPosts.find(post => post.status === 'draft');
+			const draftInPublic = publicPosts.find((post) => post.status === 'draft');
 			expect(draftInPublic).toBeUndefined();
 		});
 
 		it('should prevent regression: content sanitization in API responses', async () => {
 			// Create post with potentially unsafe content
-			const [unsafePost] = await testDb.insert(posts).values({
-				title: 'Test Post with <script>alert("xss")</script>',
-				slug: `unsafe-content-${crypto.randomUUID()}`,
-				content: 'Content with <script>alert("danger")</script> tags',
-				excerpt: 'Excerpt with <img src="x" onerror="alert(1)">',
-				status: 'published',
-				userId: testData.userId,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [unsafePost] = await testDb
+				.insert(posts)
+				.values({
+					title: 'Test Post with <script>alert("xss")</script>',
+					slug: `unsafe-content-${crypto.randomUUID()}`,
+					content: 'Content with <script>alert("danger")</script> tags',
+					excerpt: 'Excerpt with <img src="x" onerror="alert(1)">',
+					status: 'published',
+					userId: testData.userId,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Simulate API response
 			const [apiPost] = await testDb

@@ -4,7 +4,7 @@ import { join } from 'path';
 
 /**
  * Performance Monitoring for Regression Tests
- * 
+ *
  * Provides detailed performance tracking and analysis:
  * - Test execution time monitoring
  * - Memory usage tracking
@@ -72,16 +72,16 @@ export class PerformanceMonitor {
 	// Performance thresholds
 	private readonly thresholds = {
 		duration: {
-			warning: 2000,  // 2 seconds
-			critical: 5000  // 5 seconds
+			warning: 2000, // 2 seconds
+			critical: 5000 // 5 seconds
 		},
 		memory: {
-			warning: 100 * 1024 * 1024,   // 100MB
-			critical: 500 * 1024 * 1024   // 500MB
+			warning: 100 * 1024 * 1024, // 100MB
+			critical: 500 * 1024 * 1024 // 500MB
 		},
 		queryTime: {
-			warning: 1000,  // 1 second
-			critical: 3000  // 3 seconds
+			warning: 1000, // 1 second
+			critical: 3000 // 3 seconds
 		},
 		queryCount: {
 			warning: 50,
@@ -147,7 +147,7 @@ export class PerformanceMonitor {
 		const finalCpuUsage = process.cpuUsage();
 
 		const metrics: PerformanceMetrics = {
-			...activeMetric as PerformanceMetrics,
+			...(activeMetric as PerformanceMetrics),
 			endTime,
 			duration,
 			memoryUsage: {
@@ -184,7 +184,11 @@ export class PerformanceMonitor {
 	/**
 	 * Record database operation
 	 */
-	recordDatabaseOperation(testName: string, queryTime: number, isSlowQuery: boolean = false): void {
+	recordDatabaseOperation(
+		testName: string,
+		queryTime: number,
+		isSlowQuery: boolean = false
+	): void {
 		const metrics = this.activeMetrics.get(testName);
 		if (metrics && metrics.databaseMetrics) {
 			metrics.databaseMetrics.queryCount++;
@@ -198,7 +202,10 @@ export class PerformanceMonitor {
 	/**
 	 * Record resource operation
 	 */
-	recordResourceOperation(testName: string, type: 'file' | 'network' | 'cache-hit' | 'cache-miss'): void {
+	recordResourceOperation(
+		testName: string,
+		type: 'file' | 'network' | 'cache-hit' | 'cache-miss'
+	): void {
 		const metrics = this.activeMetrics.get(testName);
 		if (metrics && metrics.resourceMetrics) {
 			switch (type) {
@@ -299,7 +306,7 @@ export class PerformanceMonitor {
 	 */
 	private addAlert(alert: PerformanceAlert): void {
 		this.alerts.push(alert);
-		
+
 		// Log alert immediately
 		const severityEmoji = {
 			low: '🟡',
@@ -307,8 +314,10 @@ export class PerformanceMonitor {
 			high: '🔴',
 			critical: '🚨'
 		};
-		
-		console.warn(`${severityEmoji[alert.severity]} Performance Alert [${alert.severity.toUpperCase()}]: ${alert.message}`);
+
+		console.warn(
+			`${severityEmoji[alert.severity]} Performance Alert [${alert.severity.toUpperCase()}]: ${alert.message}`
+		);
 		console.warn(`  Test: ${alert.testName}`);
 		console.warn(`  Threshold: ${alert.threshold}, Actual: ${alert.actualValue.toFixed(2)}`);
 	}
@@ -324,25 +333,31 @@ export class PerformanceMonitor {
 				return; // Need at least 2 measurements for trend analysis
 			}
 
-			const durations = measurements.map(m => m.duration);
+			const durations = measurements.map((m) => m.duration);
 			const averageDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
-			
+
 			// Calculate variability (standard deviation)
-			const variance = durations.reduce((acc, duration) => 
-				acc + Math.pow(duration - averageDuration, 2), 0) / durations.length;
+			const variance =
+				durations.reduce(
+					(acc, duration) => acc + Math.pow(duration - averageDuration, 2),
+					0
+				) / durations.length;
 			const variability = Math.sqrt(variance);
 
 			// Calculate trend
 			const recentMeasurements = measurements.slice(-5); // Last 5 measurements
 			const oldMeasurements = measurements.slice(-10, -5); // Previous 5 measurements
-			
+
 			let trend: 'improving' | 'stable' | 'degrading' | 'critical' = 'stable';
 			let lastChange = 0;
 
 			if (recentMeasurements.length > 0 && oldMeasurements.length > 0) {
-				const recentAvg = recentMeasurements.reduce((a, b) => a + b.duration, 0) / recentMeasurements.length;
-				const oldAvg = oldMeasurements.reduce((a, b) => a + b.duration, 0) / oldMeasurements.length;
-				
+				const recentAvg =
+					recentMeasurements.reduce((a, b) => a + b.duration, 0) /
+					recentMeasurements.length;
+				const oldAvg =
+					oldMeasurements.reduce((a, b) => a + b.duration, 0) / oldMeasurements.length;
+
 				lastChange = ((recentAvg - oldAvg) / oldAvg) * 100;
 
 				if (lastChange < -10) trend = 'improving';
@@ -391,7 +406,7 @@ export class PerformanceMonitor {
 		trends: PerformanceTrend[];
 	} {
 		const allMetrics: PerformanceMetrics[] = [];
-		this.historicalData.forEach(measurements => {
+		this.historicalData.forEach((measurements) => {
 			allMetrics.push(...measurements);
 		});
 
@@ -407,25 +422,27 @@ export class PerformanceMonitor {
 			};
 		}
 
-		const durations = allMetrics.map(m => m.duration);
+		const durations = allMetrics.map((m) => m.duration);
 		const averageTestDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
 
-		const slowestMetric = allMetrics.reduce((prev, current) => 
-			prev.duration > current.duration ? prev : current);
-		const fastestMetric = allMetrics.reduce((prev, current) => 
-			prev.duration < current.duration ? prev : current);
+		const slowestMetric = allMetrics.reduce((prev, current) =>
+			prev.duration > current.duration ? prev : current
+		);
+		const fastestMetric = allMetrics.reduce((prev, current) =>
+			prev.duration < current.duration ? prev : current
+		);
 
-		const memoryUsages = allMetrics.map(m => m.memoryUsage.heapUsed);
+		const memoryUsages = allMetrics.map((m) => m.memoryUsage.heapUsed);
 		const averageMemory = memoryUsages.reduce((a, b) => a + b, 0) / memoryUsages.length;
 		const peakMemory = Math.max(...memoryUsages);
 
 		const alertSummary: Record<string, number> = {};
-		this.alerts.forEach(alert => {
+		this.alerts.forEach((alert) => {
 			alertSummary[alert.severity] = (alertSummary[alert.severity] || 0) + 1;
 		});
 
 		return {
-			totalTests: new Set(allMetrics.map(m => m.testName)).size,
+			totalTests: new Set(allMetrics.map((m) => m.testName)).size,
 			averageTestDuration,
 			slowestTest: { name: slowestMetric.testName, duration: slowestMetric.duration },
 			fastestTest: { name: fastestMetric.testName, duration: fastestMetric.duration },
@@ -479,7 +496,9 @@ export class PerformanceMonitor {
 				this.historicalData.set(key, value as PerformanceMetrics[]);
 			});
 
-			console.log(`📊 Loaded historical performance data for ${this.historicalData.size} tests`);
+			console.log(
+				`📊 Loaded historical performance data for ${this.historicalData.size} tests`
+			);
 		} catch (error) {
 			console.log('No historical performance data found (this is normal for first run)');
 		}
@@ -494,10 +513,10 @@ export function withPerformanceMonitoring<T extends (...args: any[]) => any>(
 	return ((...args: any[]) => {
 		const monitor = PerformanceMonitor.getInstance();
 		monitor.startMonitoring(testName);
-		
+
 		try {
 			const result = testFunction(...args);
-			
+
 			// Handle async functions
 			if (result && typeof result.then === 'function') {
 				return result.finally(() => {

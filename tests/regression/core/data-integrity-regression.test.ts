@@ -7,7 +7,7 @@ import { regressionDataManager } from '../utils/regression-data-manager';
 
 /**
  * Data Integrity Regression Tests
- * 
+ *
  * Prevents regression of critical data integrity constraints including:
  * - Foreign key constraint enforcement
  * - Data consistency across relationships
@@ -15,7 +15,7 @@ import { regressionDataManager } from '../utils/regression-data-manager';
  * - Cascade operation integrity
  * - Cross-table data validation
  * - Referential integrity maintenance
- * 
+ *
  * Based on historical issues:
  * - Orphaned posts after user deletion
  * - Broken category-post relationships
@@ -41,7 +41,7 @@ describe('Data Integrity Regression Tests', () => {
 	describe('Foreign Key Constraint Regression', () => {
 		it('should prevent regression: posts require valid user references', async () => {
 			const invalidUserId = 'non-existent-user-id';
-			
+
 			try {
 				await testDb.insert(posts).values({
 					title: 'Orphaned Post Test',
@@ -53,11 +53,11 @@ describe('Data Integrity Regression Tests', () => {
 					createdAt: new Date(),
 					updatedAt: new Date()
 				});
-				
+
 				expect.fail('Post creation with invalid user should have failed');
 			} catch (error) {
 				expect(error).toBeDefined();
-				
+
 				// Verify no orphaned post was created
 				const orphanedPosts = await testDb
 					.select()
@@ -70,26 +70,26 @@ describe('Data Integrity Regression Tests', () => {
 		it('should prevent regression: category-post relationships require valid references', async () => {
 			const invalidPostId = 999999;
 			const invalidCategoryId = 999999;
-			
+
 			// Test invalid post ID
 			try {
 				await testDb.insert(postsToCategories).values({
 					postId: invalidPostId,
 					categoryId: testData.categoryIds[0]
 				});
-				
+
 				expect.fail('Category-post relationship with invalid post should have failed');
 			} catch (error) {
 				expect(error).toBeDefined();
 			}
-			
+
 			// Test invalid category ID
 			try {
 				await testDb.insert(postsToCategories).values({
 					postId: testData.postIds[0],
 					categoryId: invalidCategoryId
 				});
-				
+
 				expect.fail('Category-post relationship with invalid category should have failed');
 			} catch (error) {
 				expect(error).toBeDefined();
@@ -104,17 +104,17 @@ describe('Data Integrity Regression Tests', () => {
 			}
 
 			const invalidUserId = 'non-existent-user-update';
-			
+
 			try {
 				await testDb
 					.update(posts)
 					.set({ userId: invalidUserId })
 					.where(eq(posts.id, testData.postIds[0]));
-				
+
 				expect.fail('Post update with invalid user should have failed');
 			} catch (error) {
 				expect(error).toBeDefined();
-				
+
 				// Verify post still has original valid user
 				const postResult = await testDb
 					.select()
@@ -130,30 +130,34 @@ describe('Data Integrity Regression Tests', () => {
 	describe('Cascade Operations Regression', () => {
 		it('should prevent regression: user deletion cascades to posts', async () => {
 			// Create a user specifically for deletion testing
-			const [userToDelete] = await testDb.insert(users).values({
-				id: crypto.randomUUID(),
-				username: `user_to_delete_${Date.now()}`,
-				hashedPassword: 'hashed_password_test',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [userToDelete] = await testDb
+				.insert(users)
+				.values({
+					id: crypto.randomUUID(),
+					username: `user_to_delete_${Date.now()}`,
+					hashedPassword: 'hashed_password_test',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Create posts for this user
-			const [postToDelete] = await testDb.insert(posts).values({
-				title: 'Post to be deleted',
-				slug: `post-to-delete-${crypto.randomUUID()}`,
-				content: 'This post should be deleted when user is deleted',
-				excerpt: 'Deletion test excerpt',
-				status: 'draft',
-				userId: userToDelete.id,
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [postToDelete] = await testDb
+				.insert(posts)
+				.values({
+					title: 'Post to be deleted',
+					slug: `post-to-delete-${crypto.randomUUID()}`,
+					content: 'This post should be deleted when user is deleted',
+					excerpt: 'Deletion test excerpt',
+					status: 'draft',
+					userId: userToDelete.id,
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Delete the user (should cascade to posts)
-			await testDb
-				.delete(users)
-				.where(eq(users.id, userToDelete.id));
+			await testDb.delete(users).where(eq(users.id, userToDelete.id));
 
 			// Verify user is deleted
 			const deletedUser = await testDb
@@ -172,13 +176,16 @@ describe('Data Integrity Regression Tests', () => {
 
 		it('should prevent regression: category deletion cascades to post relationships', async () => {
 			// Create a category for deletion testing
-			const [categoryToDelete] = await testDb.insert(categories).values({
-				name: `Category to Delete ${crypto.randomUUID()}`,
-				slug: `category-to-delete-${crypto.randomUUID()}`,
-				description: 'This category will be deleted',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [categoryToDelete] = await testDb
+				.insert(categories)
+				.values({
+					name: `Category to Delete ${crypto.randomUUID()}`,
+					slug: `category-to-delete-${crypto.randomUUID()}`,
+					description: 'This category will be deleted',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Create post-category relationship if we have posts
 			if (testData.postIds && testData.postIds.length > 0) {
@@ -198,9 +205,7 @@ describe('Data Integrity Regression Tests', () => {
 			}
 
 			// Delete the category (should cascade to relationships)
-			await testDb
-				.delete(categories)
-				.where(eq(categories.id, categoryToDelete.id));
+			await testDb.delete(categories).where(eq(categories.id, categoryToDelete.id));
 
 			// Verify category is deleted
 			const deletedCategory = await testDb
@@ -238,9 +243,7 @@ describe('Data Integrity Regression Tests', () => {
 			expect(relationshipBefore).toHaveLength(1);
 
 			// Delete the post (should cascade to relationships)
-			await testDb
-				.delete(posts)
-				.where(eq(posts.id, testData.postIds[0]));
+			await testDb.delete(posts).where(eq(posts.id, testData.postIds[0]));
 
 			// Verify post is deleted
 			const deletedPost = await testDb
@@ -351,7 +354,7 @@ describe('Data Integrity Regression Tests', () => {
 				.from(posts)
 				.where(eq(posts.status, 'published'));
 
-			publishedPosts.forEach(post => {
+			publishedPosts.forEach((post) => {
 				expect(post.status).toBe('published');
 				expect(post.title).toBeTruthy();
 				expect(post.content).toBeTruthy();
@@ -427,7 +430,7 @@ describe('Data Integrity Regression Tests', () => {
 					.from(posts)
 					.where(eq(posts.userId, user.userId));
 
-				userPosts.forEach(post => {
+				userPosts.forEach((post) => {
 					expect(post.userId).toBe(user.userId);
 				});
 			}
@@ -452,7 +455,7 @@ describe('Data Integrity Regression Tests', () => {
 
 			// Verify all posts have valid user references
 			expect(createdPosts).toHaveLength(10);
-			createdPosts.forEach(post => {
+			createdPosts.forEach((post) => {
 				expect(post.userId).toBe(testData.userId);
 			});
 
@@ -515,7 +518,7 @@ describe('Data Integrity Regression Tests', () => {
 			// Bulk update multiple posts
 			await testDb
 				.update(posts)
-				.set({ 
+				.set({
 					status: newStatus,
 					updatedAt: updateTime
 				})
@@ -527,7 +530,7 @@ describe('Data Integrity Regression Tests', () => {
 				.from(posts)
 				.where(eq(posts.userId, testData.userId));
 
-			updatedPosts.forEach(post => {
+			updatedPosts.forEach((post) => {
 				expect(post.status).toBe(newStatus);
 				expect(post.userId).toBe(testData.userId);
 				// All posts should maintain their individual identities
@@ -559,9 +562,7 @@ describe('Data Integrity Regression Tests', () => {
 			expect(relationshipsBefore.length).toBeGreaterThan(0);
 
 			// Bulk delete posts
-			await testDb
-				.delete(posts)
-				.where(eq(posts.userId, testData.userId));
+			await testDb.delete(posts).where(eq(posts.userId, testData.userId));
 
 			// Verify posts are deleted
 			const deletedPosts = await testDb
@@ -623,13 +624,16 @@ describe('Data Integrity Regression Tests', () => {
 
 		it('should prevent regression: cascade operation performance', async () => {
 			// Create user with multiple posts for cascade testing
-			const [testUser] = await testDb.insert(users).values({
-				id: crypto.randomUUID(),
-				username: `cascade_test_${Date.now()}`,
-				hashedPassword: 'test_password',
-				createdAt: new Date(),
-				updatedAt: new Date()
-			}).returning();
+			const [testUser] = await testDb
+				.insert(users)
+				.values({
+					id: crypto.randomUUID(),
+					username: `cascade_test_${Date.now()}`,
+					hashedPassword: 'test_password',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				})
+				.returning();
 
 			// Create multiple posts for this user
 			const cascadePosts = Array.from({ length: 20 }, (_, i) => ({

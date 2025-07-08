@@ -62,7 +62,7 @@ export class RegressionDataManager extends TestIsolation {
 		config: RegressionScenarioConfig = {}
 	): Promise<ExtendedTestData> {
 		this.testContext = scenarioName;
-		
+
 		const result: ExtendedTestData = {
 			userId: '',
 			additionalUsers: [],
@@ -86,7 +86,13 @@ export class RegressionDataManager extends TestIsolation {
 						username: `regression_user_${Date.now()}_${i}`
 					});
 					result.additionalUsers!.push(additionalUserId);
-					this.logChange('CREATE', 'users', additionalUserId, { additional: true, index: i }, scenarioName);
+					this.logChange(
+						'CREATE',
+						'users',
+						additionalUserId,
+						{ additional: true, index: i },
+						scenarioName
+					);
 				}
 			}
 
@@ -101,15 +107,24 @@ export class RegressionDataManager extends TestIsolation {
 						updatedAt: new Date()
 					};
 
-					const [category] = await testDb.insert(categories).values(categoryData).returning();
-					
+					const [category] = await testDb
+						.insert(categories)
+						.values(categoryData)
+						.returning();
+
 					if (i === 0) {
 						result.categoryId = category.id;
 					} else {
 						result.additionalCategories!.push(category.id);
 					}
 
-					this.logChange('CREATE', 'categories', category.id.toString(), categoryData, scenarioName);
+					this.logChange(
+						'CREATE',
+						'categories',
+						category.id.toString(),
+						categoryData,
+						scenarioName
+					);
 				}
 			}
 
@@ -128,7 +143,7 @@ export class RegressionDataManager extends TestIsolation {
 					};
 
 					const [post] = await testDb.insert(posts).values(postData).returning();
-					
+
 					if (i === 0) {
 						result.postId = post.id;
 					} else {
@@ -142,7 +157,13 @@ export class RegressionDataManager extends TestIsolation {
 			// Setup session data if requested
 			if (config.withSessions) {
 				result.sessionData = await this.createSessionData(result.userId);
-				this.logChange('CREATE', 'sessions', result.userId, result.sessionData, scenarioName);
+				this.logChange(
+					'CREATE',
+					'sessions',
+					result.userId,
+					result.sessionData,
+					scenarioName
+				);
 			}
 
 			return result;
@@ -174,13 +195,13 @@ export class RegressionDataManager extends TestIsolation {
 		try {
 			// Check foreign key relationships
 			await this.validateForeignKeyIntegrity();
-			
+
 			// Check data constraints
 			await this.validateDataConstraints();
-			
+
 			// Check for orphaned records
 			await this.validateOrphanedRecords();
-			
+
 			return true;
 		} catch (error) {
 			console.error('Data consistency validation failed:', error);
@@ -200,7 +221,9 @@ export class RegressionDataManager extends TestIsolation {
 			.where(isNull(users.id));
 
 		if (postsWithInvalidUsers.length > 0) {
-			throw new Error(`Found ${postsWithInvalidUsers.length} posts with invalid user references`);
+			throw new Error(
+				`Found ${postsWithInvalidUsers.length} posts with invalid user references`
+			);
 		}
 	}
 
@@ -225,7 +248,9 @@ export class RegressionDataManager extends TestIsolation {
 			.where(not(inArray(posts.status, ['draft', 'published'])));
 
 		if (postsWithInvalidStatus.length > 0) {
-			throw new Error(`Found ${postsWithInvalidStatus.length} posts with invalid status values`);
+			throw new Error(
+				`Found ${postsWithInvalidStatus.length} posts with invalid status values`
+			);
 		}
 	}
 
@@ -276,12 +301,12 @@ export class RegressionDataManager extends TestIsolation {
 	 */
 	getDataModificationStats(): Record<string, number> {
 		const stats: Record<string, number> = {};
-		
-		this.changeLog.forEach(entry => {
+
+		this.changeLog.forEach((entry) => {
 			const key = `${entry.operation}_${entry.table}`;
 			stats[key] = (stats[key] || 0) + 1;
 		});
-		
+
 		return stats;
 	}
 
@@ -292,7 +317,7 @@ export class RegressionDataManager extends TestIsolation {
 		try {
 			// Check that test data doesn't persist beyond expected scope
 			// This would include checking for test-specific naming patterns
-			
+
 			const testUsers = await testDb
 				.select({ id: users.id, username: users.username })
 				.from(users)
@@ -309,8 +334,10 @@ export class RegressionDataManager extends TestIsolation {
 				.where(like(posts.title, 'Regression Test Post%'));
 
 			// Log findings for analysis
-			console.log(`Found ${testUsers.length} test users, ${testCategories.length} test categories, ${testPosts.length} test posts`);
-			
+			console.log(
+				`Found ${testUsers.length} test users, ${testCategories.length} test categories, ${testPosts.length} test posts`
+			);
+
 			return true;
 		} catch (error) {
 			console.error('Test isolation verification failed:', error);
@@ -322,9 +349,18 @@ export class RegressionDataManager extends TestIsolation {
 	 * Create a snapshot of current database state for comparison
 	 */
 	async createDataSnapshot(): Promise<DataSnapshot> {
-		const userCount = await testDb.select().from(users).then(rows => rows.length);
-		const categoryCount = await testDb.select().from(categories).then(rows => rows.length);
-		const postCount = await testDb.select().from(posts).then(rows => rows.length);
+		const userCount = await testDb
+			.select()
+			.from(users)
+			.then((rows) => rows.length);
+		const categoryCount = await testDb
+			.select()
+			.from(categories)
+			.then((rows) => rows.length);
+		const postCount = await testDb
+			.select()
+			.from(posts)
+			.then((rows) => rows.length);
 
 		return {
 			timestamp: new Date().toISOString(),

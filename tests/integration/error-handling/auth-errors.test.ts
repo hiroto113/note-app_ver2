@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 
 /**
  * Authentication Error Boundary Tests
- * 
+ *
  * Tests authentication error scenarios including:
  * - Invalid credentials handling
  * - Session management errors
@@ -137,7 +137,7 @@ describe('Authentication Error Boundary Tests', () => {
 					expect.fail('Should have thrown authentication error');
 				} catch (error) {
 					expect(error as Error).toBeInstanceOf(Error);
-					
+
 					if (i < maxAttempts) {
 						expect((error as Error).message).toBe('Invalid credentials');
 					} else {
@@ -189,7 +189,9 @@ describe('Authentication Error Boundary Tests', () => {
 					expect.fail(`Should have thrown error for token: ${token}`);
 				} catch (error) {
 					expect(error as Error).toBeInstanceOf(Error);
-					expect((error as Error).message).toMatch(/(Invalid session|Session not found|Session expired|too short|too long)/);
+					expect((error as Error).message).toMatch(
+						/(Invalid session|Session not found|Session expired|too short|too long)/
+					);
 				}
 			}
 		});
@@ -230,7 +232,9 @@ describe('Authentication Error Boundary Tests', () => {
 
 			const mockCreateSession = async (userId: string) => {
 				if (activeSessions >= maxConcurrentSessions) {
-					throw new Error(`Maximum concurrent sessions (${maxConcurrentSessions}) exceeded`);
+					throw new Error(
+						`Maximum concurrent sessions (${maxConcurrentSessions}) exceeded`
+					);
 				}
 
 				activeSessions++;
@@ -270,18 +274,20 @@ describe('Authentication Error Boundary Tests', () => {
 
 			const mockRateLimitedLogin = async (username: string, password: string) => {
 				const now = Date.now();
-				
+
 				// Clean up old attempts outside the window
-				attempts = attempts.filter(timestamp => now - timestamp < rateLimitWindow);
-				
+				attempts = attempts.filter((timestamp) => now - timestamp < rateLimitWindow);
+
 				if (attempts.length >= maxAttempts) {
 					const oldestAttempt = Math.min(...attempts);
 					const resetTime = oldestAttempt + rateLimitWindow;
-					throw new Error(`Rate limit exceeded. Try again after ${new Date(resetTime).toISOString()}`);
+					throw new Error(
+						`Rate limit exceeded. Try again after ${new Date(resetTime).toISOString()}`
+					);
 				}
 
 				attempts.push(now);
-				
+
 				// Simulate failed login for this test
 				throw new Error('Invalid credentials');
 			};
@@ -322,23 +328,25 @@ describe('Authentication Error Boundary Tests', () => {
 
 				const now = Date.now();
 				const requests = requestCounts.get(endpoint) || [];
-				
+
 				// Clean up old requests
-				const validRequests = requests.filter(timestamp => now - timestamp < limit.window);
-				
+				const validRequests = requests.filter(
+					(timestamp) => now - timestamp < limit.window
+				);
+
 				if (validRequests.length >= limit.requests) {
 					throw new Error(`API rate limit exceeded for ${endpoint}`);
 				}
 
 				validRequests.push(now);
 				requestCounts.set(endpoint, validRequests);
-				
+
 				return { success: true };
 			};
 
 			// Test login endpoint rate limiting
 			const loginLimit = endpointLimits['/api/auth/login'];
-			
+
 			// Make requests up to the limit
 			for (let i = 0; i < loginLimit.requests; i++) {
 				const result = await mockRateLimitedEndpoint('/api/auth/login');
@@ -392,7 +400,10 @@ describe('Authentication Error Boundary Tests', () => {
 				{ token: 'malformed.token', expectedError: 'Invalid token format' },
 				{ token: 'expired.token.here', expectedError: 'Token has expired' },
 				{ token: 'invalid.signature.token', expectedError: 'Invalid token signature' },
-				{ token: 'tampered.payload.token', expectedError: 'Token payload has been tampered' }
+				{
+					token: 'tampered.payload.token',
+					expectedError: 'Token payload has been tampered'
+				}
 			];
 
 			for (const { token, expectedError } of invalidTokens) {
@@ -620,10 +631,26 @@ describe('Authentication Error Boundary Tests', () => {
 			};
 
 			const oauthErrors = [
-				{ provider: 'google', code: 'invalid_code', expectedError: 'Invalid authorization code' },
-				{ provider: 'github', code: 'expired_code', expectedError: 'Authorization code has expired' },
-				{ provider: 'facebook', code: 'revoked_app', expectedError: 'Application access has been revoked' },
-				{ provider: 'google', code: 'network_error', expectedError: 'Network error communicating' },
+				{
+					provider: 'google',
+					code: 'invalid_code',
+					expectedError: 'Invalid authorization code'
+				},
+				{
+					provider: 'github',
+					code: 'expired_code',
+					expectedError: 'Authorization code has expired'
+				},
+				{
+					provider: 'facebook',
+					code: 'revoked_app',
+					expectedError: 'Application access has been revoked'
+				},
+				{
+					provider: 'google',
+					code: 'network_error',
+					expectedError: 'Network error communicating'
+				},
 				{ provider: 'github', code: 'rate_limited', expectedError: 'Rate limited by OAuth' }
 			];
 
@@ -652,10 +679,10 @@ describe('Authentication Error Boundary Tests', () => {
 					if (mockAuthService.status === 'down') {
 						throw new Error('Authentication service is currently unavailable');
 					}
-					
+
 					if (mockAuthService.status === 'degraded') {
 						// Simulate slow response
-						await new Promise(resolve => setTimeout(resolve, 5000));
+						await new Promise((resolve) => setTimeout(resolve, 5000));
 						throw new Error('Authentication service timeout');
 					}
 
@@ -669,7 +696,9 @@ describe('Authentication Error Boundary Tests', () => {
 				expect.fail('Should have thrown service unavailable error');
 			} catch (error) {
 				expect(error as Error).toBeInstanceOf(Error);
-				expect((error as Error).message).toContain('Authentication service is currently unavailable');
+				expect((error as Error).message).toContain(
+					'Authentication service is currently unavailable'
+				);
 			}
 
 			// Test service timeout (degraded)

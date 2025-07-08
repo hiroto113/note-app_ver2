@@ -7,7 +7,7 @@ const execAsync = promisify(exec);
 
 /**
  * Regression Test Automation Infrastructure
- * 
+ *
  * Provides automated execution and reporting for regression test suites:
  * - Automated test discovery and execution
  * - Performance regression detection
@@ -79,15 +79,15 @@ export class RegressionTestRunner {
 	 */
 	async discoverTests(): Promise<string[]> {
 		const testFiles: string[] = [];
-		
+
 		const searchDirectory = async (dir: string): Promise<void> => {
 			try {
 				const entries = await readdir(dir);
-				
+
 				for (const entry of entries) {
 					const fullPath = join(dir, entry);
 					const stats = await stat(fullPath);
-					
+
 					if (stats.isDirectory()) {
 						await searchDirectory(fullPath);
 					} else if (entry.endsWith('.test.ts') || entry.endsWith('.test.js')) {
@@ -133,11 +133,13 @@ export class RegressionTestRunner {
 					failedCount: 1,
 					skippedCount: 0,
 					duration: 0,
-					failures: [{
-						testName: 'Suite Execution',
-						error: error instanceof Error ? error.message : String(error),
-						duration: 0
-					}],
+					failures: [
+						{
+							testName: 'Suite Execution',
+							error: error instanceof Error ? error.message : String(error),
+							duration: 0
+						}
+					],
 					performance: {
 						averageTestDuration: 0,
 						slowestTest: { name: '', duration: 0 },
@@ -174,15 +176,19 @@ export class RegressionTestRunner {
 	 * Run a single test suite with detailed monitoring
 	 */
 	private async runTestSuite(testFilePath: string): Promise<RegressionTestResult> {
-		const suiteName = testFilePath.replace(/^tests\/regression\//, '').replace(/\.test\.(ts|js)$/, '');
+		const suiteName = testFilePath
+			.replace(/^tests\/regression\//, '')
+			.replace(/\.test\.(ts|js)$/, '');
 		const startTime = Date.now();
-		
+
 		try {
 			// Run the test with vitest
-			const { stdout, stderr } = await execAsync(`pnpm vitest run ${testFilePath} --reporter=json`);
-			
+			const { stdout, stderr } = await execAsync(
+				`pnpm vitest run ${testFilePath} --reporter=json`
+			);
+
 			const duration = Date.now() - startTime;
-			
+
 			// Parse vitest JSON output
 			let testData;
 			try {
@@ -196,7 +202,7 @@ export class RegressionTestRunner {
 		} catch (error) {
 			const duration = Date.now() - startTime;
 			console.error(`Error running test suite ${testFilePath}:`, error);
-			
+
 			return {
 				suiteName,
 				testCount: 0,
@@ -204,11 +210,13 @@ export class RegressionTestRunner {
 				failedCount: 1,
 				skippedCount: 0,
 				duration,
-				failures: [{
-					testName: 'Test Execution',
-					error: error instanceof Error ? error.message : String(error),
-					duration
-				}],
+				failures: [
+					{
+						testName: 'Test Execution',
+						error: error instanceof Error ? error.message : String(error),
+						duration
+					}
+				],
 				performance: {
 					averageTestDuration: duration,
 					slowestTest: { name: 'Test Execution', duration },
@@ -223,7 +231,11 @@ export class RegressionTestRunner {
 	/**
 	 * Parse vitest JSON results
 	 */
-	private parseVitestResults(suiteName: string, testData: any, duration: number): RegressionTestResult {
+	private parseVitestResults(
+		suiteName: string,
+		testData: any,
+		duration: number
+	): RegressionTestResult {
 		const failures: TestFailure[] = [];
 		let testCount = 0;
 		let passedCount = 0;
@@ -254,18 +266,21 @@ export class RegressionTestRunner {
 		}
 
 		// Calculate performance metrics
-		const testDurations = failures.map(f => f.duration).filter(d => d > 0);
-		const averageTestDuration = testDurations.length > 0 
-			? testDurations.reduce((a, b) => a + b, 0) / testDurations.length 
-			: duration / Math.max(testCount, 1);
+		const testDurations = failures.map((f) => f.duration).filter((d) => d > 0);
+		const averageTestDuration =
+			testDurations.length > 0
+				? testDurations.reduce((a, b) => a + b, 0) / testDurations.length
+				: duration / Math.max(testCount, 1);
 
-		const slowestTest = testDurations.length > 0
-			? { name: 'Unknown', duration: Math.max(...testDurations) }
-			: { name: 'Unknown', duration: 0 };
+		const slowestTest =
+			testDurations.length > 0
+				? { name: 'Unknown', duration: Math.max(...testDurations) }
+				: { name: 'Unknown', duration: 0 };
 
-		const fastestTest = testDurations.length > 0
-			? { name: 'Unknown', duration: Math.min(...testDurations) }
-			: { name: 'Unknown', duration: 0 };
+		const fastestTest =
+			testDurations.length > 0
+				? { name: 'Unknown', duration: Math.min(...testDurations) }
+				: { name: 'Unknown', duration: 0 };
 
 		return {
 			suiteName,
@@ -288,7 +303,11 @@ export class RegressionTestRunner {
 	/**
 	 * Fallback parser for text output
 	 */
-	private parseTextOutput(suiteName: string, output: string, duration: number): RegressionTestResult {
+	private parseTextOutput(
+		suiteName: string,
+		output: string,
+		duration: number
+	): RegressionTestResult {
 		const lines = output.split('\n');
 		const failures: TestFailure[] = [];
 		let testCount = 0;
@@ -296,7 +315,7 @@ export class RegressionTestRunner {
 		let failedCount = 0;
 
 		// Simple text parsing
-		lines.forEach(line => {
+		lines.forEach((line) => {
 			if (line.includes('✓') || line.includes('PASS')) {
 				passedCount++;
 				testCount++;
@@ -332,23 +351,27 @@ export class RegressionTestRunner {
 	/**
 	 * Detect performance regressions by comparing with baseline
 	 */
-	private async detectPerformanceRegression(results: RegressionTestResult[]): Promise<PerformanceRegression[]> {
+	private async detectPerformanceRegression(
+		results: RegressionTestResult[]
+	): Promise<PerformanceRegression[]> {
 		const regressions: PerformanceRegression[] = [];
 
 		try {
 			const baselineData = await readFile(this.baselineFile, 'utf-8');
 			const baseline = JSON.parse(baselineData);
 
-			results.forEach(result => {
+			results.forEach((result) => {
 				const baselineResult = baseline[result.suiteName];
 				if (baselineResult) {
 					const currentDuration = result.performance.averageTestDuration;
 					const baselineDuration = baselineResult.averageTestDuration;
-					
+
 					if (baselineDuration > 0) {
-						const degradation = ((currentDuration - baselineDuration) / baselineDuration) * 100;
-						
-						if (degradation > 10) { // More than 10% slower
+						const degradation =
+							((currentDuration - baselineDuration) / baselineDuration) * 100;
+
+						if (degradation > 10) {
+							// More than 10% slower
 							let severity: 'low' | 'medium' | 'high' | 'critical' = 'low';
 							if (degradation > 50) severity = 'critical';
 							else if (degradation > 30) severity = 'high';
@@ -381,10 +404,10 @@ export class RegressionTestRunner {
 		return {
 			overall: 85,
 			byCategory: {
-				'core': 90,
-				'api': 85,
-				'business': 80,
-				'automation': 70
+				core: 90,
+				api: 85,
+				business: 80,
+				automation: 70
 			},
 			uncoveredAreas: [
 				'Error handling edge cases',
@@ -406,21 +429,29 @@ export class RegressionTestRunner {
 		const failureRate = totalTests > 0 ? (totalFailures / totalTests) * 100 : 0;
 
 		if (failureRate > 10) {
-			recommendations.push('High failure rate detected. Review and fix failing tests immediately.');
+			recommendations.push(
+				'High failure rate detected. Review and fix failing tests immediately.'
+			);
 		}
 
-		const slowSuites = results.filter(r => r.performance.averageTestDuration > 2000);
+		const slowSuites = results.filter((r) => r.performance.averageTestDuration > 2000);
 		if (slowSuites.length > 0) {
-			recommendations.push(`Performance issues detected in ${slowSuites.length} test suites. Consider optimization.`);
+			recommendations.push(
+				`Performance issues detected in ${slowSuites.length} test suites. Consider optimization.`
+			);
 		}
 
-		const suitesWithManyFailures = results.filter(r => r.failedCount > 5);
+		const suitesWithManyFailures = results.filter((r) => r.failedCount > 5);
 		if (suitesWithManyFailures.length > 0) {
-			recommendations.push('Some test suites have multiple failures. Focus on fixing core issues first.');
+			recommendations.push(
+				'Some test suites have multiple failures. Focus on fixing core issues first.'
+			);
 		}
 
 		if (recommendations.length === 0) {
-			recommendations.push('All regression tests are performing well. Continue monitoring for any degradations.');
+			recommendations.push(
+				'All regression tests are performing well. Continue monitoring for any degradations.'
+			);
 		}
 
 		return recommendations;
@@ -432,10 +463,10 @@ export class RegressionTestRunner {
 	private async saveReport(report: RegressionReport): Promise<void> {
 		try {
 			await mkdir(this.reportDirectory, { recursive: true });
-			
+
 			const timestamp = report.timestamp.toISOString().replace(/[:.]/g, '-');
 			const reportPath = join(this.reportDirectory, `regression-report-${timestamp}.json`);
-			
+
 			await writeFile(reportPath, JSON.stringify(report, null, 2));
 			console.log(`📋 Report saved to: ${reportPath}`);
 		} catch (error) {
@@ -449,8 +480,8 @@ export class RegressionTestRunner {
 	private async updateBaseline(results: RegressionTestResult[]): Promise<void> {
 		try {
 			const baseline: Record<string, any> = {};
-			
-			results.forEach(result => {
+
+			results.forEach((result) => {
 				baseline[result.suiteName] = {
 					averageTestDuration: result.performance.averageTestDuration,
 					testCount: result.testCount,
@@ -470,7 +501,7 @@ export class RegressionTestRunner {
 	 */
 	async runForCI(): Promise<{ success: boolean; report: RegressionReport }> {
 		console.log('🔄 Running regression tests in CI/CD mode...');
-		
+
 		const report = await this.runAllTests();
 		const success = report.overallPassRate >= 90; // 90% pass rate threshold
 
@@ -479,16 +510,18 @@ export class RegressionTestRunner {
 		console.log(`Total Tests: ${report.totalTests}`);
 		console.log(`Pass Rate: ${report.overallPassRate.toFixed(2)}%`);
 		console.log(`Performance Regressions: ${report.performanceRegression.length}`);
-		
+
 		if (report.performanceRegression.length > 0) {
 			console.log('\n⚠️ Performance Regressions Detected:');
-			report.performanceRegression.forEach(reg => {
-				console.log(`  - ${reg.testName}: ${reg.degradation.toFixed(1)}% slower (${reg.severity})`);
+			report.performanceRegression.forEach((reg) => {
+				console.log(
+					`  - ${reg.testName}: ${reg.degradation.toFixed(1)}% slower (${reg.severity})`
+				);
 			});
 		}
 
 		console.log('\n📋 Recommendations:');
-		report.recommendations.forEach(rec => {
+		report.recommendations.forEach((rec) => {
 			console.log(`  • ${rec}`);
 		});
 
@@ -511,19 +544,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Check if this module is being run directly
-const isMainModule = process.argv[1] === __filename || process.argv[1].endsWith('regression-test-runner.ts');
+const isMainModule =
+	process.argv[1] === __filename || process.argv[1].endsWith('regression-test-runner.ts');
 
 if (isMainModule) {
 	const runner = new RegressionTestRunner();
 	const isCI = process.argv.includes('--ci');
 
 	if (isCI) {
-		runner.runForCI().catch(error => {
+		runner.runForCI().catch((error) => {
 			console.error('Regression test execution failed:', error);
 			process.exit(1);
 		});
 	} else {
-		runner.runAllTests().catch(error => {
+		runner.runAllTests().catch((error) => {
 			console.error('Regression test execution failed:', error);
 			process.exit(1);
 		});
