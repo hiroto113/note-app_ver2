@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
 import { waitForPageLoad } from '../utils/page-helpers';
 import { loginAsAdmin, logout } from '../utils/auth-helpers';

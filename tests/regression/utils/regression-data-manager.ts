@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { testDb } from '../../integration/setup';
 import { testIsolation, TestIsolation } from '../../integration/utils/test-isolation';
 import { users, posts, categories } from '$lib/server/db/schema';

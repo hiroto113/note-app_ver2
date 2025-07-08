@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { getTestDb } from '../setup';
 import { createTestFixtures, testScenarios, testUtils } from '../../../src/lib/test-utils';

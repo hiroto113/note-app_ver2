@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { testDb } from '../../integration/setup';
 import { users, sessions } from '$lib/server/db/schema';
@@ -32,7 +33,7 @@ import { regressionDataManager } from '../utils/regression-data-manager';
 describe('Authentication Flow Regression Tests', () => {
 	let testUserId: string;
 	let testUsername: string;
-	let testPassword: string = 'secureTestPassword123!';
+	const testPassword: string = 'secureTestPassword123!';
 
 	beforeEach(async () => {
 		// Create test user with known credentials

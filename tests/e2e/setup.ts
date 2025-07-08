@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { test as setup, expect } from '@playwright/test';
 import { exec } from 'child_process';
 import { promisify } from 'util';

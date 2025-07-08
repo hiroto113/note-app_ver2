@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { testDb } from '../setup';
-import { users, sessions } from '$lib/server/db/schema';
+import { users } from '$lib/server/db/schema';
 import { testIsolation } from '../utils/test-isolation';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';

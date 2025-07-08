@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { qualityMetricsService, type QualityTrend } from '$lib/server/quality-metrics';
 import type { NewQualityMetrics } from '$lib/server/db/schema';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
 import { waitForPageLoad, setViewportSize, viewports } from '../utils/page-helpers';
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
 
 test('basic application health check', async ({ page }) => {

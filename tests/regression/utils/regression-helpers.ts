@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { expect } from 'vitest';
 import { testDb } from '../../integration/setup';
 import { users, posts, categories } from '$lib/server/db/schema';

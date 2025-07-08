@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { spawn, exec } from 'child_process';
 import { promisify } from 'util';
 import { readdir, stat, readFile, writeFile, mkdir } from 'fs/promises';

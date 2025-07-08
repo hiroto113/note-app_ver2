@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 import { performance } from 'perf_hooks';
 import { writeFile, readFile, mkdir } from 'fs/promises';
 import { join } from 'path';
