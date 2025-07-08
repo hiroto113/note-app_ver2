@@ -1,0 +1,32 @@
+{
+  "api/public-api-contract-regression": {
+    "averageTestDuration": 1705,
+    "testCount": 0,
+    "timestamp": "2025-07-08T06:00:39.375Z"
+  },
+  "business/business-logic-regression": {
+    "averageTestDuration": 3754,
+    "testCount": 0,
+    "timestamp": "2025-07-08T06:00:39.375Z"
+  },
+  "core/authentication-regression": {
+    "averageTestDuration": 3877,
+    "testCount": 0,
+    "timestamp": "2025-07-08T06:00:39.375Z"
+  },
+  "core/category-management-regression": {
+    "averageTestDuration": 2018,
+    "testCount": 0,
+    "timestamp": "2025-07-08T06:00:39.375Z"
+  },
+  "core/data-integrity-regression": {
+    "averageTestDuration": 4058,
+    "testCount": 0,
+    "timestamp": "2025-07-08T06:00:39.375Z"
+  },
+  "core/post-lifecycle-regression": {
+    "averageTestDuration": 3063,
+    "testCount": 0,
+    "timestamp": "2025-07-08T06:00:39.375Z"
+  }
+}
