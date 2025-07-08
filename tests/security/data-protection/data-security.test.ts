@@ -361,6 +361,9 @@ describe('Data Protection Security Tests', () => {
 				})
 				.returning();
 
+			// Generate a valid token for this test
+			const VALID_ERASURE_TOKEN = crypto.randomBytes(32).toString('hex');
+			
 			const mockDataErasure = async (userId: string, verificationToken: string) => {
 				// Verify erasure request token
 				if (!verificationToken || verificationToken.length < 32) {
@@ -368,8 +371,7 @@ describe('Data Protection Security Tests', () => {
 				}
 
 				// In real implementation, this would verify the token
-				const validToken = crypto.randomBytes(32).toString('hex');
-				if (verificationToken !== validToken) {
+				if (verificationToken !== VALID_ERASURE_TOKEN) {
 					throw new Error('Erasure token verification failed');
 				}
 
@@ -396,8 +398,7 @@ describe('Data Protection Security Tests', () => {
 			};
 
 			// Test erasure process
-			const validToken = crypto.randomBytes(32).toString('hex');
-			const erasureResult = await mockDataErasure(testUser.id, validToken);
+			const erasureResult = await mockDataErasure(testUser.id, VALID_ERASURE_TOKEN);
 
 			expect(erasureResult.erased).toBe(true);
 			expect(erasureResult.erasureResults.userRecord).toBe(true);
@@ -411,8 +412,8 @@ describe('Data Protection Security Tests', () => {
 			expect(deletedUser).toHaveLength(0);
 
 			// Test invalid token
-			expect(async () => {
-				await mockDataErasure('some-user-id', 'invalid-token');
+			await expect(async () => {
+				await mockDataErasure('some-user-id', crypto.randomBytes(32).toString('hex') + 'invalid');
 			}).rejects.toThrow('Erasure token verification failed');
 		});
 
@@ -764,6 +765,7 @@ describe('Data Protection Security Tests', () => {
 					// Patterns that might contain secrets
 					const secretPatterns = [
 						/password[=:]\s*([^\s,}]+)/gi,
+						/token[=:]\s*bearer\s+([^\s,}]+)/gi,
 						/token[=:]\s*([^\s,}]+)/gi,
 						/key[=:]\s*([^\s,}]+)/gi,
 						/secret[=:]\s*([^\s,}]+)/gi,
@@ -775,6 +777,8 @@ describe('Data Protection Security Tests', () => {
 					let sanitized = message;
 					secretPatterns.forEach(pattern => {
 						sanitized = sanitized.replace(pattern, (match, secret) => {
+							if (!secret) return match;
+							
 							// Keep first and last 2 characters, mask the rest
 							if (secret.length <= 4) {
 								return match.replace(secret, '***');
