@@ -21,9 +21,13 @@ const dbInitHandle: Handle = async ({ event, resolve }) => {
 const adminApiAuth: Handle = async ({ event, resolve }) => {
 	// 管理用APIパスの場合のみ認証チェック
 	if (event.url.pathname.startsWith('/api/admin/')) {
+		console.log('[AdminAuth] Checking authentication for:', event.url.pathname);
 		const session = await event.locals.getSession?.();
+		console.log('[AdminAuth] Session exists:', !!session);
+		console.log('[AdminAuth] User in session:', session?.user);
 
 		if (!session?.user) {
+			console.error('[AdminAuth] No authenticated user found');
 			return json({ error: 'Unauthorized - Authentication required' }, { status: 401 });
 		}
 	}

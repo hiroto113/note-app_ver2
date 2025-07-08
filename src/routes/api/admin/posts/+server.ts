@@ -106,9 +106,23 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	try {
 		// 認証チェックはhooks.server.tsで行われるため、sessionを取得のみ
 		const session = await locals.getSession?.();
-		const userId = session?.user?.id;
+		
+		// セッション確認を追加
+		if (!session?.user?.id) {
+			console.error('No authenticated session found');
+			return json({ error: 'Unauthorized - Please login again' }, { status: 401 });
+		}
+		
+		const userId = session.user.id;
 
 		const postData = await request.json();
+		console.log('Received post data:', {
+			title: postData.title,
+			contentLength: postData.content?.length || 0,
+			status: postData.status,
+			categoryIds: postData.categoryIds
+		});
+		
 		const { title, content, excerpt, status, categoryIds, publishedAt } = postData;
 
 		// バリデーション実行
@@ -140,6 +154,15 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		const finalPublishedAt =
 			status === 'published' ? (publishedAt ? new Date(publishedAt) : now) : null;
 
+		console.log('Creating post with data:', {
+			title,
+			slug,
+			contentLength: content.length,
+			status: status || 'draft',
+			userId,
+			publishedAt: finalPublishedAt
+		});
+
 		// Create post
 		const result = await db
 			.insert(posts)
@@ -155,6 +178,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				updatedAt: now
 			})
 			.returning();
+		
+		console.log('Post created successfully:', result[0]?.id);
 
 		const createdPost = result[0];
 
@@ -171,6 +196,18 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		return json(createdPost, { status: 201 });
 	} catch (error) {
 		console.error('Error creating post:', error);
-		return json({ error: 'Failed to create post' }, { status: 500 });
+		console.error('Error details:', {
+			name: error instanceof Error ? error.name : 'UnknownError',
+			message: error instanceof Error ? error.message : String(error),
+			stack: error instanceof Error ? error.stack : undefined
+		});
+		
+		// より詳細なエラーメッセージを返す
+		const errorMessage = error instanceof Error ? error.message : 'Failed to create post';
+		return json({ 
+			error: 'Failed to create post', 
+			details: errorMessage,
+			timestamp: new Date().toISOString()
+		}, { status: 500 });
 	}
 };

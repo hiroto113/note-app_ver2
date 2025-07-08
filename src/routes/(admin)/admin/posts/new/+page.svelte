@@ -25,8 +25,17 @@
 				// Redirect to posts list
 				goto('/admin/posts');
 			} else {
-				const errorData = await response.json();
-				error = errorData.error || '記事の作成に失敗しました';
+				let errorMessage = '記事の作成に失敗しました';
+				try {
+					const errorData = await response.json();
+					errorMessage = errorData.error || errorMessage;
+					console.error('API Error:', errorData);
+				} catch (e) {
+					// JSONパースエラーの場合、テキストレスポンスを取得
+					console.error('Response parse error:', e);
+					errorMessage = `エラー: ステータス ${response.status}`;
+				}
+				error = errorMessage;
 			}
 		} catch (err) {
 			console.error('Create post error:', err);
